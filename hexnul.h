@@ -21,6 +21,7 @@
 #define RECT_W_OFFSET 20
 #define BOARD_OFFSET_X 10
 #define BOARD_OFFSET_Y 16
+#define COLORS 12
 
 class HexNullApp {
     private:

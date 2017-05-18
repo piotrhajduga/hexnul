@@ -78,7 +78,7 @@ void HexNullApp::OnLoop() {
 
 void HexNullApp::OnRender() {
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-    SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 255);
+    SDL_SetRenderDrawColor(renderer, 0x7f, 0x7f, 0x7f, 255);
     SDL_RenderClear(renderer);
 
     drawHexs((WIN_H/RECT_H)-1, (WIN_W/RECT_W)-1);
@@ -87,16 +87,21 @@ void HexNullApp::OnRender() {
 }
 
 void HexNullApp::drawHexs(int rows, int cols) {
-    SDL_SetRenderDrawColor(renderer, 0x0, 0x0, 0x0, 255);
     SDL_Rect rect;
+    int off;
 
     for (int row=0;row<rows;row++) {
         for (int col=0;col<cols;col++) {
+            off = (((row+col)*col)%COLORS)-(COLORS/2);
+            SDL_SetRenderDrawColor(renderer, 0x58+(off*0x08), 0xbd+(off*0x08), 0x48+(off*0x08), 255);
+
             rect.x = BOARD_OFFSET_X + (RECT_W * col) + (RECT_W_OFFSET * (row%2));
             rect.y = BOARD_OFFSET_Y + RECT_H * (row);
             rect.w = RECT_W;
             rect.h = RECT_H;
 
+            SDL_RenderFillRect(renderer, &rect);
+            SDL_SetRenderDrawColor(renderer, 0x04, 0x10, 0x02, 255);
             SDL_RenderDrawRect(renderer, &rect);
         }
     }
