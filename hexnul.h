@@ -1,43 +1,23 @@
-/*
- * "Ballfield"
- *
- *   (C) David Olofson <david@olofson.net>, 2002
- *
- * This software is released under the terms of the GPL.
- *
- * Contact author for permission if you want to use this
- * software, or work derived from it, under other terms.
- */
-
 #ifndef	_HEXNUL_H_
 #define	_HEXNUL_H_
 
 #include "SDL.h"
+#include "render.h"
 
 #define WIN_W 640
 #define WIN_H 480
-#define RECT_H 32
-#define RECT_W 40
-#define RECT_W_OFFSET 20
-#define BOARD_OFFSET_X 10
-#define BOARD_OFFSET_Y 16
+#define HEX_H 36
+#define HEX_W 48
+#define BOARD_OFFSET_X 0
+#define BOARD_OFFSET_Y 0
 #define COLORS 12
 
 class HexNullApp {
-    private:
-        bool running;
-
-        SDL_Window* display;
-        SDL_Renderer* renderer;
-
-        void drawHexs(int rows, int cols);
-
     public:
         HexNullApp();
 
         int OnExecute();
 
-    public:
         bool OnInit();
 
         void OnEvent(SDL_Event* event);
@@ -47,6 +27,18 @@ class HexNullApp {
         void OnRender();
 
         void OnCleanup();
+
+        void OnClick(SDL_MouseButtonEvent* event);
+    private:
+        bool running;
+
+        SDL_Window* display;
+        SDL_Renderer* renderer;
+        GameRender* render;
+
+        void drawHexs(int cols, int rows);
+        void drawHex(int col, int row);
+        void drawHex(SDL_Point offset);
 };
 
 #endif	/* _HEXNUL_H_ */

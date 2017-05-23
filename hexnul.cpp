@@ -13,11 +13,6 @@
  * and have fun!
  */
 
-int main(int argc, char* argv[]) {
-    HexNullApp app;
-    return app.OnExecute();
-}
-
 HexNullApp::HexNullApp() {
     display = NULL;
     running = false;
@@ -33,12 +28,11 @@ int HexNullApp::OnExecute() {
     SDL_Event event;
 
     while (running) {
+        OnRender();
+        OnLoop();
         while (SDL_PollEvent(&event)) {
             OnEvent(&event);
         }
-
-        OnLoop();
-        OnRender();
     }
     OnCleanup();
     return 0;
@@ -61,16 +55,24 @@ bool HexNullApp::OnInit() {
         return false;
     }
     SDL_RenderSetLogicalSize(renderer, WIN_W, WIN_H);
+    render = new GameRender(renderer, NULL);
 
     return true;
 }
 
 void HexNullApp::OnEvent(SDL_Event* event) {
     switch (event->type) {
-        case SDL_QUIT: running = false;
-                       break;
+        case SDL_MOUSEBUTTONUP:
+            OnClick((SDL_MouseButtonEvent*) event);
+            break;
+        case SDL_QUIT:
+            running = false;
+            break;
         default: break;
     }
+}
+
+void HexNullApp::OnClick(SDL_MouseButtonEvent* event) {
 }
 
 void HexNullApp::OnLoop() {
@@ -81,30 +83,7 @@ void HexNullApp::OnRender() {
     SDL_SetRenderDrawColor(renderer, 0x7f, 0x7f, 0x7f, 255);
     SDL_RenderClear(renderer);
 
-    drawHexs((WIN_H/RECT_H)-1, (WIN_W/RECT_W)-1);
-
-    SDL_RenderPresent(renderer);
-}
-
-void HexNullApp::drawHexs(int rows, int cols) {
-    SDL_Rect rect;
-    int off;
-
-    for (int row=0;row<rows;row++) {
-        for (int col=0;col<cols;col++) {
-            off = (((row+col)*col)%COLORS)-(COLORS/2);
-            SDL_SetRenderDrawColor(renderer, 0x58+(off*0x08), 0xbd+(off*0x08), 0x48+(off*0x08), 255);
-
-            rect.x = BOARD_OFFSET_X + (RECT_W * col) + (RECT_W_OFFSET * (row%2));
-            rect.y = BOARD_OFFSET_Y + RECT_H * (row);
-            rect.w = RECT_W;
-            rect.h = RECT_H;
-
-            SDL_RenderFillRect(renderer, &rect);
-            SDL_SetRenderDrawColor(renderer, 0x04, 0x10, 0x02, 255);
-            SDL_RenderDrawRect(renderer, &rect);
-        }
-    }
+    render->render();
 }
 
 void HexNullApp::OnCleanup() {
