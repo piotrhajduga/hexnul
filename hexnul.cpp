@@ -55,7 +55,8 @@ bool HexNullApp::OnInit() {
         return false;
     }
     SDL_RenderSetLogicalSize(renderer, WIN_W, WIN_H);
-    render = new GameRender(renderer, NULL);
+
+    world = new GameWorld(renderer);
 
     return true;
 }
@@ -83,7 +84,7 @@ void HexNullApp::OnRender() {
     SDL_SetRenderDrawColor(renderer, 0x7f, 0x7f, 0x7f, 255);
     SDL_RenderClear(renderer);
 
-    render->render();
+    world->draw();
 }
 
 void HexNullApp::OnCleanup() {

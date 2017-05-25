@@ -2,12 +2,10 @@
 #define	_HEXNUL_H_
 
 #include "SDL.h"
-#include "render.h"
+#include "world.h"
 
 #define WIN_W 640
 #define WIN_H 480
-#define HEX_H 36
-#define HEX_W 48
 #define BOARD_OFFSET_X 0
 #define BOARD_OFFSET_Y 0
 #define COLORS 12
@@ -34,7 +32,7 @@ class HexNullApp {
 
         SDL_Window* display;
         SDL_Renderer* renderer;
-        GameRender* render;
+        GameWorld* world;
 
         void drawHexs(int cols, int rows);
         void drawHex(int col, int row);

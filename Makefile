@@ -11,19 +11,19 @@ EXE = hexnul
 
 all: $(EXE)
 
-$(EXE): main.o hexnul.o render.o state.o
+$(EXE): main.o hexnul.o state.o world.o
 	$(CXX) $^ $(LDFLAGS) -o $@
 
 main.o: main.cpp hexnul.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-hexnul.o: hexnul.cpp hexnul.h render.h
+hexnul.o: hexnul.cpp hexnul.h world.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 state.o: state.cpp state.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-render.o: render.cpp render.h state.h
+world.o: world.cpp world.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 clean:
