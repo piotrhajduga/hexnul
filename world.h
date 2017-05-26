@@ -11,6 +11,10 @@ class GameWorld {
 
         void draw();
 
+        SDL_Point coordsForXY(SDL_Point point);
+        void setActive(SDL_Point point);
+        void setInactive(SDL_Point point);
+
         void drawHex(SDL_Point coord) {
             drawHex(coord.x, coord.y);
         }
@@ -28,6 +32,7 @@ class GameWorld {
         };
 
         std::set<SDL_Point, compare> hexs;
+        std::set<SDL_Point, compare> activePoints;
 };
 
 #endif //_HEXNUL_GAME_WORLD_H_

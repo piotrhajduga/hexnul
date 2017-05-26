@@ -19,6 +19,7 @@ HexNullApp::HexNullApp() {
 }
 
 int HexNullApp::OnExecute() {
+    const int FPS = (1000/60);
     running = true;
 
     if (OnInit() == false) {
@@ -28,10 +29,14 @@ int HexNullApp::OnExecute() {
     SDL_Event event;
 
     while (running) {
+        ticks = SDL_GetTicks();
         OnRender();
         OnLoop();
         while (SDL_PollEvent(&event)) {
             OnEvent(&event);
+        }
+        if (SDL_GetTicks()-ticks<FPS) {
+            SDL_Delay(FPS+ticks-SDL_GetTicks());
         }
     }
     OnCleanup();
@@ -74,6 +79,7 @@ void HexNullApp::OnEvent(SDL_Event* event) {
 }
 
 void HexNullApp::OnClick(SDL_MouseButtonEvent* event) {
+    world->setActive(world->coordsForXY({event->x, event->y}));
 }
 
 void HexNullApp::OnLoop() {

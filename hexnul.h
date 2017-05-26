@@ -29,6 +29,7 @@ class HexNullApp {
         void OnClick(SDL_MouseButtonEvent* event);
     private:
         bool running;
+        unsigned int ticks = 0;
 
         SDL_Window* display;
         SDL_Renderer* renderer;
