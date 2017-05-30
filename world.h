@@ -22,8 +22,8 @@ class GameWorld {
     private:
         GameState* state;
 
-        const int HEX_H = 36;
-        const int HEX_W = 48;
+        const int HEX_H = 40;
+        const int HEX_W = 60;
         const int GRID_ROW_H = HEX_H*3/4;
         const int GRID_ROW_TOP_H = HEX_H/4;
 

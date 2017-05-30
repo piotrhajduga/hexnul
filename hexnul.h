@@ -32,6 +32,7 @@ class HexNullApp {
 
         void OnMouseMove(SDL_MouseMotionEvent* event);
     private:
+        const int FPS = 30;
         bool running;
         unsigned int ticks = 0;
 

@@ -19,7 +19,7 @@ HexNullApp::HexNullApp() {
 }
 
 int HexNullApp::OnExecute() {
-    const int FPS = (1000/60);
+    const int milisPerFrame = (1000/FPS);
     running = true;
 
     if (OnInit() == false) {
@@ -36,8 +36,8 @@ int HexNullApp::OnExecute() {
             OnEvent(&event);
         }
         int passed = SDL_GetTicks()-ticks;
-        if (passed<FPS) {
-            SDL_Delay(FPS-passed);
+        if (passed<milisPerFrame) {
+            SDL_Delay(milisPerFrame-passed);
         }
     }
     OnCleanup();
