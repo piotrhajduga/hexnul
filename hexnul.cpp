@@ -35,8 +35,9 @@ int HexNullApp::OnExecute() {
         while (SDL_PollEvent(&event)) {
             OnEvent(&event);
         }
-        if (SDL_GetTicks()-ticks<FPS) {
-            SDL_Delay(FPS+ticks-SDL_GetTicks());
+        int passed = SDL_GetTicks()-ticks;
+        if (passed<FPS) {
+            SDL_Delay(FPS-passed);
         }
     }
     OnCleanup();
@@ -61,13 +62,16 @@ bool HexNullApp::OnInit() {
     }
     SDL_RenderSetLogicalSize(renderer, WIN_W, WIN_H);
 
-    world = new GameWorld(renderer);
+    world = new GameWorld(renderer, &state);
 
     return true;
 }
 
 void HexNullApp::OnEvent(SDL_Event* event) {
     switch (event->type) {
+        case SDL_MOUSEMOTION:
+            OnMouseMove((SDL_MouseMotionEvent*) event);
+            break;
         case SDL_MOUSEBUTTONUP:
             OnClick((SDL_MouseButtonEvent*) event);
             break;
@@ -78,8 +82,14 @@ void HexNullApp::OnEvent(SDL_Event* event) {
     }
 }
 
+void HexNullApp::OnMouseMove(SDL_MouseMotionEvent* event) {
+    SDL_Point coords = world->coordsForXY({event->x, event->y});
+    world->setHover(coords);
+}
+
 void HexNullApp::OnClick(SDL_MouseButtonEvent* event) {
-    world->setActive(world->coordsForXY({event->x, event->y}));
+    SDL_Point coords = world->coordsForXY({event->x, event->y});
+    state.toggleActive(coords);
 }
 
 void HexNullApp::OnLoop() {

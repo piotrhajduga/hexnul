@@ -2,6 +2,8 @@
 #define	_HEXNUL_H_
 
 #include "SDL.h"
+
+#include "state.h"
 #include "world.h"
 
 #define WIN_W 640
@@ -27,12 +29,15 @@ class HexNullApp {
         void OnCleanup();
 
         void OnClick(SDL_MouseButtonEvent* event);
+
+        void OnMouseMove(SDL_MouseMotionEvent* event);
     private:
         bool running;
         unsigned int ticks = 0;
 
         SDL_Window* display;
         SDL_Renderer* renderer;
+        GameState state;
         GameWorld* world;
 
         void drawHexs(int cols, int rows);
