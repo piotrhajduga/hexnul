@@ -16,7 +16,6 @@ class GameWorld {
         SDL_Point coordsForXY(SDL_Point point);
 
         void drawHex(SDL_Point coord);
-        void fillHex(SDL_Point coord);
 
         void setHover(SDL_Point coord);
     private:
@@ -36,6 +35,8 @@ class GameWorld {
         SDL_Surface* loadingSurface;
 
         SDL_Texture* loadTexture(const char *file);
+
+        void drawHexOutline(SDL_Point coord);
 };
 
 #endif //_HEXNUL_GAME_WORLD_H_

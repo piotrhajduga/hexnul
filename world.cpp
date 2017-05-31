@@ -10,7 +10,9 @@ GameWorld::GameWorld(SDL_Renderer *irenderer, GameState *istate) {
 
     greenTile = loadTexture("green.png");
     redTile = loadTexture("red.png");
+    SDL_SetTextureBlendMode(redTile, SDL_BLENDMODE_BLEND);
     blueTile = loadTexture("blue.png");
+    SDL_SetTextureBlendMode(blueTile, SDL_BLENDMODE_BLEND);
 }
 
 GameWorld::~GameWorld() {
@@ -49,7 +51,7 @@ SDL_Point GameWorld::coordsForXY(SDL_Point point) {
 void GameWorld::draw() {
     auto hexs = state->getHexs();
 
-    SDL_SetRenderDrawColor(renderer, 0x7f, 0x7f, 0x7f, 255);
+    SDL_SetRenderDrawColor(renderer, 0x09, 0x12, 0x1f, 255);
     SDL_RenderClear(renderer);
 
     for (auto it=hexs.begin();it!=hexs.end();++it) {
@@ -59,12 +61,12 @@ void GameWorld::draw() {
     SDL_RenderPresent(renderer);
 }
 
-void GameWorld::drawHex(SDL_Point coord) {
+void GameWorld::drawHexOutline(SDL_Point coord) {
     const int POINTS_COUNT = 7;
     int x = (HEX_W/2) + (coord.x)*HEX_W+(coord.y%2)*(HEX_W/2);
     int y = (HEX_H/2) + (coord.y*((HEX_H*3)/4));
 
-    SDL_SetRenderDrawColor(renderer, 0x04, 0x10, 0x02, 255);
+    SDL_SetRenderDrawColor(renderer, 0xc4, 0xe0, 0xf2, 255);
     SDL_Point points[POINTS_COUNT] = {
         {x-(HEX_W/2), y-(HEX_H/4)},
         {x          , y-(HEX_H/2)},
@@ -74,8 +76,6 @@ void GameWorld::drawHex(SDL_Point coord) {
         {x-(HEX_W/2), y+(HEX_H/4)},
         {x-(HEX_W/2), y-(HEX_H/4)}
     };
-
-    fillHex(coord);
 
     SDL_RenderDrawLines(renderer, points, POINTS_COUNT);
 }
@@ -104,25 +104,36 @@ void GameWorld::setHover(SDL_Point coord) {
     }
 }
 
-void GameWorld::fillHex(SDL_Point coord) {
+void GameWorld::drawHex(SDL_Point coord) {
     SDL_Rect DestR;
     bool onHover;
     SDL_Texture* tx = NULL;
+    Thing* thing = NULL;
+
+    DestR.x = (coord.x)*HEX_W+(coord.y%2)*(HEX_W/2);
+    DestR.y = (coord.y*((HEX_H*3)/4));
+    DestR.w = HEX_W;
+    DestR.h = HEX_H;
 
     onHover = hoverCoord != NULL && coord == *hoverCoord;
 
-    if (state->isActive(coord)) {
-        tx = onHover ? redTile : greenTile;
-    } else if (onHover) {
-        tx = blueTile;
+    if (state->isGround(coord)) {
+        tx = greenTile;
+        SDL_RenderCopy(renderer, tx, NULL, &DestR);
+    }
+    if (onHover) {
+        if (state->getThing(coord)==NULL) {
+            tx = blueTile;
+        } else {
+            tx = redTile;
+        }
+        SDL_RenderCopy(renderer, tx, NULL, &DestR);
     }
 
-    if (tx != NULL) {
-        DestR.x = (coord.x)*HEX_W+(coord.y%2)*(HEX_W/2);
-        DestR.y = (coord.y*((HEX_H*3)/4));
-        DestR.w = HEX_W;
-        DestR.h = HEX_H;
+    drawHexOutline(coord);
 
-        SDL_RenderCopy(renderer, tx, NULL, &DestR);
+    thing = state->getThing(coord);
+    if (thing != NULL) {
+        thing->render(&DestR);
     }
 }

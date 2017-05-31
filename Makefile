@@ -11,7 +11,7 @@ EXE = hexnul
 
 all: $(EXE)
 
-$(EXE): main.o hexnul.o state.o world.o
+$(EXE): main.o hexnul.o state.o world.o thing.o
 	$(CXX) $^ $(LDFLAGS) -o $@
 
 main.o: main.cpp hexnul.h
@@ -20,10 +20,13 @@ main.o: main.cpp hexnul.h
 hexnul.o: hexnul.cpp hexnul.h world.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-state.o: state.cpp state.h
+state.o: state.cpp state.h thing.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 world.o: world.cpp world.h
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+thing.o: thing.cpp thing.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 clean:

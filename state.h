@@ -3,34 +3,47 @@
 
 #include "SDL.h"
 #include <set>
+#include <map>
+
+#include "thing.h"
 
 class GameState {
-    private:
-        struct compare {
+    public:
+        struct comparePoints {
             bool operator() (const SDL_Point& p1, const SDL_Point& p2) const {
                 return (p1.y<p2.y) || (p1.y==p2.y && p1.x<p2.x);
             }
         };
-    public:
+
         GameState();
         ~GameState();
 
-        typedef std::set<SDL_Point, GameState::compare> PointSet;
+        typedef std::set<SDL_Point, GameState::comparePoints> PointSet;
+        typedef std::map<SDL_Point, Thing*, comparePoints> ThingSet;
 
-        void toggleActive(SDL_Point point);
-        bool isActive(SDL_Point point);
+        void toggleGround(SDL_Point point);
+        bool isGround(SDL_Point point);
+        int countNeighbourGround(SDL_Point coord);
+
         PointSet getHexs();
+
+        void putThing(SDL_Point coord, Thing* thing);
+        void clearThing(SDL_Point coord);
+        Thing* getThing(SDL_Point coord);
     private:
+        //hexs is like an active region that user might act on
         PointSet hexs = {
-            {0, 0},{0, 1},{0, 2},{0, 6},{0, 8},
-            {1, 0},{1, 1},{1, 4},{1, 6},{1, 7},{1, 8},
-            {2, 2},{2, 3},{2, 4},{2, 8},{2, 9},
-            {3, 2},{3, 3},{3, 4},{3, 7},{3, 8},
-            {7, 0},{7, 3},{7, 5},{7, 6},{7, 7},
-            {8, 3},{8, 4},{8, 6},
-            {9, 2},{9, 3},{9, 4},{9, 6}
+                        {4,2},{5,2},
+                  {3,3},{4,3},{5,3},{6,3},
+                  {3,4},{4,4},{5,4},{6,4},{7,4},{8,4},
+            {2,5},{3,5},{4,5},{5,5},{6,5},{7,5},{8,5},
+            {2,6},{3,6},{4,6},{5,6},{6,6},{7,6},
+            {2,7},{3,7},{4,7},{5,7},{6,7},
+                        {4,8},{5,8},
         };
-        PointSet activePoints;
+
+        PointSet ground;
+        ThingSet things;
 };
 
 #endif	/* _HEXNUL_GAME_STATE_H_ */
