@@ -10,9 +10,7 @@ GameWorld::GameWorld(SDL_Renderer *irenderer, GameState *istate) {
 
     greenTile = loadTexture("green.png");
     redTile = loadTexture("red.png");
-    SDL_SetTextureBlendMode(redTile, SDL_BLENDMODE_BLEND);
     blueTile = loadTexture("blue.png");
-    SDL_SetTextureBlendMode(blueTile, SDL_BLENDMODE_BLEND);
 }
 
 GameWorld::~GameWorld() {
@@ -115,18 +113,8 @@ void GameWorld::drawHex(SDL_Point coord) {
     DestR.w = HEX_W;
     DestR.h = HEX_H;
 
-    onHover = hoverCoord != NULL && coord == *hoverCoord;
-
     if (state->isGround(coord)) {
         tx = greenTile;
-        SDL_RenderCopy(renderer, tx, NULL, &DestR);
-    }
-    if (onHover) {
-        if (state->getThing(coord)==NULL) {
-            tx = blueTile;
-        } else {
-            tx = redTile;
-        }
         SDL_RenderCopy(renderer, tx, NULL, &DestR);
     }
 
@@ -135,5 +123,15 @@ void GameWorld::drawHex(SDL_Point coord) {
     thing = state->getThing(coord);
     if (thing != NULL) {
         thing->render(&DestR);
+    }
+
+    onHover = hoverCoord != NULL && coord == *hoverCoord;
+    if (onHover) {
+        if (state->getThing(coord)==NULL) {
+            tx = blueTile;
+        } else {
+            tx = redTile;
+        }
+        SDL_RenderCopy(renderer, tx, NULL, &DestR);
     }
 }
