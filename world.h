@@ -11,20 +11,28 @@ class GameWorld {
         GameWorld(SDL_Renderer *renderer, GameState *state);
         ~GameWorld();
 
+        void initHexs();
+
         void draw();
 
         SDL_Point coordsForXY(SDL_Point point);
 
         void drawHex(SDL_Point coord);
+        void drawThings(SDL_Point coord);
 
         void setHover(SDL_Point coord);
+
+        GameState::PointSet getHexs();
     private:
         GameState* state;
 
         const int HEX_H = 40;
-        const int HEX_W = 60;
+        const int HEX_W = 56;
         const int GRID_ROW_H = HEX_H*3/4;
         const int GRID_ROW_TOP_H = HEX_H/4;
+
+        //hexs is like an active region that user might act on
+        GameState::PointSet hexs;
 
         SDL_Point* hoverCoord = NULL;
 

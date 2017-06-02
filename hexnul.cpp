@@ -89,16 +89,27 @@ void HexNullApp::OnMouseMove(SDL_MouseMotionEvent* event) {
 
 void HexNullApp::OnClick(SDL_MouseButtonEvent* event) {
     SDL_Point coords = world->coordsForXY({event->x, event->y});
-    if (state.isGround(coords)) {
-        if (state.getThing(coords)==NULL) {
-            if (state.countNeighbourGround(coords)>0) {
+
+    if (world->getHexs().find(coords) != world->getHexs().end()) {
+        switch (event->button) {
+        case SDL_BUTTON_LEFT:
+            if (state.isGround(coords)) {
                 state.putThing(coords, new Thing(renderer));
+            } else {
+                state.toggleGround(coords);
             }
-        } else {
-            state.clearThing(coords);
+            break;
+        case SDL_BUTTON_RIGHT:
+            if (state.countThings(coords) > 0) {
+                state.clearThing(coords);
+            } else if (state.isGround(coords)) {
+                state.toggleGround(coords);
+            }
+            break;
+        default:
+            //idle
+            break;
         }
-    } else {
-        state.toggleGround(coords);
     }
 }
 

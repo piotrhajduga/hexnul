@@ -11,6 +11,31 @@ GameWorld::GameWorld(SDL_Renderer *irenderer, GameState *istate) {
     greenTile = loadTexture("green.png");
     redTile = loadTexture("red.png");
     blueTile = loadTexture("blue.png");
+
+    initHexs();
+}
+
+void GameWorld::initHexs() {
+    SDL_Point origin;
+    int size = 5;
+    origin.x = 5;
+    origin.y = 6;
+
+    hexs.clear();
+
+    int i,x,y1,y2,xfrom,xto;
+    for (i=0;i<size;++i) {
+        y1 = origin.y-i;
+        y2 = origin.y+i;
+        xfrom = origin.x-size+1+((i+(origin.y%2))/2);
+        xto = origin.x+size-1-((i+((origin.y+1)%2))/2);
+        for (x=xfrom;x<=xto;++x) {
+            hexs.insert({x,y1});
+            hexs.insert({x,y2});
+        }
+    }
+
+    hexs.begin();
 }
 
 GameWorld::~GameWorld() {
@@ -47,8 +72,6 @@ SDL_Point GameWorld::coordsForXY(SDL_Point point) {
 }
 
 void GameWorld::draw() {
-    auto hexs = state->getHexs();
-
     SDL_SetRenderDrawColor(renderer, 0x09, 0x12, 0x1f, 255);
     SDL_RenderClear(renderer);
 
@@ -105,8 +128,6 @@ void GameWorld::setHover(SDL_Point coord) {
 void GameWorld::drawHex(SDL_Point coord) {
     SDL_Rect DestR;
     bool onHover;
-    SDL_Texture* tx = NULL;
-    Thing* thing = NULL;
 
     DestR.x = (coord.x)*HEX_W+(coord.y%2)*(HEX_W/2);
     DestR.y = (coord.y*((HEX_H*3)/4));
@@ -114,24 +135,43 @@ void GameWorld::drawHex(SDL_Point coord) {
     DestR.h = HEX_H;
 
     if (state->isGround(coord)) {
-        tx = greenTile;
-        SDL_RenderCopy(renderer, tx, NULL, &DestR);
+        SDL_RenderCopy(renderer, greenTile, NULL, &DestR);
     }
 
     drawHexOutline(coord);
 
-    thing = state->getThing(coord);
-    if (thing != NULL) {
-        thing->render(&DestR);
-    }
+    drawThings(coord);
+
+    int thingCount = state->countThings(coord);
+    DestR.y -= (thingCount * 8) - (thingCount>0?4:0);
 
     onHover = hoverCoord != NULL && coord == *hoverCoord;
     if (onHover) {
-        if (state->getThing(coord)==NULL) {
-            tx = blueTile;
-        } else {
-            tx = redTile;
-        }
-        SDL_RenderCopy(renderer, tx, NULL, &DestR);
+        SDL_RenderCopy(renderer, redTile, NULL, &DestR);
     }
+}
+
+void GameWorld::drawThings(SDL_Point coord) {
+    SDL_Rect DestR;
+    GameState::ThingStack things;
+
+    if (state->countThings(coord) == 0) return;
+
+    DestR.x = (coord.x)*HEX_W+(coord.y%2)*(HEX_W/2);
+    DestR.y = (coord.y*((HEX_H*3)/4));
+    DestR.w = HEX_W;
+    DestR.h = HEX_H;
+
+    things = state->getThings(coord);
+
+    for (GameState::ThingStack::reverse_iterator it=things.rbegin();
+            it!=things.rend();++it) {
+        (*it)->render(&DestR);
+        DestR.y-=8;
+    }
+
+}
+
+GameState::PointSet GameWorld::getHexs() {
+    return hexs;
 }

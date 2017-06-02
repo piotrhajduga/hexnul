@@ -1,30 +1,29 @@
-#include "state.h"
 #include <map>
 #include <list>
 #include <algorithm>
 #include <iostream>
 #include <string>
 
-void printSet(std::string name, GameState::PointSet points) {
-    std::cout<<name<<" = {";
+#include "state.h"
+
+using namespace std;
+
+void printSet(string name, GameState::PointSet points) {
+    cout<<name<<" = {";
     for (auto it=points.begin();it!=points.end();++it) {
-        std::cout<<"("<<it->x<<","<<it->y<<")";
+        cout<<"("<<it->x<<","<<it->y<<")";
     }
-    std::cout<<"}"<<std::endl;
+    cout<<"}"<<endl;
 }
 
-GameState::GameState() {
-    hexs.begin();
-}
+GameState::GameState() {}
 GameState::~GameState() {}
 
 void GameState::toggleGround(SDL_Point point) {
-    if (hexs.find(point) != hexs.end()) {
-        if (ground.find(point) == ground.end()) {
-            ground.insert(point);
-        } else {
-            ground.erase(point);
-        }
+    if (ground.find(point) == ground.end()) {
+        ground.insert(point);
+    } else {
+        ground.erase(point);
     }
 }
 
@@ -32,8 +31,7 @@ bool GameState::isGround(SDL_Point coord) {
     return ground.find(coord) != ground.end();
 }
 
-int GameState::countNeighbourGround(SDL_Point coord) {
-    int count = 0;
+bool GameState::canPutThing(SDL_Point coord) {
     GameState::PointSet neighbours = {
         {coord.x-1+(coord.y%2),coord.y-1},{coord.x+(coord.y%2),coord.y-1},
         {coord.x-1,coord.y},{coord.x+1,coord.y},
@@ -41,23 +39,50 @@ int GameState::countNeighbourGround(SDL_Point coord) {
     };
 
     for (auto it=neighbours.begin();it!=neighbours.end();++it) {
-        if (isGround(*it) && getThing(*it)==NULL) ++count;
+        //TODO: logic!
     }
 
-    return count;
+    return true;
 }
 
-GameState::PointSet GameState::getHexs() {
-    return hexs;
+int GameState::countThings(SDL_Point coord) {
+    ThingMap::iterator it = things.find(coord);
+    if (it != things.end()) {
+        return it->second.size();
+    }
+    else return 0;
 }
 
 void GameState::putThing(SDL_Point coord, Thing* thing) {
-    things.insert({coord, thing});
+    ThingMap::iterator it = things.find(coord);
+    ThingStack thingStack;
+
+    if (it==things.end()) {
+        thingStack.push_front(thing);
+        things.insert({coord, thingStack});
+    } else if (it->second.size() <= MAX_THING_STACK) {
+        it->second.push_front(thing);
+    }
 }
+
 void GameState::clearThing(SDL_Point coord) {
-    things.erase(coord);
+    Thing* thing;
+
+    ThingMap::iterator it = things.find(coord);
+    if (it!=things.end() && !it->second.empty()) {
+        thing = it->second.front();
+        delete thing;
+        it->second.pop_front();
+    }
 }
+
 Thing* GameState::getThing(SDL_Point coord) {
     auto it = things.find(coord);
-    return (it==things.end())?NULL:it->second;
+    if (it!=things.end() && !it->second.empty()) {
+        return it->second.front();
+    } else return NULL;
+}
+
+GameState::ThingStack GameState::getThings(SDL_Point coord) {
+    return things.find(coord)->second;
 }
