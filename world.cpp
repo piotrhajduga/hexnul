@@ -88,7 +88,27 @@ void GameWorld::drawHexOutline(SDL_Point coord) {
     int x = (HEX_W/2) + (coord.x)*HEX_W+(coord.y%2)*(HEX_W/2);
     int y = (HEX_H/2) + (coord.y*((HEX_H*3)/4));
 
-    SDL_SetRenderDrawColor(renderer, 0xc4, 0xe0, 0xf2, 255);
+    if (state->isGround(coord)) {
+        switch (state->getGround(coord)->getType()) {
+        case GRASS:
+            SDL_SetRenderDrawColor(renderer, 0x09, 0xb2, 0x1f, 255);
+            break;
+        case WATER:
+            SDL_SetRenderDrawColor(renderer, 0x09, 0x12, 0xcf, 255);
+            break;
+        case DIRT:
+            SDL_SetRenderDrawColor(renderer, 0xa9, 0x52, 0x1f, 255);
+            break;
+        case SAND:
+            SDL_SetRenderDrawColor(renderer, 0xe9, 0xd2, 0x1f, 255);
+            break;
+        default:
+            SDL_SetRenderDrawColor(renderer, 0x89, 0x92, 0x9f, 255);
+        }
+    } else {
+        SDL_SetRenderDrawColor(renderer, 0xc4, 0xe0, 0xf2, 255);
+    }
+
     SDL_Point points[POINTS_COUNT] = {
         {x-(HEX_W/2), y-(HEX_H/4)},
         {x          , y-(HEX_H/2)},

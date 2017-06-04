@@ -44,12 +44,12 @@ int GameState::countThings(SDL_Point coord) {
 NeighborArray getNeighbors(SDL_Point coord) {
     int row = coord.y, col=coord.x;
     NeighborArray neighbors = {
-        row-1, col,
-        row-1, col+1,
-        row, col-1,
-        row, col+1,
-        row+1, col-1,
-        row+1, col
+        col-1+(row%2), row-1,
+        col+(row%2), row-1,
+        col-1, row,
+        col+1, row,
+        col-1+(row%2), row+1,
+        col+(row%2), row+1
     };
     return neighbors;
 }
@@ -57,15 +57,14 @@ NeighborArray getNeighbors(SDL_Point coord) {
 int GameState::countNeighborGroundType(SDL_Point coord, TileType type) {
     NeighborArray neighbors = getNeighbors(coord);
     int count = 0;
-    Tile* tile;
-    try {
-        for (auto nb=neighbors.begin();nb!=neighbors.end();++nb) {
-            tile = ground.at(*nb);
-            if (tile != NULL && tile->getType()==type) {
+    for (auto nb=neighbors.begin();nb!=neighbors.end();++nb) {
+        try {
+            if (ground.at(*nb)->getType()==type) {
                 count++;
             }
+        } catch (const out_of_range& oor) {
         }
-    } catch (const out_of_range& oor) {}
+    }
     return count;
 }
 
