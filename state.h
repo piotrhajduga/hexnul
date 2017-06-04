@@ -34,6 +34,8 @@ typedef std::set<SDL_Point, compareCoords> PointSet;
 typedef std::list<Thing*> ThingStack;
 typedef std::unordered_map<SDL_Point, ThingStack, hashCoord, equalsCoords> ThingMap;
 
+typedef std::array<SDL_Point, 6> NeighborArray;
+
 class GameState {
     public:
         static const int MAX_THING_STACK = 4;
@@ -45,6 +47,7 @@ class GameState {
         void setGround(SDL_Point point, Tile* tile);
         void removeGround(SDL_Point point);
         bool isGround(SDL_Point point);
+        int countNeighborGroundType(SDL_Point coord, TileType type);
 
         int countThings(SDL_Point coord);
         void putThing(SDL_Point coord, Thing* thing);

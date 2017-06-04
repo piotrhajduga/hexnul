@@ -25,6 +25,7 @@ class TileFactory {
             {GRASS, {"green.png", false}},
             {WATER, {"water.png", false}},
             {DIRT, {"dirt.png", true}},
+            {SAND, {"sand.png", true}},
         };
         TileTypeMap tiles;
 

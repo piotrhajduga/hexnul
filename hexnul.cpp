@@ -97,6 +97,7 @@ void HexNullApp::OnMouseMove(SDL_MouseMotionEvent* event) {
 void HexNullApp::OnClick(SDL_MouseButtonEvent* event) {
     SDL_Point coords = world->coordsForXY({event->x, event->y});
     Tile* ground = NULL;
+    int neighborCount;
 
     if (world->getHexs().find(coords) != world->getHexs().end()) {
         switch (event->button) {
@@ -106,7 +107,18 @@ void HexNullApp::OnClick(SDL_MouseButtonEvent* event) {
                 if (ground->canPutThing()) {
                     state.putThing(coords, thingFactory->create("BUILDING"));
                 } else {
-                    state.setGround(coords, tileFactory->create(DIRT));
+                    switch(ground->getType()){
+                    case GRASS:
+                        neighborCount = state.countNeighborGroundType(coords, WATER);
+                        if (neighborCount>1) {
+                            state.setGround(coords, tileFactory->create(SAND));
+                        } else {
+                            state.setGround(coords, tileFactory->create(DIRT));
+                        }
+                        break;
+                    default:
+                        break;
+                    }
                 }
             } else {
                 state.setGround(coords, tileFactory->create(GRASS));

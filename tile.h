@@ -7,7 +7,7 @@
 #include "sprite.h"
 
 typedef enum {
-    GRASS, WATER, DIRT
+    GRASS, WATER, DIRT, SAND
 } TileType;
 
 class Tile : public Sprite {
@@ -22,6 +22,8 @@ class Tile : public Sprite {
             _isContainer = isContainer;
         }
         virtual ~Tile() {};
+
+        TileType getType() { return type; }
 
         bool canPutThing() { return _isContainer; }
 };

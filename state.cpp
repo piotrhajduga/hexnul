@@ -1,8 +1,10 @@
-#include <map>
 #include <list>
+#include <array>
 #include <algorithm>
 #include <iostream>
 #include <string>
+
+#include "utils.h"
 
 #include "state.h"
 
@@ -28,7 +30,6 @@ bool GameState::isGround(SDL_Point coord) {
 }
 
 void GameState::removeGround(SDL_Point coord) {
-    cout<<"Removing ("<<coord.x<<","<<coord.y<<")"<<endl;
     ground.erase(coord);
 }
 
@@ -38,6 +39,34 @@ int GameState::countThings(SDL_Point coord) {
     } catch (const out_of_range& oor) {
         return 0;
     }
+}
+
+NeighborArray getNeighbors(SDL_Point coord) {
+    int row = coord.y, col=coord.x;
+    NeighborArray neighbors = {
+        row-1, col,
+        row-1, col+1,
+        row, col-1,
+        row, col+1,
+        row+1, col-1,
+        row+1, col
+    };
+    return neighbors;
+}
+
+int GameState::countNeighborGroundType(SDL_Point coord, TileType type) {
+    NeighborArray neighbors = getNeighbors(coord);
+    int count = 0;
+    Tile* tile;
+    try {
+        for (auto nb=neighbors.begin();nb!=neighbors.end();++nb) {
+            tile = ground.at(*nb);
+            if (tile != NULL && tile->getType()==type) {
+                count++;
+            }
+        }
+    } catch (const out_of_range& oor) {}
+    return count;
 }
 
 void GameState::putThing(SDL_Point coord, Thing* thing) {
