@@ -11,18 +11,19 @@ class GameWorld {
         GameWorld(SDL_Renderer *renderer, GameState *state);
         ~GameWorld();
 
+        SDL_Point coordsForXY(SDL_Point point);
+
         void initHexs();
+        PointSet getHexs();
 
         void draw();
 
-        SDL_Point coordsForXY(SDL_Point point);
-
-        void drawHex(SDL_Point coord);
-        void drawThings(SDL_Point coord);
-
         void setHover(SDL_Point coord);
 
-        GameState::PointSet getHexs();
+    protected:
+        void drawHex(SDL_Point coord);
+        void drawThings(SDL_Point coord, SDL_Rect* destRect);
+
     private:
         GameState* state;
 
@@ -32,14 +33,12 @@ class GameWorld {
         const int GRID_ROW_TOP_H = HEX_H/4;
 
         //hexs is like an active region that user might act on
-        GameState::PointSet hexs;
+        PointSet hexs;
 
         SDL_Point* hoverCoord = NULL;
 
         SDL_Renderer* renderer;
-        SDL_Texture* greenTile;
         SDL_Texture* redTile;
-        SDL_Texture* blueTile;
         SDL_Surface* loadingSurface;
 
         SDL_Texture* loadTexture(const char *file);

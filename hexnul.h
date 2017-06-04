@@ -5,6 +5,8 @@
 
 #include "state.h"
 #include "world.h"
+#include "tilefactory.h"
+#include "thingfactory.h"
 
 #define WIN_W 640
 #define WIN_H 480
@@ -40,6 +42,9 @@ class HexNullApp {
         SDL_Renderer* renderer;
         GameState state;
         GameWorld* world;
+
+        TileFactory* tileFactory;
+        ThingFactory* thingFactory;
 
         void drawHexs(int cols, int rows);
         void drawHex(int col, int row);

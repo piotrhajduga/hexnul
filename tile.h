@@ -1,10 +1,29 @@
 #ifndef	_HEXNUL_TILE_H_
 #define	_HEXNUL_TILE_H_
 
-class Tile {
+#include "SDL.h"
+#include "SDL_image.h"
+
+#include "sprite.h"
+
+typedef enum {
+    GRASS, WATER, DIRT
+} TileType;
+
+class Tile : public Sprite {
+    private:
+        TileType type;
+        bool _isContainer = false;
+
     public:
-        Tile();
-        ~Tile();
+        Tile(TileType itype, SDL_Renderer* renderer, const char *textureFile, bool isContainer)
+            : Sprite(renderer, textureFile) {
+            type = itype;
+            _isContainer = isContainer;
+        }
+        virtual ~Tile() {};
+
+        bool canPutThing() { return _isContainer; }
 };
 
 #endif	/* _HEXNUL_H_ */

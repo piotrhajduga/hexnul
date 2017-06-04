@@ -1,3 +1,6 @@
+#include <iostream>
+#include "tilefactory.h"
+#include "thingfactory.h"
 #include "hexnul.h"
 
 /**
@@ -12,6 +15,8 @@
  *
  * and have fun!
  */
+
+using namespace std;
 
 HexNullApp::HexNullApp() {
     display = NULL;
@@ -63,6 +68,8 @@ bool HexNullApp::OnInit() {
     SDL_RenderSetLogicalSize(renderer, WIN_W, WIN_H);
 
     world = new GameWorld(renderer, &state);
+    tileFactory = new TileFactory(renderer);
+    thingFactory = new ThingFactory(renderer);
 
     return true;
 }
@@ -89,21 +96,31 @@ void HexNullApp::OnMouseMove(SDL_MouseMotionEvent* event) {
 
 void HexNullApp::OnClick(SDL_MouseButtonEvent* event) {
     SDL_Point coords = world->coordsForXY({event->x, event->y});
+    Tile* ground = NULL;
 
     if (world->getHexs().find(coords) != world->getHexs().end()) {
         switch (event->button) {
         case SDL_BUTTON_LEFT:
-            if (state.isGround(coords)) {
-                state.putThing(coords, new Thing(renderer));
+            ground = state.getGround(coords);
+            if (ground != NULL) {
+                if (ground->canPutThing()) {
+                    state.putThing(coords, thingFactory->create("BUILDING"));
+                } else {
+                    state.setGround(coords, tileFactory->create(DIRT));
+                }
             } else {
-                state.toggleGround(coords);
+                state.setGround(coords, tileFactory->create(GRASS));
             }
             break;
         case SDL_BUTTON_RIGHT:
+            ground = state.getGround(coords);
+
             if (state.countThings(coords) > 0) {
                 state.clearThing(coords);
-            } else if (state.isGround(coords)) {
-                state.toggleGround(coords);
+            } else if (ground != NULL) {
+                state.removeGround(coords);
+            } else {
+                state.setGround(coords, tileFactory->create(WATER));
             }
             break;
         default:
@@ -125,6 +142,10 @@ void HexNullApp::OnRender() {
 }
 
 void HexNullApp::OnCleanup() {
+    delete tileFactory;
+    delete thingFactory;
+    delete world;
+
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(display);
 

@@ -2,18 +2,18 @@
 #define	_HEXNUL_GAME_THING_H_
 
 #include "SDL.h"
+#include "tile.h"
 
-class Thing {
+class Thing : public Sprite {
     public:
-        Thing(SDL_Renderer* renderer);
-        ~Thing();
-
-        void render(SDL_Rect* rect);
-    private:
-        SDL_Renderer* renderer;
-        SDL_Texture* tx;
-
-        SDL_Texture* loadTexture(const char *file);
+        int height = 0;
+        Thing(SDL_Renderer* renderer, const char *textureFile)
+            : Sprite (renderer, textureFile) {}
+        Thing(SDL_Renderer* renderer, const char *textureFile, int iheight)
+            : Sprite (renderer, textureFile) {
+                height = iheight;
+            }
+        virtual ~Thing() {};
 };
 
 #endif	/* _HEXNUL_GAME_THING_H_ */
