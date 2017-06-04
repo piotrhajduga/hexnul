@@ -5,23 +5,18 @@
 #include <unordered_map>
 
 #include "SDL.h"
-#include "tile.h"
+#include "base_thing.h"
+#include "building.h"
+#include "thingstack.h"
 
 using namespace std;
 
-class Thing : public Sprite {
-    public:
-        int height = 0;
-        Thing(SDL_Renderer* renderer, const char *textureFile)
-            : Sprite (renderer, textureFile) {}
-        Thing(SDL_Renderer* renderer, const char *textureFile, int iheight)
-            : Sprite (renderer, textureFile) {
-                height = iheight;
-            }
-        virtual ~Thing() {};
-};
+typedef struct {
+    const char* textureFile;
+    int height;
+} ThingTypeData;
 
-typedef unordered_map<string, pair<string, int>> ThingTypeMap;
+typedef unordered_map<ThingType, ThingTypeData> ThingTypeMap;
 
 class ThingFactory {
     private:
@@ -29,7 +24,8 @@ class ThingFactory {
 
     protected:
         ThingTypeMap types = {
-            {"BUILDING", {"assets/tiles/building.png", 8}},
+            {STACK, {"", 0}},
+            {BUILDING, {"assets/tiles/building.png", 8}},
         };
 
     public:
@@ -37,12 +33,23 @@ class ThingFactory {
             renderer = irenderer;
         }
 
-        Thing* create(string type) {
-            ThingTypeMap::iterator it = types.find(type);
-            if (it==types.end()) {
+        Thing* create(ThingType type) {
+            try {
+                ThingTypeData typeData = types.at(type);
+                return create(type, typeData);
+            } catch (const out_of_range& oor) {
                 return NULL;
-            } else {
-                return new Thing(renderer, it->second.first.c_str(), it->second.second);
+            }
+        }
+
+        Thing* create(ThingType type, ThingTypeData typeData) {
+            switch (type) {
+                case STACK:
+                    return new ThingStack(renderer);
+                case BUILDING:
+                    return new BuildingSegment(renderer, typeData.textureFile, typeData.height);
+                default:
+                    return NULL;
             }
         }
 };

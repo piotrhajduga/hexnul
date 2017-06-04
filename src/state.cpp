@@ -7,6 +7,7 @@
 #include "utils.h"
 
 #include "state.h"
+#include "thing.h"
 
 using namespace std;
 
@@ -34,8 +35,14 @@ void GameState::removeGround(SDL_Point coord) {
 }
 
 int GameState::countThings(SDL_Point coord) {
+    Thing* thing;
     try {
-        return things.at(coord).size();
+        thing = things.at(coord);
+        if (thing->getType()==STACK) {
+            return ((ThingStack*) thing)->size();
+        } else {
+            return 1;
+        }
     } catch (const out_of_range& oor) {
         return 0;
     }
@@ -69,35 +76,36 @@ int GameState::countNeighborGroundType(SDL_Point coord, TileType type) {
 }
 
 void GameState::putThing(SDL_Point coord, Thing* thing) {
-    ThingMap::iterator it = things.find(coord);
-    ThingStack thingStack;
-
-    if (it==things.end()) {
-        thingStack.push_front(thing);
-        things.insert({coord, thingStack});
-    } else if (it->second.size() <= MAX_THING_STACK) {
-        it->second.push_front(thing);
+    Thing* currentThing;
+    try {
+        currentThing = things.at(coord);
+        if (currentThing!=NULL && currentThing->getType()==STACK) {
+            ((ThingStack*) currentThing)->putThing(thing);
+        }
+    } catch (const out_of_range& oor) {
+        things[coord] = thing;
     }
 }
 
 void GameState::clearThing(SDL_Point coord) {
     Thing* thing;
 
-    ThingMap::iterator it = things.find(coord);
-    if (it!=things.end() && !it->second.empty()) {
-        thing = it->second.front();
-        delete thing;
-        it->second.pop_front();
+    try {
+        thing = things.at(coord);
+        if (thing!=NULL && thing->getType()==STACK) {
+            delete ((ThingStack*) thing)->takeThing();
+        } else {
+            delete thing;
+            things.erase(coord);
+        }
+    } catch (const out_of_range& oor) {
     }
 }
 
 Thing* GameState::getThing(SDL_Point coord) {
-    auto it = things.find(coord);
-    if (it!=things.end() && !it->second.empty()) {
-        return it->second.front();
-    } else return NULL;
-}
-
-ThingStack GameState::getThings(SDL_Point coord) {
-    return things.find(coord)->second;
+    try {
+        return things.at(coord);
+    } catch (const out_of_range& oor) {
+        return NULL;
+    }
 }

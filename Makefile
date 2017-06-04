@@ -15,32 +15,30 @@ SDL_INCLUDE = -I/usr/local/include -I/usr/include/SDL2 -I./$(INCLUDE_DIR)
 CXXFLAGS = -Wall -c -std=c++11 $(DEBUGFLAGS) $(SDL_INCLUDE)
 LDFLAGS = $(DEBUGFLAGS) $(SDL_LIB)
 
-all: objdir outdir $(EXE)
+all: $(OUT_DIR) $(OBJ_DIR) $(EXE)
 
-$(EXE): $(OBJ_DIR)/main.o $(OBJ_DIR)/hexnul.o $(OBJ_DIR)/state.o $(OBJ_DIR)/world.o $(OBJ_DIR)/utils.o
+$(OUT_DIR):
+	mkdir $(OUT_DIR)
+
+$(OBJ_DIR):
+	mkdir $(OBJ_DIR)
+
+$(EXE): $(addprefix $(OBJ_DIR)/, main.o hexnul.o state.o world.o utils.o)
 	$(CXX) $^ $(LDFLAGS) -o $@
-
-outdir:
-	if [ ! -d "$(OUT_DIR)" ]; then mkdir $(OUT_DIR); fi
-
-objdir:
-	if [ ! -d "$(OBJ_DIR)" ]; then mkdir $(OBJ_DIR); fi
 
 $(OBJ_DIR)/main.o: $(SOURCE_DIR)/main.cpp $(INCLUDE_DIR)/hexnul.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-HEXNUL_OBJS = $(OBJ_DIR)/world.o $(OBJ_DIR)/state.o $(OBJ_DIR)/utils.o
-$(OBJ_DIR)/hexnul.o: $(SOURCE_DIR)/hexnul.cpp $(INCLUDE_DIR)/hexnul.h $(HEXNUL_OBJS)
+$(OBJ_DIR)/hexnul.o: $(SOURCE_DIR)/hexnul.cpp $(INCLUDE_DIR)/hexnul.h $(OBJ_DIR)/world.o $(OBJ_DIR)/state.o $(OBJ_DIR)/utils.o
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-STATE_OBJS = $(OBJS_DIR)/utils.o $(OBJ_DIR)/tile.o $(OBJ_DIR)/tile.o
-$(OBJ_DIR)/state.o: $(SOURCE_DIR)/state.cpp $(INCLUDE_DIR)/state.h $(STATE_OBJ)
+$(OBJ_DIR)/state.o: $(SOURCE_DIR)/state.cpp $(INCLUDE_DIR)/state.h $(addprefix $(OBJ_DIR)/, utils.o tile.o thing.o)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 $(OBJ_DIR)/tile.o: $(INCLUDE_DIR)/tile.h $(OBJ_DIR)/sprite.o
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-$(OBJ_DIR)/thing.o: $(INCLUDE_DIR)/thing.h $(OBJ_DIR)/sprite.o
+$(OBJ_DIR)/thing.o: $(addprefix $(INCLUDE_DIR)/,thing.h base_thing.h building.h thingstack.h) $(OBJ_DIR)/sprite.o
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 $(OBJ_DIR)/sprite.o: $(INCLUDE_DIR)/sprite.h $(INCLUDE_DIR)/renderable.h

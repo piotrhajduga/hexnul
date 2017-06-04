@@ -7,6 +7,7 @@
 
 #include "SDL.h"
 
+#include "tile.h"
 #include "thing.h"
 
 struct hashCoord {
@@ -31,8 +32,7 @@ typedef std::unordered_map<SDL_Point, Tile*, hashCoord, equalsCoords> TileMap;
 
 typedef std::set<SDL_Point, compareCoords> PointSet;
 
-typedef std::list<Thing*> ThingStack;
-typedef std::unordered_map<SDL_Point, ThingStack, hashCoord, equalsCoords> ThingMap;
+typedef std::unordered_map<SDL_Point, Thing*, hashCoord, equalsCoords> ThingMap;
 
 typedef std::array<SDL_Point, 6> NeighborArray;
 
@@ -53,7 +53,6 @@ class GameState {
         void putThing(SDL_Point coord, Thing* thing);
         void clearThing(SDL_Point coord);
         Thing* getThing(SDL_Point coord);
-        ThingStack getThings(SDL_Point coord);
     private:
         TileMap ground;
         ThingMap things;

@@ -11,7 +11,8 @@ GameWorld::GameWorld(SDL_Renderer *irenderer, GameState *istate) {
     int win_w, win_h;
     SDL_GetRendererOutputSize(renderer, &win_w, &win_h);
 
-    redTile = Utils::loadTexture(HOVER_TEXTURE_FILE, renderer);
+    hover = Utils::loadTexture(HOVER_TEXTURE_FILE, renderer);
+    SDL_SetTextureBlendMode(hover, SDL_BLENDMODE_ADD);
 
     initHexs();
 }
@@ -89,20 +90,11 @@ void GameWorld::drawHexOutline(SDL_Point coord) {
     int y = (HEX_H/2) + (coord.y*((HEX_H*3)/4));
 
     if (state->isGround(coord)) {
-        switch (state->getGround(coord)->getType()) {
-        case GRASS:
-            SDL_SetRenderDrawColor(renderer, 0x09, 0xb2, 0x1f, 255);
-            break;
-        case WATER:
-            SDL_SetRenderDrawColor(renderer, 0x09, 0x12, 0xcf, 255);
-            break;
-        case DIRT:
-            SDL_SetRenderDrawColor(renderer, 0xa9, 0x52, 0x1f, 255);
-            break;
-        case SAND:
-            SDL_SetRenderDrawColor(renderer, 0xe9, 0xd2, 0x1f, 255);
-            break;
-        default:
+        SDL_Color color;
+        try {
+            color = tileBorderColors.at(state->getGround(coord)->getType());
+            SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+        } catch (const out_of_range& oor) {
             SDL_SetRenderDrawColor(renderer, 0x89, 0x92, 0x9f, 255);
         }
     } else {
@@ -139,6 +131,7 @@ void GameWorld::drawHex(SDL_Point coord) {
     SDL_Rect DestR;
     bool onHover;
     Tile* ground = NULL;
+    Thing* thing = NULL;
 
     DestR.x = (coord.x)*HEX_W+(coord.y%2)*(HEX_W/2);
     DestR.y = (coord.y*((HEX_H*3)/4));
@@ -152,31 +145,17 @@ void GameWorld::drawHex(SDL_Point coord) {
 
     drawHexOutline(coord);
 
-    drawThings(coord, &DestR);
-
-    if (state->countThings(coord) > 0) {
-        DestR.y -= 4;
+    thing = state->getThing(coord);
+    if (thing != NULL) {
+        thing->render(&DestR);
+        DestR.y -= thing->height;
+        DestR.h += thing->height;
     }
 
     onHover = hoverCoord != NULL && coord == *hoverCoord;
     if (onHover) {
-        SDL_RenderCopy(renderer, redTile, NULL, &DestR);
+        SDL_RenderCopy(renderer, hover, NULL, &DestR);
     }
-}
-
-void GameWorld::drawThings(SDL_Point coord, SDL_Rect* DestR) {
-    ThingStack things;
-
-    if (state->countThings(coord) == 0) return;
-
-    things = state->getThings(coord);
-
-    for (ThingStack::reverse_iterator it=things.rbegin();
-            it!=things.rend();++it) {
-        (*it)->render(DestR);
-        DestR->y-=(*it)->height;
-    }
-
 }
 
 PointSet GameWorld::getHexs() {

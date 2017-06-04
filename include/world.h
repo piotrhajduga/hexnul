@@ -1,6 +1,8 @@
 #ifndef _HEXNUL_GAME_WORLD_H_
 #define _HEXNUL_GAME_WORLD_H_
 
+#include <unordered_map>
+#include <array>
 #include "SDL.h"
 #include "SDL_image.h"
 
@@ -27,7 +29,7 @@ class GameWorld {
     private:
         GameState* state;
 
-        const char* HOVER_TEXTURE_FILE = "assets/tiles/red.png";
+        const char* HOVER_TEXTURE_FILE = "assets/ui/hover.png";
         const int HEX_H = 40;
         const int HEX_W = 58;
         const int GRID_ROW_H = HEX_H*3/4;
@@ -39,10 +41,17 @@ class GameWorld {
         SDL_Point* hoverCoord = NULL;
 
         SDL_Renderer* renderer;
-        SDL_Texture* redTile;
+        SDL_Texture* hover;
         SDL_Surface* loadingSurface;
 
         SDL_Texture* loadTexture(const char *file);
+
+        std::unordered_map<TileType, SDL_Color> tileBorderColors = {
+            {GRASS, {0x09, 0xb2, 0x1f, 255}},
+            {WATER, {0x09, 0x12, 0xcf, 255}},
+            {DIRT, {0xa9, 0x52, 0x1f, 255}},
+            {SAND, {0xe9, 0xd2, 0x1f, 255}},
+        };
 
         void drawHexOutline(SDL_Point coord);
 };
