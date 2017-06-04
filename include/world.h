@@ -27,8 +27,9 @@ class GameWorld {
     private:
         GameState* state;
 
+        const char* HOVER_TEXTURE_FILE = "assets/tiles/red.png";
         const int HEX_H = 40;
-        const int HEX_W = 56;
+        const int HEX_W = 58;
         const int GRID_ROW_H = HEX_H*3/4;
         const int GRID_ROW_TOP_H = HEX_H/4;
 

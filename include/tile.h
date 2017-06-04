@@ -1,12 +1,37 @@
-#ifndef	_HEXNUL_TILE_FACTORY_H_
-#define	_HEXNUL_TILE_FACTORY_H_
+#ifndef	_HEXNUL_TILE_H_
+#define	_HEXNUL_TILE_H_
 
-#include <string>
 #include <unordered_map>
-#include "tile.h"
+
+#include "SDL.h"
+#include "SDL_image.h"
+
+#include "sprite.h"
 #include "utils.h"
 
 using namespace std;
+
+typedef enum {
+    GRASS, WATER, DIRT, SAND
+} TileType;
+
+class Tile : public Sprite {
+    private:
+        TileType type;
+        bool _isContainer = false;
+
+    public:
+        Tile(TileType itype, SDL_Renderer* renderer, const char *textureFile, bool isContainer)
+            : Sprite(renderer, textureFile) {
+            type = itype;
+            _isContainer = isContainer;
+        }
+        virtual ~Tile() {};
+
+        TileType getType() { return type; }
+
+        bool canPutThing() { return _isContainer; }
+};
 
 typedef struct {
     const char* textureFile;
@@ -22,10 +47,10 @@ class TileFactory {
 
     protected:
         TileTypeDataMap types = {
-            {GRASS, {"green.png", false}},
-            {WATER, {"water.png", false}},
-            {DIRT, {"dirt.png", true}},
-            {SAND, {"sand.png", true}},
+            {GRASS, {"assets/tiles/green.png", false}},
+            {WATER, {"assets/tiles/water.png", false}},
+            {DIRT, {"assets/tiles/dirt.png", true}},
+            {SAND, {"assets/tiles/sand.png", true}},
         };
         TileTypeMap tiles;
 
@@ -55,4 +80,4 @@ class TileFactory {
         }
 };
 
-#endif	/* _HEXNUL_TILE_FACTORY_H_ */
+#endif	/* _HEXNUL_H_ */

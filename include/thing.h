@@ -1,11 +1,25 @@
-#ifndef	_HEXNUL_THING_FACTORY_H_
-#define	_HEXNUL_THING_FACTORY_H_
+#ifndef	_HEXNUL_GAME_THING_H_
+#define	_HEXNUL_GAME_THING_H_
 
 #include <string>
 #include <unordered_map>
-#include "thing.h"
+
+#include "SDL.h"
+#include "tile.h"
 
 using namespace std;
+
+class Thing : public Sprite {
+    public:
+        int height = 0;
+        Thing(SDL_Renderer* renderer, const char *textureFile)
+            : Sprite (renderer, textureFile) {}
+        Thing(SDL_Renderer* renderer, const char *textureFile, int iheight)
+            : Sprite (renderer, textureFile) {
+                height = iheight;
+            }
+        virtual ~Thing() {};
+};
 
 typedef unordered_map<string, pair<string, int>> ThingTypeMap;
 
@@ -15,7 +29,7 @@ class ThingFactory {
 
     protected:
         ThingTypeMap types = {
-            {"BUILDING", {"building.png", 8}},
+            {"BUILDING", {"assets/tiles/building.png", 8}},
         };
 
     public:
@@ -32,5 +46,4 @@ class ThingFactory {
             }
         }
 };
-
-#endif	/* _HEXNUL_THING_FACTORY_H_ */
+#endif	/* _HEXNUL_GAME_THING_H_ */

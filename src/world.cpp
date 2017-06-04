@@ -11,7 +11,7 @@ GameWorld::GameWorld(SDL_Renderer *irenderer, GameState *istate) {
     int win_w, win_h;
     SDL_GetRendererOutputSize(renderer, &win_w, &win_h);
 
-    redTile = Utils::loadTexture("red.png", renderer);
+    redTile = Utils::loadTexture(HOVER_TEXTURE_FILE, renderer);
 
     initHexs();
 }

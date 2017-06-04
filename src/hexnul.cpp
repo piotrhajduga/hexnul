@@ -1,6 +1,5 @@
 #include <iostream>
-#include "tilefactory.h"
-#include "thingfactory.h"
+
 #include "hexnul.h"
 
 /**

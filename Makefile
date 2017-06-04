@@ -1,52 +1,60 @@
+OUT_DIR = bin
+OBJ_DIR = obj
+EXE = $(OUT_DIR)/hexnul
+INCLUDE_DIR = include
+SOURCE_DIR = src
+
 CXX = g++
 DEBUGFLAGS = -g
 # Update these paths to match your installation
 # You may also need to update the linker option rpath, which sets where to look for
 # the SDL2 libraries at runtime to match your install
 SDL_LIB = -L/usr/local/lib -lSDL2 -lSDL2_image -Wl,-rpath=/usr/local/lib
-SDL_INCLUDE = -I/usr/local/include -I/usr/include/SDL2 -I./
+SDL_INCLUDE = -I/usr/local/include -I/usr/include/SDL2 -I./$(INCLUDE_DIR)
 # You may need to change -std=c++11 to -std=c++0x if your compiler is a bit older
 CXXFLAGS = -Wall -c -std=c++11 $(DEBUGFLAGS) $(SDL_INCLUDE)
 LDFLAGS = $(DEBUGFLAGS) $(SDL_LIB)
-OBJ_DIR = obj
-EXE = hexnul
 
-all: $(EXE)
+all: objdir outdir $(EXE)
 
-$(EXE): main.o hexnul.o state.o world.o utils.o
+$(EXE): $(OBJ_DIR)/main.o $(OBJ_DIR)/hexnul.o $(OBJ_DIR)/state.o $(OBJ_DIR)/world.o $(OBJ_DIR)/utils.o
 	$(CXX) $^ $(LDFLAGS) -o $@
 
+outdir:
+	if [ ! -d "$(OUT_DIR)" ]; then mkdir $(OUT_DIR); fi
+
 objdir:
-	mkdir $(OBJ_DIR)
+	if [ ! -d "$(OBJ_DIR)" ]; then mkdir $(OBJ_DIR); fi
 
-$(OBJ_DIR)/main.o: main.cpp hexnul.h
+$(OBJ_DIR)/main.o: $(SOURCE_DIR)/main.cpp $(INCLUDE_DIR)/hexnul.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-$(OBJ_DIR)/hexnul.o: hexnul.cpp hexnul.h world.o state.o utils.o
+HEXNUL_OBJS = $(OBJ_DIR)/world.o $(OBJ_DIR)/state.o $(OBJ_DIR)/utils.o
+$(OBJ_DIR)/hexnul.o: $(SOURCE_DIR)/hexnul.cpp $(INCLUDE_DIR)/hexnul.h $(HEXNUL_OBJS)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-STATE_DEPS = thingfactory.h tilefactory.h $(OBJ_DIR)/utils.o
-
-$(OBJ_DIR)/state.o: state.cpp state.h utils.h $(STATE_DEPS)
+STATE_OBJS = $(OBJS_DIR)/utils.o $(OBJ_DIR)/tile.o $(OBJ_DIR)/tile.o
+$(OBJ_DIR)/state.o: $(SOURCE_DIR)/state.cpp $(INCLUDE_DIR)/state.h $(STATE_OBJ)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-$(OBJ_DIR)/tile.o: tile.h $(OBJ_DIR)/sprite.o
+$(OBJ_DIR)/tile.o: $(INCLUDE_DIR)/tile.h $(OBJ_DIR)/sprite.o
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-$(OBJ_DIR)/thing.o: thing.h $(OBJ_DIR)/sprite.o
+$(OBJ_DIR)/thing.o: $(INCLUDE_DIR)/thing.h $(OBJ_DIR)/sprite.o
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-$(OBJ_DIR)/sprite.o: sprite.h $(OBJ_DIR)/renderable.o
+$(OBJ_DIR)/sprite.o: $(INCLUDE_DIR)/sprite.h $(INCLUDE_DIR)/renderable.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-$(OBJ_DIR)/world.o: world.cpp world.h $(OBJ_DIR)/state.o $(OBJ_DIR)/utils.o
+$(OBJ_DIR)/world.o: $(SOURCE_DIR)/world.cpp $(INCLUDE_DIR)/world.h $(OBJ_DIR)/state.o $(OBJ_DIR)/utils.o
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-$(OBJ_DIR)/utils.o: utils.cpp utils.h
+$(OBJ_DIR)/utils.o: $(SOURCE_DIR)/utils.cpp $(INCLUDE_DIR)/utils.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-$(OBJ_DIR)/renderable.o: renderable.h
-	$(CXX) $(CXXFLAGS) $< -o $@
-
-clean:
-	rm *.o;rm $(EXE)
+clean-objects:
+	rm -f *.o
+	rm -rf $(OBJ_DIR)
+	
+clean: clean-objects
+	rm -f $(EXE)

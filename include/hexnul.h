@@ -5,8 +5,8 @@
 
 #include "state.h"
 #include "world.h"
-#include "tilefactory.h"
-#include "thingfactory.h"
+#include "tile.h"
+#include "thing.h"
 
 #define WIN_W 640
 #define WIN_H 480
