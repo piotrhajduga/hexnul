@@ -5,7 +5,7 @@
 #include "renderable.h"
 
 typedef enum {
-    THING, BUILDING, STACK
+    THING, BUILDING, STACK, ROAD
 } ThingType;
 
 class Thing : public Renderable {

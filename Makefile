@@ -38,7 +38,7 @@ $(OBJ_DIR)/state.o: $(SOURCE_DIR)/state.cpp $(INCLUDE_DIR)/state.h $(addprefix $
 $(OBJ_DIR)/tile.o: $(INCLUDE_DIR)/tile.h $(OBJ_DIR)/sprite.o
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-$(OBJ_DIR)/thing.o: $(addprefix $(INCLUDE_DIR)/,thing.h base_thing.h building.h thingstack.h) $(OBJ_DIR)/sprite.o
+$(OBJ_DIR)/thing.o: $(addprefix $(INCLUDE_DIR)/,thing.h base_thing.h building.h thingstack.h road.h) $(OBJ_DIR)/sprite.o
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 $(OBJ_DIR)/sprite.o: $(INCLUDE_DIR)/sprite.h $(INCLUDE_DIR)/renderable.h

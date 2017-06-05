@@ -61,6 +61,20 @@ NeighborArray getNeighbors(SDL_Point coord) {
     return neighbors;
 }
 
+int GameState::countNeighborThingType(SDL_Point coord, ThingType type) {
+    NeighborArray neighbors = getNeighbors(coord);
+    int count = 0;
+    for (auto nb=neighbors.begin();nb!=neighbors.end();++nb) {
+        try {
+            if (things.at(*nb)->getType()==type) {
+                count++;
+            }
+        } catch (const out_of_range& oor) {
+        }
+    }
+    return count;
+}
+
 int GameState::countNeighborGroundType(SDL_Point coord, TileType type) {
     NeighborArray neighbors = getNeighbors(coord);
     int count = 0;

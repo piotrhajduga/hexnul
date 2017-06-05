@@ -53,6 +53,7 @@ class GameState {
         void putThing(SDL_Point coord, Thing* thing);
         void clearThing(SDL_Point coord);
         Thing* getThing(SDL_Point coord);
+        int countNeighborThingType(SDL_Point coord, ThingType type);
     private:
         TileMap ground;
         ThingMap things;

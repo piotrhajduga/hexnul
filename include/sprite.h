@@ -17,7 +17,7 @@ class Sprite : public Renderable {
             : Renderable(renderer) {
             texture = Utils::loadTexture(textureFile, renderer);
         }
-        ~Sprite() {
+        virtual ~Sprite() {
             SDL_DestroyTexture(texture);
         }
 

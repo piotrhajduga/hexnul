@@ -8,6 +8,7 @@
 #include "base_thing.h"
 #include "building.h"
 #include "thingstack.h"
+#include "road.h"
 
 using namespace std;
 
@@ -26,6 +27,7 @@ class ThingFactory {
         ThingTypeMap types = {
             {STACK, {"", 0}},
             {BUILDING, {"assets/tiles/building.png", 8}},
+            {ROAD, {"", 0}},
         };
 
     public:
