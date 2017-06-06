@@ -6,7 +6,7 @@
 #include "state.h"
 #include "world.h"
 #include "tile.h"
-#include "thing.h"
+#include "things.h"
 
 #define WIN_W 640
 #define WIN_H 480
@@ -14,9 +14,9 @@
 #define BOARD_OFFSET_Y 0
 #define COLORS 12
 
-class HexNullApp {
+class Game {
     public:
-        HexNullApp();
+        Game();
 
         int OnExecute();
 

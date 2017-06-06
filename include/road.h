@@ -3,6 +3,10 @@
 
 #include <map>
 #include <unordered_map>
+
+#include "SDL.h"
+
+#include "state.h"
 #include "thing.h"
 
 using namespace std;
@@ -21,7 +25,7 @@ typedef struct {
 
 class Road : public Thing {
     protected:
-        static constexpr const char* SEGMENTS[6] = {
+        const char* SEGMENTS[6] = {
             "assets/tiles/road_tl.png",
             "assets/tiles/road_tr.png",
             "assets/tiles/road_l.png",
@@ -31,40 +35,21 @@ class Road : public Thing {
         };
 
     public:
-        Road(SDL_Renderer* renderer) : Thing(renderer) {
-            initSegmentSprite(TOPLEFT);
-            initSegmentSprite(TOPRIGHT);
-            initSegmentSprite(LEFT);
-            initSegmentSprite(RIGHT);
-            initSegmentSprite(BOTTOMLEFT);
-            initSegmentSprite(BOTTOMRIGHT);
-        }
-        ~Road() {
-            for (auto it=segments.begin();it!=segments.end();++it) {
-                if (it->second.sprite != NULL) {
-                    delete it->second.sprite;
-                }
-            }
+        Road(SDL_Renderer* renderer);
+        virtual ~Road();
+
+        virtual ThingType getType() const {
+            return ROAD;
         }
 
-        void setVisible(RoadDir dir) {
-            segments[dir].isVisible = true;
-        }
+        void setVisible(RoadDir dir);
 
-        void render(SDL_Rect* rect) {
-            for (auto it=segments.begin();it!=segments.end();++it) {
-                if (it->second.isVisible) {
-                    it->second.sprite->render(rect);
-                }
-            }
-        }
+        void render(SDL_Rect* rect);
 
     private:
         map<RoadDir, RoadSegment> segments;
 
-        void initSegmentSprite(RoadDir dir) {
-            segments[dir].sprite = new Sprite(renderer, SEGMENTS[dir]);
-        }
+        void initSegmentSprite(RoadDir dir);
 };
 
 #endif //_HEXNUL_ROAD_THING_H_

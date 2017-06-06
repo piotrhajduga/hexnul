@@ -1,58 +1,25 @@
-#ifndef	_HEXNUL_GAME_THING_H_
-#define	_HEXNUL_GAME_THING_H_
+#ifndef	_HEXNUL_BASE_THING_H_
+#define	_HEXNUL_BASE_THING_H_
 
 #include <string>
 #include <unordered_map>
-
 #include "SDL.h"
-#include "base_thing.h"
-#include "building.h"
-#include "thingstack.h"
-#include "road.h"
+#include "renderable.h"
+#include "thingtype.h"
 
-using namespace std;
+class Thing : public Renderable {
+    public:
+        int height = 0;
 
-typedef struct {
-    const char* textureFile;
-    int height;
-} ThingTypeData;
+        Thing(SDL_Renderer* renderer);
+        Thing(SDL_Renderer* renderer, int height);
+        virtual ~Thing() {};
 
-typedef unordered_map<ThingType, ThingTypeData> ThingTypeMap;
-
-class ThingFactory {
-    private:
-        SDL_Renderer* renderer;
-
-    protected:
-        ThingTypeMap types = {
-            {STACK, {"", 0}},
-            {BUILDING, {"assets/tiles/building.png", 8}},
-            {ROAD, {"", 0}},
+        virtual ThingType getType() const {
+            return THING;
         };
 
-    public:
-        ThingFactory(SDL_Renderer* irenderer) {
-            renderer = irenderer;
-        }
-
-        Thing* create(ThingType type) {
-            try {
-                ThingTypeData typeData = types.at(type);
-                return create(type, typeData);
-            } catch (const out_of_range& oor) {
-                return NULL;
-            }
-        }
-
-        Thing* create(ThingType type, ThingTypeData typeData) {
-            switch (type) {
-                case STACK:
-                    return new ThingStack(renderer);
-                case BUILDING:
-                    return new BuildingSegment(renderer, typeData.textureFile, typeData.height);
-                default:
-                    return NULL;
-            }
-        }
+        virtual void init() {};
 };
-#endif	/* _HEXNUL_GAME_THING_H_ */
+
+#endif	/* _HEXNUL_BASE_THING_H_ */

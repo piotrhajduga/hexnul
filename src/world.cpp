@@ -1,7 +1,6 @@
 #include <iostream>
 
 #include "utils.h"
-
 #include "world.h"
 
 GameWorld::GameWorld(SDL_Renderer *irenderer, GameState *istate) {

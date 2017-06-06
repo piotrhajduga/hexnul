@@ -1,6 +1,6 @@
-#include "hexnul.h"
+#include "game.h"
 
 int main(int argc, char* argv[]) {
-    HexNullApp app;
+    Game app;
     return app.OnExecute();
 }

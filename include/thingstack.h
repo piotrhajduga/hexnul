@@ -2,12 +2,14 @@
 #define	_HEXNUL_THING_STACk_H_
 #include <list>
 #include "SDL.h"
-#include "base_thing.h"
+#include "thing.h"
 
 class ThingStack : public std::list<Thing*>, public Thing {
     public:
         ThingStack(SDL_Renderer* renderer)
             : Thing(renderer, 0) {}
+
+        virtual ThingType getType() const { return STACK; };
 
         void putThing(Thing* thing) {
             height += thing->height;
@@ -29,8 +31,6 @@ class ThingStack : public std::list<Thing*>, public Thing {
                 DestR.y-=(*it)->height;
             }
         }
-
-        ThingType getType() { return STACK; };
 };
 
 #endif //_HEXNUL_THING_STACK_H_

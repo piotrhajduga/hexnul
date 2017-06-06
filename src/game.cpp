@@ -1,6 +1,8 @@
 #include <iostream>
 
-#include "hexnul.h"
+#include "thing.h"
+#include "road.h"
+#include "game.h"
 
 /**
  * initial goal is to draw
@@ -17,12 +19,12 @@
 
 using namespace std;
 
-HexNullApp::HexNullApp() {
+Game::Game() {
     display = NULL;
     running = false;
 }
 
-int HexNullApp::OnExecute() {
+int Game::OnExecute() {
     const int milisPerFrame = (1000/FPS);
     running = true;
 
@@ -48,7 +50,7 @@ int HexNullApp::OnExecute() {
     return 0;
 }
 
-bool HexNullApp::OnInit() {
+bool Game::OnInit() {
     if(SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) < 0) {
         return false;
     }
@@ -73,7 +75,7 @@ bool HexNullApp::OnInit() {
     return true;
 }
 
-void HexNullApp::OnEvent(SDL_Event* event) {
+void Game::OnEvent(SDL_Event* event) {
     switch (event->type) {
         case SDL_MOUSEMOTION:
             OnMouseMove((SDL_MouseMotionEvent*) event);
@@ -88,12 +90,12 @@ void HexNullApp::OnEvent(SDL_Event* event) {
     }
 }
 
-void HexNullApp::OnMouseMove(SDL_MouseMotionEvent* event) {
+void Game::OnMouseMove(SDL_MouseMotionEvent* event) {
     SDL_Point coords = world->coordsForXY({event->x, event->y});
     world->setHover(coords);
 }
 
-void HexNullApp::OnClick(SDL_MouseButtonEvent* event) {
+void Game::OnClick(SDL_MouseButtonEvent* event) {
     SDL_Point coords = world->coordsForXY({event->x, event->y});
     Tile* ground = NULL;
     Thing* thing = NULL;
@@ -107,29 +109,34 @@ void HexNullApp::OnClick(SDL_MouseButtonEvent* event) {
                 if (ground->canPutThing()) {
                     thing = state.getThing(coords);
                     if (thing == NULL) {
-                        thing = thingFactory->create(STACK);
+                        if ((state.countNeighborThingType(coords, STACK) > 2
+                            || state.countNeighborThingType(coords, ROAD) > 0)
+                            && state.countNeighborThingType(coords, ROAD) < 4
+                            ) {
+                            Utils::log(DEBUG, "Create Road");
+                            thing = thingFactory->create(ROAD);
+                            ((Road*)thing)->setVisible(TOPLEFT);
+                            ((Road*)thing)->setVisible(RIGHT);
+                            ((Road*)thing)->setVisible(BOTTOMLEFT);
+                        } else {
+                            Utils::log(DEBUG, "Create ThingStack");
+                            thing = thingFactory->create(STACK);
+                        }
                         state.putThing(coords, thing);
                     }
 
-                    switch(thing->getType()){
-                    case STACK:
+                    if(thing->getType()==STACK) {
+                        Utils::log(DEBUG, "Create BuildingSegment");
                         ((ThingStack*) thing)->putThing(thingFactory->create(BUILDING));
-                        break;
-                    default:
-                        break;
                     }
                 } else {
-                    switch(ground->getType()){
-                    case GRASS:
+                    if (ground->getType()==GRASS) {
                         neighborCount = state.countNeighborGroundType(coords, WATER);
                         if (neighborCount>1) {
                             state.setGround(coords, tileFactory->create(SAND));
                         } else {
                             state.setGround(coords, tileFactory->create(DIRT));
                         }
-                        break;
-                    default:
-                        break;
                     }
                 }
             } else {
@@ -154,10 +161,10 @@ void HexNullApp::OnClick(SDL_MouseButtonEvent* event) {
     }
 }
 
-void HexNullApp::OnLoop() {
+void Game::OnLoop() {
 }
 
-void HexNullApp::OnRender() {
+void Game::OnRender() {
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
     SDL_SetRenderDrawColor(renderer, 0x7f, 0x7f, 0x7f, 255);
     SDL_RenderClear(renderer);
@@ -165,7 +172,7 @@ void HexNullApp::OnRender() {
     world->draw();
 }
 
-void HexNullApp::OnCleanup() {
+void Game::OnCleanup() {
     delete tileFactory;
     delete thingFactory;
     delete world;

@@ -7,7 +7,7 @@
 #include "utils.h"
 
 #include "state.h"
-#include "thing.h"
+#include "things.h"
 
 using namespace std;
 
@@ -108,8 +108,16 @@ void GameState::clearThing(SDL_Point coord) {
         thing = things.at(coord);
         if (thing!=NULL && thing->getType()==STACK) {
             delete ((ThingStack*) thing)->takeThing();
+            if (((ThingStack*) thing)->empty()) {
+                delete thing;
+                thing = NULL;
+            }
         } else {
             delete thing;
+            thing = NULL;
+        }
+
+        if (thing == NULL) {
             things.erase(coord);
         }
     } catch (const out_of_range& oor) {
