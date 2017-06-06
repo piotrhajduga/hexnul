@@ -1,8 +1,6 @@
 #include <list>
 #include <array>
 #include <algorithm>
-#include <iostream>
-#include <string>
 
 #include "utils.h"
 
@@ -48,21 +46,8 @@ int GameState::countThings(SDL_Point coord) {
     }
 }
 
-NeighborArray getNeighbors(SDL_Point coord) {
-    int row = coord.y, col=coord.x;
-    NeighborArray neighbors = {
-        col-1+(row%2), row-1,
-        col+(row%2), row-1,
-        col-1, row,
-        col+1, row,
-        col-1+(row%2), row+1,
-        col+(row%2), row+1
-    };
-    return neighbors;
-}
-
 int GameState::countNeighborThingType(SDL_Point coord, ThingType type) {
-    NeighborArray neighbors = getNeighbors(coord);
+    NeighborArray neighbors = Utils::getNeighbors(coord);
     int count = 0;
     for (auto nb=neighbors.begin();nb!=neighbors.end();++nb) {
         try {
@@ -76,7 +61,7 @@ int GameState::countNeighborThingType(SDL_Point coord, ThingType type) {
 }
 
 int GameState::countNeighborGroundType(SDL_Point coord, TileType type) {
-    NeighborArray neighbors = getNeighbors(coord);
+    NeighborArray neighbors = Utils::getNeighbors(coord);
     int count = 0;
     for (auto nb=neighbors.begin();nb!=neighbors.end();++nb) {
         try {

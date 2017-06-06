@@ -1,4 +1,7 @@
 #include <iostream>
+#include <algorithm>
+
+#include "utils.h"
 
 #include "thing.h"
 #include "road.h"
@@ -100,6 +103,7 @@ void Game::OnClick(SDL_MouseButtonEvent* event) {
     Tile* ground = NULL;
     Thing* thing = NULL;
     int neighborCount;
+    NeighborArray neighbors;
 
     if (world->getHexs().find(coords) != world->getHexs().end()) {
         switch (event->button) {
@@ -115,9 +119,13 @@ void Game::OnClick(SDL_MouseButtonEvent* event) {
                             ) {
                             Utils::log(DEBUG, "Create Road");
                             thing = thingFactory->create(ROAD);
-                            ((Road*)thing)->setVisible(TOPLEFT);
-                            ((Road*)thing)->setVisible(RIGHT);
-                            ((Road*)thing)->setVisible(BOTTOMLEFT);
+
+                            neighbors = Utils::getNeighbors(coords);
+                            for(int i=0;i<6;++i) {
+                                if (state.getThing(neighbors[i]) != NULL) {
+                                    ((Road*)thing)->setVisible((RoadDir) i);
+                                }
+                            }
                         } else {
                             Utils::log(DEBUG, "Create ThingStack");
                             thing = thingFactory->create(STACK);

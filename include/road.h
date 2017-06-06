@@ -43,6 +43,7 @@ class Road : public Thing {
         }
 
         void setVisible(RoadDir dir);
+        void setVisible(RoadDir dir, bool cond);
 
         void render(SDL_Rect* rect);
 

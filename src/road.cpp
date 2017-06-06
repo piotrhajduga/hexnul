@@ -19,7 +19,11 @@ Road::~Road() {
 }
 
 void Road::setVisible(RoadDir dir) {
-    segments[dir].isVisible = true;
+    setVisible(dir, true);
+}
+
+void Road::setVisible(RoadDir dir, bool cond) {
+    segments[dir].isVisible = cond;
 }
 
 void Road::render(SDL_Rect* rect) {

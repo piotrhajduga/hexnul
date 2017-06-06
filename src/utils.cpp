@@ -6,17 +6,6 @@
 
 #include "utils.h"
 
-SDL_Texture* Utils::loadTexture(const char *file, SDL_Renderer* renderer) {
-    SDL_Surface* loadingSurface = IMG_Load(file);
-    if (loadingSurface == NULL) {
-        std::cout<<"Cannot load "<<file<<std::endl;
-        return NULL;
-    }
-    SDL_Texture* tx = SDL_CreateTextureFromSurface(renderer, loadingSurface);
-    SDL_FreeSurface(loadingSurface);
-    return tx;
-}
-
 void Utils::log(LogLevel ilevel, std::string message) {
     if (ilevel >= level) {
         switch (ilevel) {
@@ -31,4 +20,27 @@ void Utils::log(LogLevel ilevel, std::string message) {
         }
         std::cout<<message<<std::endl;
     }
+}
+
+SDL_Texture* Utils::loadTexture(const char *file, SDL_Renderer* renderer) {
+    SDL_Surface* loadingSurface = IMG_Load(file);
+    if (loadingSurface == NULL) {
+        std::cout<<"Cannot load "<<file<<std::endl;
+        return NULL;
+    }
+    SDL_Texture* tx = SDL_CreateTextureFromSurface(renderer, loadingSurface);
+    SDL_FreeSurface(loadingSurface);
+    return tx;
+}
+
+NeighborArray Utils::getNeighbors(SDL_Point coord) {
+    int row = coord.y, col=coord.x;
+    return {
+        col-1+(row%2), row-1,
+        col+(row%2), row-1,
+        col-1, row,
+        col+1, row,
+        col-1+(row%2), row+1,
+        col+(row%2), row+1
+    };
 }
