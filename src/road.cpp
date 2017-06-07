@@ -18,11 +18,11 @@ Road::~Road() {
     }
 }
 
-void Road::setVisible(Direction dir) {
-    setVisible(dir, true);
+void Road::setSegmentVisible(Direction dir) {
+    setSegmentVisible(dir, true);
 }
 
-void Road::setVisible(Direction dir, bool cond) {
+void Road::setSegmentVisible(Direction dir, bool cond) {
     segments[dir].isVisible = cond;
 }
 

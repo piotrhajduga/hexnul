@@ -37,8 +37,8 @@ class Road : public Thing {
             return ROAD;
         }
 
-        void setVisible(Direction dir);
-        void setVisible(Direction dir, bool cond);
+        void setSegmentVisible(Direction dir);
+        void setSegmentVisible(Direction dir, bool cond);
 
         void render(SDL_Rect* rect);
 

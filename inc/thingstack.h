@@ -1,5 +1,6 @@
 #ifndef	_HEXNUL_THING_STACK_H_
-#define	_HEXNUL_THING_STACk_H_
+#define	_HEXNUL_THING_STACK_H_
+
 #include <list>
 #include "SDL.h"
 #include "thing.h"

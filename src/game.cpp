@@ -116,7 +116,7 @@ void Game::updateRoad(Road* road, NeighborArray neighbors) {
 
     while (dir<6) {
         neighbor = state.getThing(neighbors[dir]);
-        road->setVisible(dir, neighbor!=NULL);
+        road->setSegmentVisible(dir, neighbor!=NULL);
         dir = (Direction) (((int) dir) + 1);
     }
 }
@@ -134,7 +134,8 @@ void Game::updateNeighbors(NeighborArray neighbors, Thing* thing) {
         if (neighbor != NULL) {
             switch (neighbor->getType()) {
             case ROAD:
-                ((Road*)neighbor)->setVisible((Direction)((3+dir)%6), thing!=NULL);
+                ((Road*)neighbor)->setSegmentVisible(
+                    (Direction)((3+dir)%6), thing!=NULL);
                 break;
             default:
                 break;

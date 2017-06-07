@@ -12,10 +12,12 @@ DEBUGFLAGS = #-g
 SDL_LIB = -L/usr/local/lib -lSDL2 -lSDL2_image -Wl,-rpath=/usr/local/lib
 SDL_INCLUDE = -I/usr/local/include -I/usr/include/SDL2 -I$(INC_DIR)
 # You may need to change -std=c++11 to -std=c++0x if your compiler is a bit older
-CXXFLAGS = -Wall -c -std=c++11 $(DEBUGFLAGS) $(SDL_INCLUDE)
+CXXFLAGS = -O2 -Wall -c -std=c++11 $(DEBUGFLAGS) $(SDL_INCLUDE)
 LDFLAGS = $(DEBUGFLAGS) $(SDL_LIB)
 
 all: $(OUT_DIR) $(OBJ_DIR) $(EXE)
+
+rebuild: clean all
 
 $(OUT_DIR):
 	mkdir $(OUT_DIR)
