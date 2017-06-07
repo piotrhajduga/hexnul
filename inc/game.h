@@ -49,6 +49,10 @@ class Game {
         void drawHexs(int cols, int rows);
         void drawHex(int col, int row);
         void drawHex(SDL_Point offset);
+
+        Road* createRoad(NeighborArray neighbors);
+        void updateRoad(Road* road, NeighborArray neighbors);
+        void updateNeighbors(NeighborArray neighbors, Thing* thing);
 };
 
 #endif	/* _HEXNUL_H_ */

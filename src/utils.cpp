@@ -10,15 +10,31 @@ void Utils::log(LogLevel ilevel, std::string message) {
     if (ilevel >= level) {
         switch (ilevel) {
         case DEBUG:
-            std::cout<<"D "; break;
+            std::cout<<"D"; break;
         case INFO:
-            std::cout<<"I "; break;
+            std::cout<<"I"; break;
         case WARN:
-            std::cout<<"W "; break;
+            std::cout<<"W"; break;
         case ERROR:
-            std::cout<<"E "; break;
+            std::cout<<"E"; break;
         }
-        std::cout<<message<<std::endl;
+        std::cout<<" | "<<message<<std::endl;
+    }
+}
+
+void Utils::log(LogLevel ilevel, std::string message, std::string file, int line) {
+    if (ilevel >= level) {
+        switch (ilevel) {
+        case DEBUG:
+            std::cout<<"D"; break;
+        case INFO:
+            std::cout<<"I"; break;
+        case WARN:
+            std::cout<<"W"; break;
+        case ERROR:
+            std::cout<<"E"; break;
+        }
+        std::cout<<" | "<<file<<":"<<line<<" | "<<message<<std::endl;
     }
 }
 
@@ -38,9 +54,9 @@ NeighborArray Utils::getNeighbors(SDL_Point coord) {
     return {
         col-1+(row%2), row-1,
         col+(row%2), row-1,
-        col-1, row,
         col+1, row,
+        col+(row%2), row+1,
         col-1+(row%2), row+1,
-        col+(row%2), row+1
+        col-1, row,
     };
 }

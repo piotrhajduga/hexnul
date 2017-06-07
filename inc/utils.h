@@ -15,13 +15,16 @@ typedef std::array<SDL_Point, 6> NeighborArray;
 
 class Utils {
     private:
-        static const LogLevel level = WARN;
+        static const LogLevel level = INFO;
 
     public:
         static void log(LogLevel level, std::string msg);
+        static void log(LogLevel ilevel, std::string message, std::string file, int line);
 
         static SDL_Texture* loadTexture(const char *file, SDL_Renderer* renderer);
         static NeighborArray getNeighbors(SDL_Point coord);
 };
+
+#define LOG(level, message) Utils::log(level, message, __FILE__, __LINE__)
 
 #endif

@@ -4,6 +4,7 @@
 #include "utils.h"
 
 #include "thing.h"
+#include "direction.h"
 #include "road.h"
 #include "game.h"
 
@@ -98,12 +99,57 @@ void Game::OnMouseMove(SDL_MouseMotionEvent* event) {
     world->setHover(coords);
 }
 
+Road* Game::createRoad(NeighborArray neighbors) {
+    LOG(DEBUG, "Create Road");
+    Road* road = new Road(renderer);
+
+    updateRoad(road, neighbors);
+
+    return road;
+}
+
+void Game::updateRoad(Road* road, NeighborArray neighbors) {
+    Thing* neighbor;
+    Direction dir=(Direction)0;
+
+    LOG(DEBUG, "Update Road");
+
+    while (dir<6) {
+        neighbor = state.getThing(neighbors[dir]);
+        road->setVisible(dir, neighbor!=NULL);
+        dir = (Direction) (((int) dir) + 1);
+    }
+}
+
+void Game::updateNeighbors(NeighborArray neighbors, Thing* thing) {
+    Thing* neighbor;
+    SDL_Point coord;
+    Direction dir = (Direction)0;
+
+    LOG(DEBUG, "Update neighbors");
+
+    while (dir<6) {
+        coord = neighbors[dir];
+        neighbor = state.getThing(coord);
+        if (neighbor != NULL) {
+            switch (neighbor->getType()) {
+            case ROAD:
+                ((Road*)neighbor)->setVisible((Direction)((3+dir)%6), thing!=NULL);
+                break;
+            default:
+                break;
+            }
+        }
+        dir = (Direction) (((int) dir) + 1);
+    }
+}
+
 void Game::OnClick(SDL_MouseButtonEvent* event) {
     SDL_Point coords = world->coordsForXY({event->x, event->y});
     Tile* ground = NULL;
-    Thing* thing = NULL;
+    Thing* thing = state.getThing(coords);
     int neighborCount;
-    NeighborArray neighbors;
+    NeighborArray neighbors = Utils::getNeighbors(coords);
 
     if (world->getHexs().find(coords) != world->getHexs().end()) {
         switch (event->button) {
@@ -111,30 +157,21 @@ void Game::OnClick(SDL_MouseButtonEvent* event) {
             ground = state.getGround(coords);
             if (ground != NULL) {
                 if (ground->canPutThing()) {
-                    thing = state.getThing(coords);
                     if (thing == NULL) {
-                        if ((state.countNeighborThingType(coords, STACK) > 2
+                        if ((state.countNeighborThingType(coords, STACK) > 1
                             || state.countNeighborThingType(coords, ROAD) > 0)
-                            && state.countNeighborThingType(coords, ROAD) < 4
+                            && state.countNeighborThingType(coords, ROAD) < 3
                             ) {
-                            Utils::log(DEBUG, "Create Road");
-                            thing = thingFactory->create(ROAD);
-
-                            neighbors = Utils::getNeighbors(coords);
-                            for(int i=0;i<6;++i) {
-                                if (state.getThing(neighbors[i]) != NULL) {
-                                    ((Road*)thing)->setVisible((RoadDir) i);
-                                }
-                            }
+                            thing = createRoad(neighbors);
                         } else {
-                            Utils::log(DEBUG, "Create ThingStack");
+                            LOG(DEBUG, "Create ThingStack");
                             thing = thingFactory->create(STACK);
                         }
                         state.putThing(coords, thing);
                     }
 
                     if(thing->getType()==STACK) {
-                        Utils::log(DEBUG, "Create BuildingSegment");
+                        LOG(DEBUG, "Create BuildingSegment");
                         ((ThingStack*) thing)->putThing(thingFactory->create(BUILDING));
                     }
                 } else {
@@ -156,6 +193,7 @@ void Game::OnClick(SDL_MouseButtonEvent* event) {
 
             if (state.countThings(coords) > 0) {
                 state.clearThing(coords);
+                thing = state.getThing(coords);
             } else if (ground != NULL) {
                 state.removeGround(coords);
             } else {
@@ -167,6 +205,8 @@ void Game::OnClick(SDL_MouseButtonEvent* event) {
             break;
         }
     }
+
+    updateNeighbors(neighbors, thing);
 }
 
 void Game::OnLoop() {

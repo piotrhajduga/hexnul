@@ -24,18 +24,18 @@ class ThingFactory {
         ThingTypeMap types = {
             {STACK,
                 [](SDL_Renderer* renderer) {
-                    Utils::log(DEBUG, "Create ThingStack");
+                    LOG(DEBUG, "Create ThingStack");
                     return new ThingStack(renderer);
                 }},
             {BUILDING,
                 [](SDL_Renderer* renderer) {
-                    Utils::log(DEBUG, "Create BuildingSegment");
+                    LOG(DEBUG, "Create BuildingSegment");
                     return new BuildingSegment(
                             renderer, "assets/tiles/building.png", 8);
                 }},
             {ROAD,
                 [](SDL_Renderer* renderer) {
-                    Utils::log(DEBUG, "Create Road");
+                    LOG(DEBUG, "Create Road");
                     return new Road(renderer);
                 }},
         };

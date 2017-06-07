@@ -7,12 +7,12 @@ ThingFactory::ThingFactory(SDL_Renderer* irenderer) {
 
 Thing* ThingFactory::create(ThingType type) {
     try {
-        Utils::log(DEBUG, "Create thing");
+        LOG(DEBUG, "Create thing");
         std::function<Thing*(SDL_Renderer*)> create = types.at(type);
-        Utils::log(DEBUG, "Found create lambda");
+        LOG(DEBUG, "Found create lambda");
         return create(renderer);
     } catch (const out_of_range& oor) {
-        Utils::log(WARN, "Cannot find create lambda");
+        LOG(WARN, "Cannot find create lambda");
         return NULL;
     }
 }

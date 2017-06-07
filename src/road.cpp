@@ -11,29 +11,29 @@ Road::Road(SDL_Renderer* renderer)
 }
 
 Road::~Road() {
-    for (auto it=segments.begin();it!=segments.end();++it) {
-        if (it->second.sprite != NULL) {
-            delete it->second.sprite;
+    for (auto it : segments) {
+        if (it.second.sprite != NULL) {
+            delete it.second.sprite;
         }
     }
 }
 
-void Road::setVisible(RoadDir dir) {
+void Road::setVisible(Direction dir) {
     setVisible(dir, true);
 }
 
-void Road::setVisible(RoadDir dir, bool cond) {
+void Road::setVisible(Direction dir, bool cond) {
     segments[dir].isVisible = cond;
 }
 
 void Road::render(SDL_Rect* rect) {
-    for (auto it=segments.begin();it!=segments.end();++it) {
-        if (it->second.isVisible) {
-            it->second.sprite->render(rect);
+    for (auto it : segments) {
+        if (it.second.isVisible) {
+            it.second.sprite->render(rect);
         }
     }
 }
 
-void Road::initSegmentSprite(RoadDir dir) {
+void Road::initSegmentSprite(Direction dir) {
     segments[dir].sprite = new Sprite(renderer, Road::SEGMENTS[dir]);
 }
