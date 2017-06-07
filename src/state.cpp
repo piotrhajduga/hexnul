@@ -1,13 +1,11 @@
 #include <list>
 #include <array>
 #include <algorithm>
-#include <iostream>
-#include <string>
 
 #include "utils.h"
 
 #include "state.h"
-#include "thing.h"
+#include "things.h"
 
 using namespace std;
 
@@ -48,21 +46,22 @@ int GameState::countThings(SDL_Point coord) {
     }
 }
 
-NeighborArray getNeighbors(SDL_Point coord) {
-    int row = coord.y, col=coord.x;
-    NeighborArray neighbors = {
-        col-1+(row%2), row-1,
-        col+(row%2), row-1,
-        col-1, row,
-        col+1, row,
-        col-1+(row%2), row+1,
-        col+(row%2), row+1
-    };
-    return neighbors;
+int GameState::countNeighborThingType(SDL_Point coord, ThingType type) {
+    NeighborArray neighbors = Utils::getNeighbors(coord);
+    int count = 0;
+    for (auto nb=neighbors.begin();nb!=neighbors.end();++nb) {
+        try {
+            if (things.at(*nb)->getType()==type) {
+                count++;
+            }
+        } catch (const out_of_range& oor) {
+        }
+    }
+    return count;
 }
 
 int GameState::countNeighborGroundType(SDL_Point coord, TileType type) {
-    NeighborArray neighbors = getNeighbors(coord);
+    NeighborArray neighbors = Utils::getNeighbors(coord);
     int count = 0;
     for (auto nb=neighbors.begin();nb!=neighbors.end();++nb) {
         try {
@@ -94,8 +93,16 @@ void GameState::clearThing(SDL_Point coord) {
         thing = things.at(coord);
         if (thing!=NULL && thing->getType()==STACK) {
             delete ((ThingStack*) thing)->takeThing();
+            if (((ThingStack*) thing)->empty()) {
+                delete thing;
+                thing = NULL;
+            }
         } else {
             delete thing;
+            thing = NULL;
+        }
+
+        if (thing == NULL) {
             things.erase(coord);
         }
     } catch (const out_of_range& oor) {

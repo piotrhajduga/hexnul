@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "utils.h"
-
+#include "sprite.h"
 #include "world.h"
 
 GameWorld::GameWorld(SDL_Renderer *irenderer, GameState *istate) {
@@ -41,6 +41,7 @@ void GameWorld::initHexs() {
 }
 
 GameWorld::~GameWorld() {
+    Sprite::clearTextureCache();
 }
 
 SDL_Point GameWorld::coordsForXY(SDL_Point point) {

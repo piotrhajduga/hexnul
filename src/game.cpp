@@ -1,6 +1,12 @@
 #include <iostream>
+#include <algorithm>
 
-#include "hexnul.h"
+#include "utils.h"
+
+#include "thing.h"
+#include "direction.h"
+#include "road.h"
+#include "game.h"
 
 /**
  * initial goal is to draw
@@ -17,12 +23,12 @@
 
 using namespace std;
 
-HexNullApp::HexNullApp() {
+Game::Game() {
     display = NULL;
     running = false;
 }
 
-int HexNullApp::OnExecute() {
+int Game::OnExecute() {
     const int milisPerFrame = (1000/FPS);
     running = true;
 
@@ -48,7 +54,7 @@ int HexNullApp::OnExecute() {
     return 0;
 }
 
-bool HexNullApp::OnInit() {
+bool Game::OnInit() {
     if(SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) < 0) {
         return false;
     }
@@ -73,7 +79,7 @@ bool HexNullApp::OnInit() {
     return true;
 }
 
-void HexNullApp::OnEvent(SDL_Event* event) {
+void Game::OnEvent(SDL_Event* event) {
     switch (event->type) {
         case SDL_MOUSEMOTION:
             OnMouseMove((SDL_MouseMotionEvent*) event);
@@ -88,16 +94,62 @@ void HexNullApp::OnEvent(SDL_Event* event) {
     }
 }
 
-void HexNullApp::OnMouseMove(SDL_MouseMotionEvent* event) {
+void Game::OnMouseMove(SDL_MouseMotionEvent* event) {
     SDL_Point coords = world->coordsForXY({event->x, event->y});
     world->setHover(coords);
 }
 
-void HexNullApp::OnClick(SDL_MouseButtonEvent* event) {
+Road* Game::createRoad(NeighborArray neighbors) {
+    LOG(DEBUG, "Create Road");
+    Road* road = new Road(renderer);
+
+    updateRoad(road, neighbors);
+
+    return road;
+}
+
+void Game::updateRoad(Road* road, NeighborArray neighbors) {
+    Thing* neighbor;
+    Direction dir=(Direction)0;
+
+    LOG(DEBUG, "Update Road");
+
+    while (dir<6) {
+        neighbor = state.getThing(neighbors[dir]);
+        road->setVisible(dir, neighbor!=NULL);
+        dir = (Direction) (((int) dir) + 1);
+    }
+}
+
+void Game::updateNeighbors(NeighborArray neighbors, Thing* thing) {
+    Thing* neighbor;
+    SDL_Point coord;
+    Direction dir = (Direction)0;
+
+    LOG(DEBUG, "Update neighbors");
+
+    while (dir<6) {
+        coord = neighbors[dir];
+        neighbor = state.getThing(coord);
+        if (neighbor != NULL) {
+            switch (neighbor->getType()) {
+            case ROAD:
+                ((Road*)neighbor)->setVisible((Direction)((3+dir)%6), thing!=NULL);
+                break;
+            default:
+                break;
+            }
+        }
+        dir = (Direction) (((int) dir) + 1);
+    }
+}
+
+void Game::OnClick(SDL_MouseButtonEvent* event) {
     SDL_Point coords = world->coordsForXY({event->x, event->y});
     Tile* ground = NULL;
-    Thing* thing = NULL;
+    Thing* thing = state.getThing(coords);
     int neighborCount;
+    NeighborArray neighbors = Utils::getNeighbors(coords);
 
     if (world->getHexs().find(coords) != world->getHexs().end()) {
         switch (event->button) {
@@ -105,31 +157,31 @@ void HexNullApp::OnClick(SDL_MouseButtonEvent* event) {
             ground = state.getGround(coords);
             if (ground != NULL) {
                 if (ground->canPutThing()) {
-                    thing = state.getThing(coords);
                     if (thing == NULL) {
-                        thing = thingFactory->create(STACK);
+                        if ((state.countNeighborThingType(coords, STACK) > 1
+                            || state.countNeighborThingType(coords, ROAD) > 0)
+                            && state.countNeighborThingType(coords, ROAD) < 3
+                            ) {
+                            thing = createRoad(neighbors);
+                        } else {
+                            LOG(DEBUG, "Create ThingStack");
+                            thing = thingFactory->create(STACK);
+                        }
                         state.putThing(coords, thing);
                     }
 
-                    switch(thing->getType()){
-                    case STACK:
+                    if(thing->getType()==STACK) {
+                        LOG(DEBUG, "Create BuildingSegment");
                         ((ThingStack*) thing)->putThing(thingFactory->create(BUILDING));
-                        break;
-                    default:
-                        break;
                     }
                 } else {
-                    switch(ground->getType()){
-                    case GRASS:
+                    if (ground->getType()==GRASS) {
                         neighborCount = state.countNeighborGroundType(coords, WATER);
                         if (neighborCount>1) {
                             state.setGround(coords, tileFactory->create(SAND));
                         } else {
                             state.setGround(coords, tileFactory->create(DIRT));
                         }
-                        break;
-                    default:
-                        break;
                     }
                 }
             } else {
@@ -141,6 +193,7 @@ void HexNullApp::OnClick(SDL_MouseButtonEvent* event) {
 
             if (state.countThings(coords) > 0) {
                 state.clearThing(coords);
+                thing = state.getThing(coords);
             } else if (ground != NULL) {
                 state.removeGround(coords);
             } else {
@@ -152,12 +205,14 @@ void HexNullApp::OnClick(SDL_MouseButtonEvent* event) {
             break;
         }
     }
+
+    updateNeighbors(neighbors, thing);
 }
 
-void HexNullApp::OnLoop() {
+void Game::OnLoop() {
 }
 
-void HexNullApp::OnRender() {
+void Game::OnRender() {
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
     SDL_SetRenderDrawColor(renderer, 0x7f, 0x7f, 0x7f, 255);
     SDL_RenderClear(renderer);
@@ -165,7 +220,7 @@ void HexNullApp::OnRender() {
     world->draw();
 }
 
-void HexNullApp::OnCleanup() {
+void Game::OnCleanup() {
     delete tileFactory;
     delete thingFactory;
     delete world;

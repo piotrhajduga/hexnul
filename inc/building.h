@@ -13,7 +13,7 @@ class BuildingSegment : public Thing, public Sprite {
         BuildingSegment(SDL_Renderer* renderer, const char *textureFile, int iheight)
             : Thing(renderer, iheight), Sprite (renderer, textureFile) {}
 
-        ThingType getType() { return BUILDING; };
+        ThingType getType() const { return BUILDING; };
 
         void render(SDL_Rect* rect) {
             Sprite::render(rect);

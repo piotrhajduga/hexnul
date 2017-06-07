@@ -6,7 +6,7 @@
 #include "state.h"
 #include "world.h"
 #include "tile.h"
-#include "thing.h"
+#include "things.h"
 
 #define WIN_W 640
 #define WIN_H 480
@@ -14,9 +14,9 @@
 #define BOARD_OFFSET_Y 0
 #define COLORS 12
 
-class HexNullApp {
+class Game {
     public:
-        HexNullApp();
+        Game();
 
         int OnExecute();
 
@@ -49,6 +49,10 @@ class HexNullApp {
         void drawHexs(int cols, int rows);
         void drawHex(int col, int row);
         void drawHex(SDL_Point offset);
+
+        Road* createRoad(NeighborArray neighbors);
+        void updateRoad(Road* road, NeighborArray neighbors);
+        void updateNeighbors(NeighborArray neighbors, Thing* thing);
 };
 
 #endif	/* _HEXNUL_H_ */
