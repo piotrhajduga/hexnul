@@ -8,6 +8,11 @@
 
 #include "state.h"
 
+#define WIN_W 1024
+#define WIN_H 768
+#define BOARD_OFFSET_X 0
+#define BOARD_OFFSET_Y 0
+
 class GameWorld {
     public:
         GameWorld(SDL_Renderer *renderer, GameState *state);
@@ -30,21 +35,20 @@ class GameWorld {
         GameState* state;
 
         const char* HOVER_TEXTURE_FILE = "assets/ui/hover.png";
-        const int HEX_H = 40;
-        const int HEX_W = 58;
-        const int GRID_ROW_H = HEX_H*3/4;
-        const int GRID_ROW_TOP_H = HEX_H/4;
+
+        int HEX_H = WIN_H/11;
+        int HEX_W = WIN_W/11;
+        int GRID_ROW_H = HEX_H*3/4;
+        int GRID_ROW_TOP_H = HEX_H/4;
 
         //hexs is like an active region that user might act on
         PointSet hexs;
 
+        SDL_Point offset;
         SDL_Point* hoverCoord = NULL;
 
         SDL_Renderer* renderer;
-        SDL_Texture* hover;
-        SDL_Surface* loadingSurface;
-
-        SDL_Texture* loadTexture(const char *file);
+        Sprite* hover;
 
         std::unordered_map<TileType, SDL_Color> tileBorderColors = {
             {GRASS, {0x09, 0xb2, 0x1f, 255}},

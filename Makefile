@@ -12,7 +12,7 @@ DEBUGFLAGS = #-g
 SDL_LIB = -L/usr/local/lib -lSDL2 -lSDL2_image -Wl,-rpath=/usr/local/lib
 SDL_INCLUDE = -I/usr/local/include -I/usr/include/SDL2 -I$(INC_DIR)
 # You may need to change -std=c++11 to -std=c++0x if your compiler is a bit older
-CXXFLAGS = -O2 -Wall -c -std=c++11 $(DEBUGFLAGS) $(SDL_INCLUDE)
+CXXFLAGS = -Wall -c -std=c++11 $(DEBUGFLAGS) $(SDL_INCLUDE)
 LDFLAGS = $(DEBUGFLAGS) $(SDL_LIB)
 
 all: $(OUT_DIR) $(OBJ_DIR) $(EXE)
@@ -25,7 +25,7 @@ $(OUT_DIR):
 $(OBJ_DIR):
 	mkdir $(OBJ_DIR)
 
-$(EXE): $(addprefix $(OBJ_DIR)/,main.o sprite.o game.o state.o world.o thing.o things.o utils.o road.o)
+$(EXE): $(addprefix $(OBJ_DIR)/,main.o sprite.o game.o state.o world.o thing.o things.o utils.o road.o tile.o)
 	$(CXX) $^ $(LDFLAGS) -o $@
 
 MAIN_INC = $(addprefix $(INC_DIR)/,game.h road.h things.h thing.h utils.h)
@@ -41,7 +41,7 @@ STATE_INC = $(addprefix $(INC_DIR)/,state.h utils.h direction.h tile.h things.h)
 $(OBJ_DIR)/state.o: $(SRC_DIR)/state.cpp $(STATE_INC)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-$(OBJ_DIR)/tile.o: $(addprefix $(INC_DIR)/,tile.h sprite.h)
+$(OBJ_DIR)/tile.o: $(SRC_DIR)/tile.cpp $(addprefix $(INC_DIR)/,tile.h sprite.h)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 THINGS_INC = $(addprefix $(INC_DIR)/,things.h thing.h thingtype.h thingstack.h building.h road.h)

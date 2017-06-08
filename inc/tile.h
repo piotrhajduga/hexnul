@@ -15,18 +15,21 @@ typedef enum {
     GRASS, WATER, DIRT, SAND
 } TileType;
 
+const string TILEMASK_TEXTURE_FILE = "assets/tiles/tile_mask.png";
+
 class Tile : public Sprite {
     private:
+        static SDL_Surface* tileMask;
+        static SDL_Surface* getTileMask();
+
         TileType type;
         bool _isContainer = false;
 
     public:
-        Tile(TileType itype, SDL_Renderer* renderer, const char *textureFile, bool isContainer)
-            : Sprite(renderer, textureFile) {
-            type = itype;
-            _isContainer = isContainer;
-        }
-        virtual ~Tile() {};
+        Tile(TileType itype, SDL_Renderer* renderer, string textureFile, bool isContainer);
+        virtual ~Tile();
+
+        virtual SDL_Texture* getTexture(string textureFile, SDL_Renderer* renderer);
 
         TileType getType() { return type; }
 

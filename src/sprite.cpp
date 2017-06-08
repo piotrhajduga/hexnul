@@ -36,7 +36,13 @@ Sprite::Sprite(SDL_Renderer* renderer, SDL_Texture* iTexture)
 
 Sprite::Sprite(SDL_Renderer* renderer, string textureFile)
     : Renderable(renderer) {
-    texture = Sprite::getTexture(textureFile, renderer);
+    texture = getTexture(textureFile, renderer);
+}
+
+Sprite::Sprite(SDL_Renderer* renderer, string textureFile, SDL_BlendMode blend)
+    : Renderable(renderer) {
+    texture = getTexture(textureFile, renderer);
+    SDL_SetTextureBlendMode(texture, blend);
 }
 
 Sprite::~Sprite() {

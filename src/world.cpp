@@ -11,8 +11,7 @@ GameWorld::GameWorld(SDL_Renderer *irenderer, GameState *istate) {
     int win_w, win_h;
     SDL_GetRendererOutputSize(renderer, &win_w, &win_h);
 
-    hover = Utils::loadTexture(HOVER_TEXTURE_FILE, renderer);
-    SDL_SetTextureBlendMode(hover, SDL_BLENDMODE_ADD);
+    hover = new Sprite(renderer, HOVER_TEXTURE_FILE, SDL_BLENDMODE_ADD);
 
     initHexs({5,6}, 6);
 }
@@ -36,6 +35,8 @@ void GameWorld::initHexs(SDL_Point origin, int size) {
 }
 
 GameWorld::~GameWorld() {
+    delete hover;
+
     Sprite::clearTextureCache();
 }
 
@@ -152,7 +153,7 @@ void GameWorld::drawHex(SDL_Point coord) {
 
     onHover = hoverCoord != NULL && coord == *hoverCoord;
     if (onHover) {
-        SDL_RenderCopy(renderer, hover, NULL, &DestR);
+        hover->render(&DestR);
     }
 }
 

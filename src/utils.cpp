@@ -38,10 +38,10 @@ void Utils::log(LogLevel ilevel, std::string message, std::string file, int line
     }
 }
 
-SDL_Texture* Utils::loadTexture(const char *file, SDL_Renderer* renderer) {
-    SDL_Surface* loadingSurface = IMG_Load(file);
+SDL_Texture* Utils::loadTexture(std::string file, SDL_Renderer* renderer) {
+    SDL_Surface* loadingSurface = IMG_Load(file.c_str());
     if (loadingSurface == NULL) {
-        std::cout<<"Cannot load "<<file<<std::endl;
+        LOG(ERROR, "Cannot load "+file);
         return NULL;
     }
     SDL_Texture* tx = SDL_CreateTextureFromSurface(renderer, loadingSurface);

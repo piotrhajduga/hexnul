@@ -13,15 +13,18 @@
 using namespace std;
 
 class Sprite : public Renderable {
-    public:
+    protected:
         static map<string, SDL_Texture*> textureCache;
-        static SDL_Texture* getTexture(string textureFile, SDL_Renderer* renderer);
+
+    public:
         static void clearTextureCache();
 
         Sprite(SDL_Renderer* renderer, SDL_Texture* iTexture);
         Sprite(SDL_Renderer* renderer, string textureFile);
+        Sprite(SDL_Renderer* renderer, string textureFile, SDL_BlendMode blend);
         virtual ~Sprite();
 
+        virtual SDL_Texture* getTexture(string textureFile, SDL_Renderer* renderer);
         void render(SDL_Rect* rect);
     private:
         SDL_Texture* texture;
