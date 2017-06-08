@@ -61,7 +61,7 @@ bool Game::OnInit() {
 
     display = SDL_CreateWindow("0x0",
             SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-            WIN_W, WIN_H, SDL_WINDOW_OPENGL);
+            WIN_W, WIN_H, SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE);
 
     if(display == NULL) {
         return false;

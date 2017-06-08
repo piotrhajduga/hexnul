@@ -15,7 +15,7 @@ class GameWorld {
 
         SDL_Point coordsForXY(SDL_Point point);
 
-        void initHexs();
+        void initHexs(SDL_Point origin, int size);
         PointSet getHexs();
 
         void draw();

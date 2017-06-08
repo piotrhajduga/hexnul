@@ -14,15 +14,10 @@ GameWorld::GameWorld(SDL_Renderer *irenderer, GameState *istate) {
     hover = Utils::loadTexture(HOVER_TEXTURE_FILE, renderer);
     SDL_SetTextureBlendMode(hover, SDL_BLENDMODE_ADD);
 
-    initHexs();
+    initHexs({5,6}, 6);
 }
 
-void GameWorld::initHexs() {
-    SDL_Point origin;
-    int size = 5;
-    origin.x = 5;
-    origin.y = 6;
-
+void GameWorld::initHexs(SDL_Point origin, int size) {
     hexs.clear();
 
     int i,x,y1,y2,xfrom,xto;
@@ -112,7 +107,9 @@ void GameWorld::drawHexOutline(SDL_Point coord) {
         {x-(HEX_W/2), y-(HEX_H/4)}
     };
 
-    SDL_RenderDrawLines(renderer, points, POINTS_COUNT);
+    if (!state->isGround(coord)) {
+        SDL_RenderDrawLines(renderer, points, POINTS_COUNT);
+    }
 }
 
 inline bool operator== (SDL_Point p1, SDL_Point p2) {
