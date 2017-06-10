@@ -7,8 +7,11 @@ using namespace std;
 
 unordered_map<string, SDL_Texture*> Sprite::textureCache;
 
+SDL_Texture* Sprite::getTexture() {
+    return texture;
+}
+
 SDL_Texture* Sprite::getTexture(string textureFile, SDL_Renderer* renderer) {
-    SDL_Texture* texture = NULL;
     try {
         LOG(DEBUG, "Looking up texture");
         texture = Sprite::textureCache[textureFile];

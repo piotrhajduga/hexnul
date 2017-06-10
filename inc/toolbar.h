@@ -48,6 +48,8 @@ class Toolbar : public Renderable {
         void setActive(ToolType toolType);
         ToolType getActive();
 
+        Sprite* getActiveToolSprite();
+
         void OnClick(SDL_MouseButtonEvent* event);
         void OnMouseMove(SDL_MouseMotionEvent* event);
 

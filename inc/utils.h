@@ -15,7 +15,7 @@ typedef std::array<SDL_Point, 6> NeighborArray;
 
 class Utils {
     private:
-        static const LogLevel level = DEBUG;
+        static const LogLevel level = INFO;
 
     public:
         static void log(LogLevel level, std::string msg);

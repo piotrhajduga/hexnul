@@ -91,6 +91,14 @@ ToolType Toolbar::getActive() {
     return activeTool;
 }
 
+Sprite* Toolbar::getActiveToolSprite() {
+    try {
+        return toolSprites.at(activeTool);
+    } catch (const out_of_range& oor) {
+        return NULL;
+    }
+}
+
 void Toolbar::OnClick(SDL_MouseButtonEvent* event) {
     ToolType type = toolTypeForXY({event->x, event->y});
     if (type != ToolType::NONE) {

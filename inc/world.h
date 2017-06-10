@@ -38,6 +38,7 @@ class GameWorld : public Renderable {
     protected:
         void initHexs(SDL_Point origin, int size);
         void drawHex(SDL_Point coord);
+        void drawHover(SDL_Point coord, SDL_Rect* rect);
         void drawThings(SDL_Point coord, SDL_Rect* destRect);
         void useTool(SDL_Point coord);
 

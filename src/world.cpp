@@ -277,7 +277,6 @@ void GameWorld::setHover(SDL_Point coord) {
 
 void GameWorld::drawHex(SDL_Point coord) {
     SDL_Rect DestR;
-    bool onHover;
     Tile* ground = NULL;
     Thing* thing = NULL;
 
@@ -296,12 +295,23 @@ void GameWorld::drawHex(SDL_Point coord) {
     thing = state->getThing(coord);
     if (thing != NULL) {
         thing->render(&DestR);
-        DestR.y -= thing->height;
-        DestR.h += thing->height;
+        //DestR.y -= thing->height;
+        //DestR.h += thing->height;
     }
 
-    onHover = hoverCoord != NULL && coord == *hoverCoord;
-    if (onHover) {
-        hover->render(&DestR);
+    drawHover(coord, &DestR);
+}
+
+void GameWorld::drawHover(SDL_Point coord, SDL_Rect* rect) {
+    Sprite* myhover = NULL;
+    if (hoverCoord != NULL && coord == *hoverCoord) {
+        myhover = toolbar->getActiveToolSprite();
+        if (myhover == NULL) {
+            myhover = hover;
+        }
+        SDL_Texture* tx = myhover->getTexture();
+        SDL_SetTextureAlphaMod(tx, 0x90);
+        myhover->render(rect);
+        SDL_SetTextureAlphaMod(tx, 0xff);
     }
 }
