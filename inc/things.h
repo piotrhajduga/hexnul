@@ -31,7 +31,7 @@ class ThingFactory {
                 [](SDL_Renderer* renderer) {
                     LOG(DEBUG, "Create BuildingSegment");
                     return new BuildingSegment(
-                            renderer, "assets/tiles/building.png", 8);
+                            renderer, "assets/tiles/building.png", 16);
                 }},
             {ROAD,
                 [](SDL_Renderer* renderer) {

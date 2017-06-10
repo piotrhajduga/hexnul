@@ -1,10 +1,12 @@
 #include <iostream>
 #include <string>
 
-#include "SDL.h"
 #include "SDL_image.h"
+#include "SDL.h"
 
 #include "utils.h"
+
+using namespace std;
 
 void Utils::log(LogLevel ilevel, std::string message) {
     if (ilevel >= level) {
@@ -38,13 +40,18 @@ void Utils::log(LogLevel ilevel, std::string message, std::string file, int line
     }
 }
 
-SDL_Texture* Utils::loadTexture(std::string file, SDL_Renderer* renderer) {
+SDL_Texture* Utils::loadTexture(string file, SDL_Renderer* renderer) {
+    SDL_Texture* tx = NULL;
+    LOG(INFO, string("Load surface from image: ")+file);
     SDL_Surface* loadingSurface = IMG_Load(file.c_str());
     if (loadingSurface == NULL) {
-        LOG(ERROR, "Cannot load "+file);
+        LOG(ERROR, "Cannot load: "+file);
         return NULL;
     }
-    SDL_Texture* tx = SDL_CreateTextureFromSurface(renderer, loadingSurface);
+    SDL_SetSurfaceRLE(loadingSurface, 1);
+    LOG(DEBUG, "Create texture from surface");
+    tx = SDL_CreateTextureFromSurface(renderer, loadingSurface);
+    LOG(DEBUG, string("Free surface with image: ")+file);
     SDL_FreeSurface(loadingSurface);
     return tx;
 }

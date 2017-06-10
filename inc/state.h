@@ -36,8 +36,6 @@ typedef std::unordered_map<SDL_Point, Thing*, hashCoord, equalsCoords> ThingMap;
 
 class GameState {
     public:
-        static const int MAX_THING_STACK = 4;
-
         GameState();
         ~GameState();
 

@@ -1,5 +1,8 @@
 #include <string>
 
+#include "SDL.h"
+#include "SDL_image.h"
+
 #include "sprite.h"
 #include "utils.h"
 #include "tile.h"
@@ -7,6 +10,7 @@
 using namespace std;
 
 SDL_Surface* Tile::tileMask = NULL;
+Tile::TileTypeMap Tile::typeobjs;
 
 SDL_Surface* Tile::getTileMask() {
     SDL_Surface* surf = NULL;
@@ -56,10 +60,22 @@ SDL_Texture* Tile::getTexture(string textureFile, SDL_Renderer* renderer) {
     return tx;
 }
 
-Tile::Tile(TileType itype, SDL_Renderer* renderer, string textureFile, bool isContainer)
-    : Sprite(renderer, getTexture(textureFile, renderer)) {
+Tile::Tile(TileType itype, SDL_Renderer* renderer)
+    : Sprite(renderer, getTexture(TILE_TYPE_DATA.at(itype).textureFile, renderer)) {
+    LOG(DEBUG, "new Tile()");
     type = itype;
-    _isContainer = isContainer;
+    _isContainer = TILE_TYPE_DATA.at(itype).isContainer;
 }
 
 Tile::~Tile() {}
+
+Tile* Tile::getTile(TileType type, SDL_Renderer* renderer) {
+    LOG(DEBUG, string("Looking up TileType"));
+    auto tile = typeobjs[type];
+    if (tile==NULL) {
+        LOG(DEBUG, "TileType not found, creating new one");
+        typeobjs[type] = new Tile(type, renderer);
+    }
+    LOG(DEBUG, "getTile|return typeobjs[type];");
+    return typeobjs[type];
+}

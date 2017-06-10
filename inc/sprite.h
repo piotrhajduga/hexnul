@@ -1,7 +1,7 @@
 #ifndef	_HEXNUL_SPRITE_H_
 #define	_HEXNUL_SPRITE_H_
 
-#include <map>
+#include <unordered_map>
 #include <string>
 
 #include "SDL.h"
@@ -14,7 +14,7 @@ using namespace std;
 
 class Sprite : public Renderable {
     protected:
-        static map<string, SDL_Texture*> textureCache;
+        static unordered_map<string, SDL_Texture*> textureCache;
 
     public:
         static void clearTextureCache();

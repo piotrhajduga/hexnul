@@ -2,12 +2,14 @@
 #define	_HEXNUL_TILE_H_
 
 #include <unordered_map>
+#include <string>
 
 #include "SDL.h"
 #include "SDL_image.h"
 
 #include "sprite.h"
 #include "utils.h"
+#include "tile.h"
 
 using namespace std;
 
@@ -15,9 +17,25 @@ typedef enum {
     GRASS, WATER, DIRT, SAND
 } TileType;
 
+typedef struct {
+    const char* textureFile;
+    bool isContainer;
+} TileData;
+typedef unordered_map<TileType, TileData> TileTypeDataMap;
+
 const string TILEMASK_TEXTURE_FILE = "assets/tiles/tile_mask.png";
 
+static TileTypeDataMap TILE_TYPE_DATA = {
+    {GRASS, {"assets/tiles/grass.png", false}},
+    {WATER, {"assets/tiles/water.png", false}},
+    {DIRT, {"assets/tiles/dirt.png", true}},
+    {SAND, {"assets/tiles/sand.png", true}},
+};
+
 class Tile : public Sprite {
+    public:
+        typedef unordered_map<TileType, Tile*> TileTypeMap;
+
     private:
         static SDL_Surface* tileMask;
         static SDL_Surface* getTileMask();
@@ -25,62 +43,18 @@ class Tile : public Sprite {
         TileType type;
         bool _isContainer = false;
 
+        static TileTypeMap typeobjs;
+
     public:
-        Tile(TileType itype, SDL_Renderer* renderer, string textureFile, bool isContainer);
+        static Tile* getTile(TileType type, SDL_Renderer* renderer);
+
+        Tile(TileType itype, SDL_Renderer* renderer);
         virtual ~Tile();
 
         virtual SDL_Texture* getTexture(string textureFile, SDL_Renderer* renderer);
 
         TileType getType() { return type; }
 
-        bool canPutThing() { return _isContainer; }
+        bool isContainer() { return _isContainer; }
 };
-
-typedef struct {
-    const char* textureFile;
-    bool isContainer;
-} TileData;
-
-typedef unordered_map<TileType, TileData> TileTypeDataMap;
-typedef unordered_map<TileType, Tile*> TileTypeMap;
-
-class TileFactory {
-    private:
-        SDL_Renderer* renderer;
-
-    protected:
-        TileTypeDataMap types = {
-            {GRASS, {"assets/tiles/green.png", false}},
-            {WATER, {"assets/tiles/water.png", false}},
-            {DIRT, {"assets/tiles/dirt.png", true}},
-            {SAND, {"assets/tiles/sand.png", true}},
-        };
-        TileTypeMap tiles;
-
-    public:
-        TileFactory(SDL_Renderer* irenderer) {
-            TileData data;
-            renderer = irenderer;
-            for (TileTypeDataMap::iterator it=types.begin();it!=types.end();++it) {
-                data = it->second;
-                tiles[it->first] = new Tile(it->first, renderer, data.textureFile, data.isContainer);
-            }
-        }
-
-        ~TileFactory() {
-            for (TileTypeMap::iterator it=tiles.begin();it!=tiles.end();++it) {
-                delete it->second;
-            }
-        }
-
-        Tile* create(TileType type) {
-            TileTypeMap::iterator it = tiles.find(type);
-            if (it==tiles.end()) {
-                return NULL;
-            } else {
-                return it->second;
-            }
-        }
-};
-
 #endif	/* _HEXNUL_H_ */

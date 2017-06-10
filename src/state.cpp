@@ -2,10 +2,10 @@
 #include <array>
 #include <algorithm>
 
+#include "building.h"
 #include "utils.h"
 
 #include "state.h"
-#include "things.h"
 
 using namespace std;
 
@@ -21,6 +21,11 @@ Tile* GameState::getGround(SDL_Point coord) {
 }
 
 void GameState::setGround(SDL_Point coord, Tile* tile) {
+    if (ground[coord] != NULL) {
+        LOG(DEBUG, "Ground already present. Remove...");
+        delete ground[coord];
+    }
+    LOG(DEBUG, "Set new ground");
     ground[coord] = tile;
 }
 
@@ -37,7 +42,7 @@ int GameState::countThings(SDL_Point coord) {
     try {
         thing = things.at(coord);
         if (thing->getType()==STACK) {
-            return ((ThingStack*) thing)->size();
+            return ((Building*) thing)->size();
         } else {
             return 1;
         }
@@ -78,8 +83,8 @@ void GameState::putThing(SDL_Point coord, Thing* thing) {
     Thing* currentThing;
     try {
         currentThing = things.at(coord);
-        if (currentThing!=NULL && currentThing->getType()==STACK) {
-            ((ThingStack*) currentThing)->putThing(thing);
+        if (currentThing == NULL) {
+            things[coord] = thing;
         }
     } catch (const out_of_range& oor) {
         things[coord] = thing;
@@ -92,8 +97,8 @@ void GameState::clearThing(SDL_Point coord) {
     try {
         thing = things.at(coord);
         if (thing!=NULL && thing->getType()==STACK) {
-            delete ((ThingStack*) thing)->takeThing();
-            if (((ThingStack*) thing)->empty()) {
+            ((Building*) thing)->shrink();
+            if (((Building*) thing)->empty()) {
                 delete thing;
                 thing = NULL;
             }

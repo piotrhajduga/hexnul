@@ -20,6 +20,7 @@ typedef struct {
 
 class Road : public Thing {
     protected:
+        const char* CENTER = "assets/tiles/road_c.png";
         const char* SEGMENTS[6] = {
             "assets/tiles/road_tl.png",
             "assets/tiles/road_tr.png",
@@ -43,9 +44,8 @@ class Road : public Thing {
         void render(SDL_Rect* rect);
 
     private:
+        Sprite* center;
         map<Direction, RoadSegment> segments;
-
-        void initSegmentSprite(Direction dir);
 };
 
 #endif //_HEXNUL_ROAD_THING_H_

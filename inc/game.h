@@ -1,12 +1,12 @@
-#ifndef	_HEXNUL_H_
-#define	_HEXNUL_H_
+#ifndef	_HEXNUL_GAME_H_
+#define	_HEXNUL_GAME_H_
 
 #include "SDL.h"
 
 #include "state.h"
 #include "world.h"
 #include "tile.h"
-#include "things.h"
+#include "toolbar.h"
 
 #define COLORS 12
 
@@ -30,6 +30,7 @@ class Game {
 
         void OnMouseMove(SDL_MouseMotionEvent* event);
     private:
+        static const int TOOLBAR_H = 100;
         const int FPS = 30;
         bool running;
         unsigned int ticks = 0;
@@ -38,17 +39,7 @@ class Game {
         SDL_Renderer* renderer;
         GameState state;
         GameWorld* world;
-
-        TileFactory* tileFactory;
-        ThingFactory* thingFactory;
-
-        void drawHexs(int cols, int rows);
-        void drawHex(int col, int row);
-        void drawHex(SDL_Point offset);
-
-        Road* createRoad(NeighborArray neighbors);
-        void updateRoad(Road* road, NeighborArray neighbors);
-        void updateNeighbors(NeighborArray neighbors, Thing* thing);
+        Toolbar* toolbar;
 };
 
-#endif	/* _HEXNUL_H_ */
+#endif	/* _HEXNUL_GAME_H_ */

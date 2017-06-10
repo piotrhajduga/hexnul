@@ -6,6 +6,15 @@
 #include "SDL.h"
 #include "SDL_image.h"
 
+#include "utils.h"
+#include "renderable.h"
+#include "sprite.h"
+#include "thing.h"
+#include "tile.h"
+#include "building.h"
+#include "road.h"
+#include "direction.h"
+#include "toolbar.h"
 #include "state.h"
 
 #define WIN_W 1024
@@ -13,26 +22,28 @@
 #define BOARD_OFFSET_X 0
 #define BOARD_OFFSET_Y 0
 
-class GameWorld {
+class GameWorld : public Renderable {
     public:
-        GameWorld(SDL_Renderer *renderer, GameState *state);
-        ~GameWorld();
+        GameWorld(SDL_Renderer *renderer, GameState *state, Toolbar* toolbar);
+        virtual ~GameWorld();
 
         SDL_Point coordsForXY(SDL_Point point);
 
-        void initHexs(SDL_Point origin, int size);
-        PointSet getHexs();
-
-        void draw();
+        void render(SDL_Rect* rect);
 
         void setHover(SDL_Point coord);
 
+        void OnClick(SDL_MouseButtonEvent* event);
+        void OnMouseMove(SDL_MouseMotionEvent* event);
     protected:
+        void initHexs(SDL_Point origin, int size);
         void drawHex(SDL_Point coord);
         void drawThings(SDL_Point coord, SDL_Rect* destRect);
+        void useTool(SDL_Point coord);
 
     private:
         GameState* state;
+        Toolbar* toolbar;
 
         const char* HOVER_TEXTURE_FILE = "assets/ui/hover.png";
 
@@ -47,7 +58,6 @@ class GameWorld {
         SDL_Point offset;
         SDL_Point* hoverCoord = NULL;
 
-        SDL_Renderer* renderer;
         Sprite* hover;
 
         std::unordered_map<TileType, SDL_Color> tileBorderColors = {
@@ -58,6 +68,10 @@ class GameWorld {
         };
 
         void drawHexOutline(SDL_Point coord);
+
+        Road* createRoad(NeighborArray neighbors);
+        void updateRoad(Road* road, NeighborArray neighbors);
+        void updateNeighbors(NeighborArray neighbors, Thing* thing);
 };
 
 #endif //_HEXNUL_GAME_WORLD_H_

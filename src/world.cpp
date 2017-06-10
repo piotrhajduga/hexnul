@@ -1,15 +1,27 @@
+#include <unordered_map>
+#include <functional>
 #include <iostream>
 
+#include "SDL.h"
+
 #include "utils.h"
+#include "renderable.h"
 #include "sprite.h"
+#include "thing.h"
+#include "tile.h"
+#include "building.h"
+#include "road.h"
+#include "direction.h"
 #include "world.h"
+#include "toolbar.h"
+#include "state.h"
 
-GameWorld::GameWorld(SDL_Renderer *irenderer, GameState *istate) {
+using namespace std;
+
+GameWorld::GameWorld(SDL_Renderer *renderer, GameState *istate, Toolbar* itoolbar) 
+    : Renderable(renderer) {
     state = istate;
-    renderer = irenderer;
-
-    int win_w, win_h;
-    SDL_GetRendererOutputSize(renderer, &win_w, &win_h);
+    toolbar = itoolbar;
 
     hover = new Sprite(renderer, HOVER_TEXTURE_FILE, SDL_BLENDMODE_ADD);
 
@@ -38,6 +50,141 @@ GameWorld::~GameWorld() {
     delete hover;
 
     Sprite::clearTextureCache();
+}
+
+void GameWorld::OnClick(SDL_MouseButtonEvent* event) {
+    SDL_Point coord = coordsForXY({event->x, event->y});
+    Thing* thing;
+
+    NeighborArray neighbors = Utils::getNeighbors(coord);
+    if (hexs.find(coord) != hexs.end()) {
+        switch (event->button) {
+        case SDL_BUTTON_LEFT:
+            useTool(coord);
+            break;
+        case SDL_BUTTON_RIGHT:
+            toolbar->setActive(ToolType::NONE);
+            break;
+        default:
+            //idle
+            break;
+        }
+    }
+
+    LOG(DEBUG, "Updating neighbors");
+    thing = state->getThing(coord);
+    updateNeighbors(neighbors, thing);
+}
+
+void GameWorld::useTool(SDL_Point coord) {
+    Tile* ground = state->getGround(coord);
+    Thing* thing = state->getThing(coord);
+    NeighborArray neighbors = Utils::getNeighbors(coord);
+
+    switch (toolbar->getActive()) {
+    case ToolType::GRASS:
+        if (thing == NULL && ground == NULL) {
+            LOG(DEBUG, "Set GRASS");
+            state->setGround(coord, Tile::getTile(GRASS, renderer));
+        }
+        break;
+    case ToolType::WATER:
+        if (thing == NULL && ground == NULL) {
+            LOG(DEBUG, "Set WATER");
+            state->setGround(coord, Tile::getTile(WATER, renderer));
+        }
+        break;
+    case ToolType::DIRT:
+        if (thing == NULL && ground == NULL) {
+            LOG(DEBUG, "Set DIRT");
+            state->setGround(coord, Tile::getTile(DIRT, renderer));
+        }
+        break;
+    case ToolType::SAND:
+        if (thing == NULL && ground == NULL) {
+            LOG(DEBUG, "Set SAND");
+            state->setGround(coord, Tile::getTile(SAND, renderer));
+        }
+        break;
+    case ToolType::ROAD:
+        if (ground!=NULL && ground->isContainer() && thing==NULL) {
+            LOG(DEBUG, "Put ROAD");
+            state->putThing(coord, createRoad(neighbors));
+        }
+        break;
+    case ToolType::BUILDING:
+        if (ground!=NULL && ground->isContainer()) {
+            if (thing==NULL) {
+                LOG(DEBUG, "Create ThingStack");
+                thing = new Building(renderer);
+                state->putThing(coord, thing);
+            }
+            if(thing->getType()==STACK) {
+                LOG(DEBUG, "Create BuildingSegment");
+                ((Building*) thing)->grow();
+            }
+        }
+        break;
+    case ToolType::DESTROY:
+        LOG(DEBUG, "Destroy!");
+        if (state->countThings(coord) > 0) {
+            LOG(DEBUG, "Oh, there's a thing! Destroy!");
+            state->clearThing(coord);
+        } else if (ground != NULL) {
+            LOG(DEBUG, "Oh, there's ground! Destroy!");
+            state->removeGround(coord);
+        }
+        break;
+    default:
+        //idle
+        break;
+    }
+}
+
+void GameWorld::updateNeighbors(NeighborArray neighbors, Thing* thing) {
+    Thing* neighbor;
+    SDL_Point coord;
+    Direction dir = (Direction)0;
+
+    LOG(DEBUG, "Update neighbors");
+
+    while (dir<6) {
+        coord = neighbors[dir];
+        neighbor = state->getThing(coord);
+        if (neighbor != NULL) {
+            switch (neighbor->getType()) {
+            case ROAD:
+                ((Road*)neighbor)->setSegmentVisible(
+                    (Direction)((3+dir)%6), thing!=NULL);
+                break;
+            default:
+                break;
+            }
+        }
+        dir = (Direction) (((int) dir) + 1);
+    }
+}
+
+Road* GameWorld::createRoad(NeighborArray neighbors) {
+    LOG(DEBUG, "Create Road");
+    Road* road = new Road(renderer);
+
+    updateRoad(road, neighbors);
+
+    return road;
+}
+
+void GameWorld::updateRoad(Road* road, NeighborArray neighbors) {
+    Thing* neighbor;
+    Direction dir=(Direction)0;
+
+    LOG(DEBUG, "Update Road");
+
+    while (dir<6) {
+        neighbor = state->getThing(neighbors[dir]);
+        road->setSegmentVisible(dir, neighbor!=NULL);
+        dir = (Direction) (((int) dir) + 1);
+    }
 }
 
 SDL_Point GameWorld::coordsForXY(SDL_Point point) {
@@ -70,15 +217,13 @@ SDL_Point GameWorld::coordsForXY(SDL_Point point) {
     return ret;
 }
 
-void GameWorld::draw() {
+void GameWorld::render(SDL_Rect* rect) {
     SDL_SetRenderDrawColor(renderer, 0x09, 0x12, 0x1f, 255);
-    SDL_RenderClear(renderer);
+    SDL_RenderFillRect(renderer, rect);
 
     for (auto it=hexs.begin();it!=hexs.end();++it) {
         drawHex(*it);
     }
-
-    SDL_RenderPresent(renderer);
 }
 
 void GameWorld::drawHexOutline(SDL_Point coord) {
@@ -111,6 +256,10 @@ void GameWorld::drawHexOutline(SDL_Point coord) {
     if (!state->isGround(coord)) {
         SDL_RenderDrawLines(renderer, points, POINTS_COUNT);
     }
+}
+
+void GameWorld::OnMouseMove(SDL_MouseMotionEvent* event) {
+    setHover(coordsForXY({event->x, event->y}));
 }
 
 inline bool operator== (SDL_Point p1, SDL_Point p2) {
@@ -155,8 +304,4 @@ void GameWorld::drawHex(SDL_Point coord) {
     if (onHover) {
         hover->render(&DestR);
     }
-}
-
-PointSet GameWorld::getHexs() {
-    return hexs;
 }

@@ -1,13 +1,11 @@
 #include "road.h"
 
 Road::Road(SDL_Renderer* renderer)
-    : Thing(renderer) {
-    initSegmentSprite(TOPLEFT);
-    initSegmentSprite(TOPRIGHT);
-    initSegmentSprite(LEFT);
-    initSegmentSprite(RIGHT);
-    initSegmentSprite(BOTTOMLEFT);
-    initSegmentSprite(BOTTOMRIGHT);
+: Thing(renderer) {
+    center = new Sprite(renderer, CENTER);
+    for (int i=0;i<6;++i) {
+        segments[Direction(i)].sprite = new Sprite(renderer, Road::SEGMENTS[Direction(i)]);
+    }
 }
 
 Road::~Road() {
@@ -16,6 +14,7 @@ Road::~Road() {
             delete it.second.sprite;
         }
     }
+    delete center;
 }
 
 void Road::setSegmentVisible(Direction dir) {
@@ -27,13 +26,14 @@ void Road::setSegmentVisible(Direction dir, bool cond) {
 }
 
 void Road::render(SDL_Rect* rect) {
+    bool noneVisible = true;
     for (auto it : segments) {
         if (it.second.isVisible) {
+            noneVisible = false;
             it.second.sprite->render(rect);
         }
     }
-}
-
-void Road::initSegmentSprite(Direction dir) {
-    segments[dir].sprite = new Sprite(renderer, Road::SEGMENTS[dir]);
+    if (noneVisible) {
+        center->render(rect);
+    }
 }

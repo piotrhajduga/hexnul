@@ -3,23 +3,8 @@
 
 #include "utils.h"
 
-#include "thing.h"
-#include "direction.h"
 #include "road.h"
 #include "game.h"
-
-/**
- * initial goal is to draw
- * HEX grid - a grid of hexagonal tiles
- * and have actors walk from point A to point B
- * only allowed moves are to adjacent free tiles
- *
- * free means that no other object can occupy that tile
- *
- * remember about the coordinate system
- *
- * and have fun!
- */
 
 using namespace std;
 
@@ -72,9 +57,8 @@ bool Game::OnInit() {
     }
     SDL_RenderSetLogicalSize(renderer, WIN_W, WIN_H);
 
-    world = new GameWorld(renderer, &state);
-    tileFactory = new TileFactory(renderer);
-    thingFactory = new ThingFactory(renderer);
+    toolbar = new Toolbar(renderer, &state);
+    world = new GameWorld(renderer, &state, toolbar);
 
     return true;
 }
@@ -95,135 +79,44 @@ void Game::OnEvent(SDL_Event* event) {
 }
 
 void Game::OnMouseMove(SDL_MouseMotionEvent* event) {
-    SDL_Point coords = world->coordsForXY({event->x, event->y});
-    world->setHover(coords);
-}
-
-Road* Game::createRoad(NeighborArray neighbors) {
-    LOG(DEBUG, "Create Road");
-    Road* road = new Road(renderer);
-
-    updateRoad(road, neighbors);
-
-    return road;
-}
-
-void Game::updateRoad(Road* road, NeighborArray neighbors) {
-    Thing* neighbor;
-    Direction dir=(Direction)0;
-
-    LOG(DEBUG, "Update Road");
-
-    while (dir<6) {
-        neighbor = state.getThing(neighbors[dir]);
-        road->setSegmentVisible(dir, neighbor!=NULL);
-        dir = (Direction) (((int) dir) + 1);
-    }
-}
-
-void Game::updateNeighbors(NeighborArray neighbors, Thing* thing) {
-    Thing* neighbor;
-    SDL_Point coord;
-    Direction dir = (Direction)0;
-
-    LOG(DEBUG, "Update neighbors");
-
-    while (dir<6) {
-        coord = neighbors[dir];
-        neighbor = state.getThing(coord);
-        if (neighbor != NULL) {
-            switch (neighbor->getType()) {
-            case ROAD:
-                ((Road*)neighbor)->setSegmentVisible(
-                    (Direction)((3+dir)%6), thing!=NULL);
-                break;
-            default:
-                break;
-            }
-        }
-        dir = (Direction) (((int) dir) + 1);
+    if ((event->y) <= WIN_H-TOOLBAR_H) {
+        toolbar->setHover(ToolType::NONE);
+        world->OnMouseMove(event);
+    } else {
+        toolbar->OnMouseMove(event);
     }
 }
 
 void Game::OnClick(SDL_MouseButtonEvent* event) {
-    SDL_Point coords = world->coordsForXY({event->x, event->y});
-    Tile* ground = NULL;
-    Thing* thing = state.getThing(coords);
-    int neighborCount;
-    NeighborArray neighbors = Utils::getNeighbors(coords);
-
-    if (world->getHexs().find(coords) != world->getHexs().end()) {
-        switch (event->button) {
-        case SDL_BUTTON_LEFT:
-            ground = state.getGround(coords);
-            if (ground != NULL) {
-                if (ground->canPutThing()) {
-                    if (thing == NULL) {
-                        if ((state.countNeighborThingType(coords, STACK) > 1
-                            || state.countNeighborThingType(coords, ROAD) > 0)
-                            && state.countNeighborThingType(coords, ROAD) < 3
-                            ) {
-                            thing = createRoad(neighbors);
-                        } else {
-                            LOG(DEBUG, "Create ThingStack");
-                            thing = thingFactory->create(STACK);
-                        }
-                        state.putThing(coords, thing);
-                    }
-
-                    if(thing->getType()==STACK) {
-                        LOG(DEBUG, "Create BuildingSegment");
-                        ((ThingStack*) thing)->putThing(thingFactory->create(BUILDING));
-                    }
-                } else {
-                    if (ground->getType()==GRASS) {
-                        neighborCount = state.countNeighborGroundType(coords, WATER);
-                        if (neighborCount>1) {
-                            state.setGround(coords, tileFactory->create(SAND));
-                        } else {
-                            state.setGround(coords, tileFactory->create(DIRT));
-                        }
-                    }
-                }
-            } else {
-                state.setGround(coords, tileFactory->create(GRASS));
-            }
-            break;
-        case SDL_BUTTON_RIGHT:
-            ground = state.getGround(coords);
-
-            if (state.countThings(coords) > 0) {
-                state.clearThing(coords);
-                thing = state.getThing(coords);
-            } else if (ground != NULL) {
-                state.removeGround(coords);
-            } else {
-                state.setGround(coords, tileFactory->create(WATER));
-            }
-            break;
-        default:
-            //idle
-            break;
-        }
+    if (event->y <= WIN_H-TOOLBAR_H) {
+        world->OnClick(event);
+    } else {
+        toolbar->OnClick(event);
     }
-
-    updateNeighbors(neighbors, thing);
 }
 
 void Game::OnLoop() {
 }
 
 void Game::OnRender() {
+    SDL_Rect rect;
+
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+
     SDL_SetRenderDrawColor(renderer, 0x7f, 0x7f, 0x7f, 255);
     SDL_RenderClear(renderer);
 
-    world->draw();
+    rect = {0, 0, WIN_W, WIN_H-TOOLBAR_H};
+    world->render(&rect);
+
+    rect = {0, WIN_H-TOOLBAR_H, WIN_W, TOOLBAR_H};
+    toolbar->render(&rect);
+
+    SDL_RenderPresent(renderer);
 }
 
 void Game::OnCleanup() {
-    delete tileFactory;
-    delete thingFactory;
+    delete toolbar;
     delete world;
 
     SDL_DestroyRenderer(renderer);
