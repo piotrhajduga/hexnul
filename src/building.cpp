@@ -24,6 +24,7 @@ Building::Building(SDL_Renderer* renderer)
 }
 
 void Building::grow() {
+    if (size() >= MAX_SEGMENTS) return;
     LOG(DEBUG, "Building::grow");
     auto segment = new BuildingSegment(renderer);
     height += segment->height;

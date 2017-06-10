@@ -14,7 +14,7 @@ static string BUILDING_TEXTURE_FILE = "assets/tiles/building.png";
 
 class BuildingSegment : public Sprite, public Thing  {
     public:
-        static const int BUILDING_SIZE = 15;
+        static const int BUILDING_SIZE = 20;
 
         BuildingSegment(SDL_Renderer* renderer);
 
@@ -25,6 +25,8 @@ class BuildingSegment : public Sprite, public Thing  {
 
 class Building : public std::list<Thing*>, public Thing {
     public:
+        static const int MAX_SEGMENTS = 8;
+
         Building(SDL_Renderer* renderer);
 
         virtual ThingType getType() const { return STACK; };
