@@ -42,7 +42,7 @@ int GameState::countThings(SDL_Point coord) {
     try {
         thing = things.at(coord);
         if (thing->getType()==STACK) {
-            return ((Building*) thing)->size();
+            return ((BuildingStack*) thing)->size();
         } else {
             return 1;
         }
@@ -97,8 +97,8 @@ void GameState::clearThing(SDL_Point coord) {
     try {
         thing = things.at(coord);
         if (thing!=NULL && thing->getType()==STACK) {
-            ((Building*) thing)->shrink();
-            if (((Building*) thing)->empty()) {
+            ((BuildingStack*) thing)->shrink();
+            if (((BuildingStack*) thing)->empty()) {
                 delete thing;
                 thing = NULL;
             }

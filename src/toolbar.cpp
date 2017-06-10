@@ -11,6 +11,7 @@ const char* toString(ToolType type) {
     case ToolType::SAND: return "ToolType::SAND";
     case ToolType::ROAD: return "ToolType::ROAD";
     case ToolType::BUILDING: return "ToolType::BUILDING";
+    case ToolType::BUILDINGSTACK: return "ToolType::BUILDING";
     case ToolType::DESTROY: return "ToolType::DESTROY";
     default:
     case ToolType::NONE: return "ToolType::NONE";

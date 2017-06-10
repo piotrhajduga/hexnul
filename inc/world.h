@@ -46,10 +46,12 @@ class GameWorld : public Renderable {
         GameState* state;
         Toolbar* toolbar;
 
+        const char* EMPTY_TEXTURE_FILE = "assets/tiles/empty.png";
         const char* HOVER_TEXTURE_FILE = "assets/ui/hover.png";
 
-        int HEX_H = WIN_H/11;
-        int HEX_W = WIN_W/11;
+        int VIEW_RADIUS = 8;
+        int HEX_H = WIN_H/(VIEW_RADIUS*2-1);
+        int HEX_W = WIN_W/(VIEW_RADIUS*2-1);
         int GRID_ROW_H = HEX_H*3/4;
         int GRID_ROW_TOP_H = HEX_H/4;
 
@@ -59,6 +61,7 @@ class GameWorld : public Renderable {
         SDL_Point offset;
         SDL_Point* hoverCoord = NULL;
 
+        Sprite* empty;
         Sprite* hover;
 
         std::unordered_map<TileType, SDL_Color> tileBorderColors = {

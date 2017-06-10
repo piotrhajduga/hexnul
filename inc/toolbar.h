@@ -21,6 +21,7 @@ enum class ToolType {
     SAND,
     ROAD,
     BUILDING,
+    BUILDINGSTACK,
     DESTROY,
     NONE
 };
@@ -65,7 +66,8 @@ class Toolbar : public Renderable {
             {ToolType::DIRT, "assets/ui/dirt.png"},
             {ToolType::SAND, "assets/ui/sand.png"},
             {ToolType::ROAD, "assets/ui/road.png"},
-            {ToolType::BUILDING, "assets/ui/building.png"},
+            {ToolType::BUILDINGSTACK, "assets/ui/building.png"},
+            {ToolType::BUILDING, "assets/ui/home_0.png"},
             {ToolType::DESTROY, "assets/ui/destroy.png"},
         };
         unordered_map<ToolType, Sprite*> toolSprites;

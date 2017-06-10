@@ -24,8 +24,9 @@ GameWorld::GameWorld(SDL_Renderer *renderer, GameState *istate, Toolbar* itoolba
     toolbar = itoolbar;
 
     hover = new Sprite(renderer, HOVER_TEXTURE_FILE, SDL_BLENDMODE_ADD);
+    empty = new Sprite(renderer, EMPTY_TEXTURE_FILE);
 
-    initHexs({5,6}, 6);
+    initHexs({VIEW_RADIUS-1,VIEW_RADIUS}, VIEW_RADIUS);
 }
 
 void GameWorld::initHexs(SDL_Point origin, int size) {
@@ -47,6 +48,7 @@ void GameWorld::initHexs(SDL_Point origin, int size) {
 }
 
 GameWorld::~GameWorld() {
+    delete empty;
     delete hover;
 
     Sprite::clearTextureCache();
@@ -112,16 +114,24 @@ void GameWorld::useTool(SDL_Point coord) {
             state->putThing(coord, createRoad(neighbors));
         }
         break;
-    case ToolType::BUILDING:
+    case ToolType::BUILDINGSTACK:
         if (ground!=NULL && ground->isContainer()) {
             if (thing==NULL) {
                 LOG(DEBUG, "Create ThingStack");
-                thing = new Building(renderer);
+                thing = new BuildingStack(renderer);
                 state->putThing(coord, thing);
             }
             if(thing->getType()==STACK) {
                 LOG(DEBUG, "Create BuildingSegment");
-                ((Building*) thing)->grow();
+                ((BuildingStack*) thing)->grow();
+            }
+        }
+        break;
+    case ToolType::BUILDING:
+        if (ground!=NULL && ground->isContainer()) {
+            if (thing==NULL) {
+                LOG(DEBUG, "Create Building");
+                state->putThing(coord, new Building(renderer));
             }
         }
         break;
@@ -226,38 +236,6 @@ void GameWorld::render(SDL_Rect* rect) {
     }
 }
 
-void GameWorld::drawHexOutline(SDL_Point coord) {
-    const int POINTS_COUNT = 7;
-    int x = (HEX_W/2) + (coord.x)*HEX_W+(coord.y%2)*(HEX_W/2);
-    int y = (HEX_H/2) + (coord.y*((HEX_H*3)/4));
-
-    if (state->isGround(coord)) {
-        SDL_Color color;
-        try {
-            color = tileBorderColors.at(state->getGround(coord)->getType());
-            SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-        } catch (const out_of_range& oor) {
-            SDL_SetRenderDrawColor(renderer, 0x89, 0x92, 0x9f, 255);
-        }
-    } else {
-        SDL_SetRenderDrawColor(renderer, 0xc4, 0xe0, 0xf2, 255);
-    }
-
-    SDL_Point points[POINTS_COUNT] = {
-        {x-(HEX_W/2), y-(HEX_H/4)},
-        {x          , y-(HEX_H/2)},
-        {x+(HEX_W/2), y-(HEX_H/4)},
-        {x+(HEX_W/2), y+(HEX_H/4)},
-        {x          , y+(HEX_H/2)},
-        {x-(HEX_W/2), y+(HEX_H/4)},
-        {x-(HEX_W/2), y-(HEX_H/4)}
-    };
-
-    if (!state->isGround(coord)) {
-        SDL_RenderDrawLines(renderer, points, POINTS_COUNT);
-    }
-}
-
 void GameWorld::OnMouseMove(SDL_MouseMotionEvent* event) {
     setHover(coordsForXY({event->x, event->y}));
 }
@@ -288,15 +266,16 @@ void GameWorld::drawHex(SDL_Point coord) {
     ground = state->getGround(coord);
     if (ground != NULL) {
         ground->render(&DestR);
+    } else {
+        empty->render(&DestR);
     }
-
-    drawHexOutline(coord);
 
     thing = state->getThing(coord);
     if (thing != NULL) {
         thing->render(&DestR);
         //DestR.y -= thing->height;
         //DestR.h += thing->height;
+    } else {
     }
 
     drawHover(coord, &DestR);

@@ -26,10 +26,10 @@ typedef unordered_map<TileType, TileData> TileTypeDataMap;
 const string TILEMASK_TEXTURE_FILE = "assets/tiles/tile_mask.png";
 
 static TileTypeDataMap TILE_TYPE_DATA = {
-    {GRASS, {"assets/tiles/grass.png", false}},
+    {GRASS, {"assets/tiles/grass.png", true}},
     {WATER, {"assets/tiles/water.png", false}},
     {DIRT, {"assets/tiles/dirt.png", true}},
-    {SAND, {"assets/tiles/sand.png", true}},
+    {SAND, {"assets/tiles/sand.png", false}},
 };
 
 class Tile : public Sprite {

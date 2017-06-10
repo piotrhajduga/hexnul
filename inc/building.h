@@ -1,6 +1,7 @@
 #ifndef	_HEXNUL_BUILDING_H_
 #define	_HEXNUL_BUILDING_H_
 
+#include <array>
 #include <string>
 #include <list>
 #include "SDL.h"
@@ -10,11 +11,11 @@
 
 using namespace std;
 
-static string BUILDING_TEXTURE_FILE = "assets/tiles/building.png";
+static string BUILDINGSEGMENT_TEXTURE_FILE = "assets/tiles/building.png";
 
 class BuildingSegment : public Sprite, public Thing  {
     public:
-        static const int BUILDING_SIZE = 20;
+        static const int BUILDINGSEGMENT_SIZE = 15;
 
         BuildingSegment(SDL_Renderer* renderer);
 
@@ -23,17 +24,32 @@ class BuildingSegment : public Sprite, public Thing  {
         void render(SDL_Rect* rect);
 };
 
-class Building : public std::list<Thing*>, public Thing {
+class BuildingStack : public std::list<Thing*>, public Thing {
     public:
         static const int MAX_SEGMENTS = 8;
 
-        Building(SDL_Renderer* renderer);
+        BuildingStack (SDL_Renderer* renderer);
 
         virtual ThingType getType() const { return STACK; };
 
         void grow();
 
         void shrink();
+
+        void render(SDL_Rect* rect);
+};
+
+static array<string,1> BUILDING_TEXTURE_FILES = {"assets/tiles/building/home_0.png"};
+
+class Building : public Sprite, public Thing {
+    private:
+        int level = 0;
+    public:
+        static const int BUILDING_SIZE = 0;
+
+        Building(SDL_Renderer* renderer);
+
+        ThingType getType() const { return BUILDING; };
 
         void render(SDL_Rect* rect);
 };
