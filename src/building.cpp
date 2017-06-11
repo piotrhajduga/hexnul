@@ -3,11 +3,73 @@
 #include "SDL.h"
 #include "sprite.h"
 #include "thing.h"
+#include "road.h"
 #include "utils.h"
 
 #include "building.h"
 
 using namespace std;
+
+map<int, Sprite*> BuildingWithLevel::levels;
+
+BuildingWithLevel::BuildingWithLevel(SDL_Renderer* renderer)
+: BuildingWithLevel(renderer, 0) {}
+
+BuildingWithLevel::BuildingWithLevel(SDL_Renderer* renderer, int initialLevel)
+: RoadNode(renderer) {
+    setLevel(initialLevel);
+}
+
+BuildingWithLevel::~BuildingWithLevel() {
+}
+
+Sprite* BuildingWithLevel::getLevel(int level) {
+    Sprite* levelSprite = NULL;
+
+    try {
+        LOG(DEBUG, "Looking for building level sprite");
+        levelSprite = BuildingWithLevel::levels.at(level);
+    } catch (const out_of_range& oor) {
+    }
+
+    if (levelSprite==NULL) {
+        LOG(INFO, "Building level sprite not found");
+        levelSprite = new Sprite(renderer, LEVEL_TEXTURES[level]);
+        BuildingWithLevel::levels[level] = levelSprite;
+    }
+
+    return levelSprite;
+}
+
+void BuildingWithLevel::deleteLevels() {
+    for (auto it : levels) {
+        delete it.second;
+    }
+}
+
+int BuildingWithLevel::getLevel() {
+    return level;
+}
+
+int BuildingWithLevel::incLevel() {
+    if (level<MAXLEVEL) { ++level; }
+    update();
+    return level;
+}
+
+void BuildingWithLevel::setLevel(int ilevel) {
+    level = ilevel;
+    update();
+}
+
+void BuildingWithLevel::update() {
+    sprite = getLevel(getLevel());
+}
+
+void BuildingWithLevel::render(SDL_Rect* rect) {
+    RoadNode::render(rect);
+    sprite->render(rect);
+}
 
 BuildingSegment::BuildingSegment(SDL_Renderer* renderer)
 : Sprite(renderer, BUILDINGSEGMENT_TEXTURE_FILE), Thing(renderer, BUILDINGSEGMENT_SIZE) {

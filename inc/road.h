@@ -18,9 +18,20 @@ typedef struct {
     bool isVisible = false;
 } RoadSegment;
 
-class Road : public Thing {
+class RoadNode : public Thing {
+    public:
+        const unsigned short int travelCost = 0xff;
+
+        RoadNode(SDL_Renderer* renderer);
+        virtual ~RoadNode();
+
+        void render(SDL_Rect* rect);
+
+        void setSegmentVisible(Direction dir);
+        void setSegmentVisible(Direction dir, bool cond);
+
+        bool isVisible();
     protected:
-        const char* CENTER = "assets/tiles/road_c.png";
         const char* SEGMENTS[6] = {
             "assets/tiles/road_tl.png",
             "assets/tiles/road_tr.png",
@@ -30,22 +41,28 @@ class Road : public Thing {
             "assets/tiles/road_l.png",
         };
 
+        int getVisibleCount();
+
+    private:
+        map<Direction, RoadSegment> segments;
+
+        int visibleCount = 0;
+};
+
+class Road : public RoadNode, public Sprite {
+    protected:
+        const char* ROAD_CENTER = "assets/tiles/road_c.png";
+
     public:
         Road(SDL_Renderer* renderer);
-        virtual ~Road();
 
         virtual ThingType getType() const {
             return ROAD;
         }
 
-        void setSegmentVisible(Direction dir);
-        void setSegmentVisible(Direction dir, bool cond);
+        bool isVisible();
 
         void render(SDL_Rect* rect);
-
-    private:
-        Sprite* center;
-        map<Direction, RoadSegment> segments;
 };
 
 #endif //_HEXNUL_ROAD_THING_H_

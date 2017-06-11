@@ -12,7 +12,7 @@ class Renderable {
         Renderable(SDL_Renderer* iRenderer) {
             renderer = iRenderer;
         }
-        ~Renderable() {};
+        virtual ~Renderable() {};
 
         virtual void render(SDL_Rect* rect) {
             std::cout<<"renderable.h:18 - rendering base class"<<std::endl;

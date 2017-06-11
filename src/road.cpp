@@ -1,39 +1,67 @@
+#include "utils.h"
+
+#include "sprite.h"
+
 #include "road.h"
 
-Road::Road(SDL_Renderer* renderer)
+RoadNode::RoadNode(SDL_Renderer* renderer)
 : Thing(renderer) {
-    center = new Sprite(renderer, CENTER);
+    LOG(DEBUG, "Creating road segments");
     for (int i=0;i<6;++i) {
-        segments[Direction(i)].sprite = new Sprite(renderer, Road::SEGMENTS[Direction(i)]);
+        segments[Direction(i)].sprite = new Sprite(renderer, SEGMENTS[Direction(i)]);
     }
 }
 
-Road::~Road() {
+RoadNode::~RoadNode() {
+    LOG(DEBUG, "Destroying road segments");
     for (auto it : segments) {
         if (it.second.sprite != NULL) {
             delete it.second.sprite;
         }
     }
-    delete center;
 }
 
-void Road::setSegmentVisible(Direction dir) {
-    setSegmentVisible(dir, true);
-}
-
-void Road::setSegmentVisible(Direction dir, bool cond) {
-    segments[dir].isVisible = cond;
-}
-
-void Road::render(SDL_Rect* rect) {
-    bool noneVisible = true;
+void RoadNode::render(SDL_Rect* rect) {
     for (auto it : segments) {
         if (it.second.isVisible) {
-            noneVisible = false;
             it.second.sprite->render(rect);
         }
     }
-    if (noneVisible) {
-        center->render(rect);
+}
+
+void RoadNode::setSegmentVisible(Direction dir) {
+    setSegmentVisible(dir, true);
+}
+
+void RoadNode::setSegmentVisible(Direction dir, bool cond) {
+    if (!segments[dir].isVisible && cond) {
+        visibleCount++;
+    } else if (segments[dir].isVisible && !cond) {
+        visibleCount--;
     }
+    segments[dir].isVisible = cond;
+}
+
+int RoadNode::getVisibleCount() {
+    return visibleCount;
+}
+
+bool RoadNode::isVisible() {
+    return true;
+}
+
+Road::Road(SDL_Renderer* renderer)
+: RoadNode(renderer), Sprite(renderer, "assets/tiles/road_c.png") {
+    LOG(DEBUG, "Init road done");
+}
+
+void Road::render(SDL_Rect* rect) {
+    RoadNode::render(rect);
+    if (getVisibleCount()<2) {
+        Sprite::render(rect);
+    }
+}
+
+bool Road::isVisible() {
+    return getVisibleCount()>0;
 }

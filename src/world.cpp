@@ -56,9 +56,8 @@ GameWorld::~GameWorld() {
 
 void GameWorld::OnClick(SDL_MouseButtonEvent* event) {
     SDL_Point coord = coordsForXY({event->x, event->y});
-    Thing* thing;
-
     NeighborArray neighbors = Utils::getNeighbors(coord);
+
     if (hexs.find(coord) != hexs.end()) {
         switch (event->button) {
         case SDL_BUTTON_LEFT:
@@ -73,15 +72,16 @@ void GameWorld::OnClick(SDL_MouseButtonEvent* event) {
         }
     }
 
-    LOG(DEBUG, "Updating neighbors");
-    thing = state->getThing(coord);
+    RoadNode* thing = dynamic_cast<RoadNode*>(state->getThing(coord));
+    if (thing!=NULL) {
+        updateRoadNode(thing, neighbors);
+    }
     updateNeighbors(neighbors, thing);
 }
 
 void GameWorld::useTool(SDL_Point coord) {
     Tile* ground = state->getGround(coord);
     Thing* thing = state->getThing(coord);
-    NeighborArray neighbors = Utils::getNeighbors(coord);
 
     switch (toolbar->getActive()) {
     case ToolType::GRASS:
@@ -111,27 +111,20 @@ void GameWorld::useTool(SDL_Point coord) {
     case ToolType::ROAD:
         if (ground!=NULL && ground->isContainer() && thing==NULL) {
             LOG(DEBUG, "Put ROAD");
-            state->putThing(coord, createRoad(neighbors));
-        }
-        break;
-    case ToolType::BUILDINGSTACK:
-        if (ground!=NULL && ground->isContainer()) {
-            if (thing==NULL) {
-                LOG(DEBUG, "Create ThingStack");
-                thing = new BuildingStack(renderer);
-                state->putThing(coord, thing);
-            }
-            if(thing->getType()==STACK) {
-                LOG(DEBUG, "Create BuildingSegment");
-                ((BuildingStack*) thing)->grow();
-            }
+            thing = new Road(renderer);
+            state->putThing(coord, thing);
         }
         break;
     case ToolType::BUILDING:
         if (ground!=NULL && ground->isContainer()) {
             if (thing==NULL) {
                 LOG(DEBUG, "Create Building");
-                state->putThing(coord, new Building(renderer));
+                state->putThing(coord, new BuildingWithLevel(renderer));
+            } else {
+                BuildingWithLevel* building = dynamic_cast<BuildingWithLevel*>(thing);
+                if (building!=NULL) {
+                    building->incLevel();
+                }
             }
         }
         break;
@@ -151,8 +144,8 @@ void GameWorld::useTool(SDL_Point coord) {
     }
 }
 
-void GameWorld::updateNeighbors(NeighborArray neighbors, Thing* thing) {
-    Thing* neighbor;
+void GameWorld::updateNeighbors(NeighborArray neighbors, RoadNode* thing) {
+    RoadNode* neighbor;
     SDL_Point coord;
     Direction dir = (Direction)0;
 
@@ -160,39 +153,22 @@ void GameWorld::updateNeighbors(NeighborArray neighbors, Thing* thing) {
 
     while (dir<6) {
         coord = neighbors[dir];
-        neighbor = state->getThing(coord);
+        neighbor = dynamic_cast<RoadNode*>(state->getThing(coord));
         if (neighbor != NULL) {
-            switch (neighbor->getType()) {
-            case ROAD:
-                ((Road*)neighbor)->setSegmentVisible(
-                    (Direction)((3+dir)%6), thing!=NULL);
-                break;
-            default:
-                break;
-            }
+            neighbor->setSegmentVisible((Direction)((3+dir)%6), thing!=NULL && thing->isVisible());
         }
         dir = (Direction) (((int) dir) + 1);
     }
 }
 
-Road* GameWorld::createRoad(NeighborArray neighbors) {
-    LOG(DEBUG, "Create Road");
-    Road* road = new Road(renderer);
-
-    updateRoad(road, neighbors);
-
-    return road;
-}
-
-void GameWorld::updateRoad(Road* road, NeighborArray neighbors) {
-    Thing* neighbor;
+void GameWorld::updateRoadNode(RoadNode* road, NeighborArray neighbors) {
+    RoadNode* neighbor;
     Direction dir=(Direction)0;
 
-    LOG(DEBUG, "Update Road");
-
+    LOG(DEBUG, "Update RoadNode");
     while (dir<6) {
-        neighbor = state->getThing(neighbors[dir]);
-        road->setSegmentVisible(dir, neighbor!=NULL);
+        neighbor = dynamic_cast<RoadNode*>(state->getThing(neighbors[dir]));
+        road->setSegmentVisible(dir, neighbor!=NULL && neighbor->isVisible());
         dir = (Direction) (((int) dir) + 1);
     }
 }
@@ -212,12 +188,12 @@ SDL_Point GameWorld::coordsForXY(SDL_Point point) {
 
     if (norm.y < GRID_ROW_TOP_H) {
         if (norm.x < HEX_W / 2) {
-            if ((norm.x * 2 / HEX_W) * HEX_H / 4 <= norm.y) {
+            if ((norm.x * 2 / HEX_W) * HEX_H / 4 < norm.y) {
                 --ret.y;
                 ret.x += row_odd-1;
             }
         } else if (norm.x > HEX_W / 2) {
-            if (((HEX_W-norm.x) * 2 / HEX_W) * HEX_H / 4 <= norm.y) {
+            if (((HEX_W-norm.x) * 2 / HEX_W) * HEX_H / 4 < norm.y) {
                 --ret.y;
                 ret.x += row_odd;
             }

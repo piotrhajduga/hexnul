@@ -49,7 +49,7 @@ class GameWorld : public Renderable {
         const char* EMPTY_TEXTURE_FILE = "assets/tiles/empty.png";
         const char* HOVER_TEXTURE_FILE = "assets/ui/hover.png";
 
-        int VIEW_RADIUS = 8;
+        int VIEW_RADIUS = 10;
         int HEX_H = WIN_H/(VIEW_RADIUS*2-1);
         int HEX_W = WIN_W/(VIEW_RADIUS*2-1);
         int GRID_ROW_H = HEX_H*3/4;
@@ -73,9 +73,8 @@ class GameWorld : public Renderable {
 
         void drawHexOutline(SDL_Point coord);
 
-        Road* createRoad(NeighborArray neighbors);
-        void updateRoad(Road* road, NeighborArray neighbors);
-        void updateNeighbors(NeighborArray neighbors, Thing* thing);
+        void updateRoadNode(RoadNode* road, NeighborArray neighbors);
+        void updateNeighbors(NeighborArray neighbors, RoadNode* thing);
 };
 
 #endif //_HEXNUL_GAME_WORLD_H_
