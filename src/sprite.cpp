@@ -37,11 +37,13 @@ void Sprite::clearTextureCache() {
 
 Sprite::Sprite(SDL_Renderer* renderer, SDL_Texture* iTexture)
     : Renderable(renderer) {
+    LOG(DEBUG, "Sprite::Sprite from existing texture");
     texture = iTexture;
 };
 
 Sprite::Sprite(SDL_Renderer* renderer, string textureFile)
     : Renderable(renderer) {
+    LOG(DEBUG, string("Sprite::Sprite ")+textureFile);
     texture = getTexture(textureFile, renderer);
 }
 

@@ -15,6 +15,7 @@
 #include "road.h"
 #include "direction.h"
 #include "toolbar.h"
+#include "agent.h"
 #include "state.h"
 
 #define WIN_W 1024
@@ -58,6 +59,8 @@ class GameWorld : public Renderable {
         //hexs is like an active region that user might act on
         PointSet hexs;
 
+        PathfindingAgent* agent = NULL;
+
         SDL_Point offset;
         SDL_Point* hoverCoord = NULL;
 
@@ -72,6 +75,9 @@ class GameWorld : public Renderable {
         };
 
         void drawHexOutline(SDL_Point coord);
+        SDL_Rect getHexRectForCoord(SDL_Point coord);
+
+        void drawAgent();
 
         void updateRoadNode(RoadNode* road, NeighborArray neighbors);
         void updateNeighbors(NeighborArray neighbors, RoadNode* thing);

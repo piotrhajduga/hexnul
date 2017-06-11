@@ -30,7 +30,7 @@ class Game {
 
         void OnMouseMove(SDL_MouseMotionEvent* event);
     private:
-        static const int TOOLBAR_H = 80;
+        static const int TOOLBAR_H = 62;
         const int FPS = 30;
         bool running;
         unsigned int ticks = 0;

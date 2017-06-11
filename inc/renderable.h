@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "SDL.h"
+#include "utils.h"
 
 class Renderable {
     protected:
@@ -15,7 +16,7 @@ class Renderable {
         virtual ~Renderable() {};
 
         virtual void render(SDL_Rect* rect) {
-            std::cout<<"renderable.h:18 - rendering base class"<<std::endl;
+            LOG(WARN, "rendering base class");
         };
 };
 

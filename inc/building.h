@@ -49,11 +49,10 @@ class BuildingWithLevel : public RoadNode {
         
 };
 
-static string BUILDINGSEGMENT_TEXTURE_FILE = "assets/tiles/building.png";
-
 class BuildingSegment : public Sprite, public Thing  {
     public:
-        static const int BUILDINGSEGMENT_SIZE = 10;
+        const int BUILDINGSEGMENT_SIZE = 10;
+        const char* BUILDINGSEGMENT_TEXTURE_FILE = "assets/tiles/building.png";
 
         BuildingSegment(SDL_Renderer* renderer);
 
@@ -77,11 +76,10 @@ class BuildingStack : public std::list<Thing*>, public Thing {
         void render(SDL_Rect* rect);
 };
 
-static array<string,1> BUILDING_TEXTURE_FILES = {"assets/tiles/building/home_0.png"};
-
 class Building : public Sprite, public Thing {
     public:
-        static const int BUILDING_SIZE = 0;
+        const int BUILDING_SIZE = 0;
+        const char* BUILDING_TEXTURE_FILES[1] = {"assets/tiles/building/home_0.png"};
 
         Building(SDL_Renderer* renderer);
 

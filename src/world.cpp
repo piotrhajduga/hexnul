@@ -14,6 +14,7 @@
 #include "direction.h"
 #include "world.h"
 #include "toolbar.h"
+#include "agent.h"
 #include "state.h"
 
 using namespace std;
@@ -50,6 +51,10 @@ void GameWorld::initHexs(SDL_Point origin, int size) {
 GameWorld::~GameWorld() {
     delete empty;
     delete hover;
+
+    if (agent != NULL) {
+        delete agent;
+    }
 
     Sprite::clearTextureCache();
 }
@@ -126,6 +131,16 @@ void GameWorld::useTool(SDL_Point coord) {
                     building->incLevel();
                 }
             }
+        }
+        break;
+    case ToolType::AGENT:
+        if (agent==NULL) {
+            if (ground != NULL) {
+                LOG(DEBUG, "Create new PathfindingAgent");
+                agent = new PathfindingAgent(renderer, state, coord);
+            }
+        } else {
+            agent->setDestination(coord);
         }
         break;
     case ToolType::DESTROY:
@@ -210,6 +225,8 @@ void GameWorld::render(SDL_Rect* rect) {
     for (auto it=hexs.begin();it!=hexs.end();++it) {
         drawHex(*it);
     }
+
+    drawAgent();
 }
 
 void GameWorld::OnMouseMove(SDL_MouseMotionEvent* event) {
@@ -229,32 +246,34 @@ void GameWorld::setHover(SDL_Point coord) {
     }
 }
 
+SDL_Rect GameWorld::getHexRectForCoord(SDL_Point coord) {
+    SDL_Rect rect;
+    rect.x = (coord.x)*HEX_W+(coord.y%2)*(HEX_W/2);
+    rect.y = (coord.y*((HEX_H*3)/4));
+    rect.w = HEX_W;
+    rect.h = HEX_H;
+    return rect;
+}
+
 void GameWorld::drawHex(SDL_Point coord) {
-    SDL_Rect DestR;
+    SDL_Rect rect = getHexRectForCoord(coord);
     Tile* ground = NULL;
     Thing* thing = NULL;
 
-    DestR.x = (coord.x)*HEX_W+(coord.y%2)*(HEX_W/2);
-    DestR.y = (coord.y*((HEX_H*3)/4));
-    DestR.w = HEX_W;
-    DestR.h = HEX_H;
-
     ground = state->getGround(coord);
     if (ground != NULL) {
-        ground->render(&DestR);
+        ground->render(&rect);
     } else {
-        empty->render(&DestR);
+        empty->render(&rect);
     }
 
     thing = state->getThing(coord);
     if (thing != NULL) {
-        thing->render(&DestR);
-        //DestR.y -= thing->height;
-        //DestR.h += thing->height;
+        thing->render(&rect);
     } else {
     }
 
-    drawHover(coord, &DestR);
+    drawHover(coord, &rect);
 }
 
 void GameWorld::drawHover(SDL_Point coord, SDL_Rect* rect) {
@@ -268,5 +287,13 @@ void GameWorld::drawHover(SDL_Point coord, SDL_Rect* rect) {
         SDL_SetTextureAlphaMod(tx, 0x90);
         myhover->render(rect);
         SDL_SetTextureAlphaMod(tx, 0xff);
+    }
+}
+
+void GameWorld::drawAgent() {
+    SDL_Rect rect;
+    if (agent != NULL) {
+        rect = getHexRectForCoord(agent->getPosition());
+        agent->render(&rect);
     }
 }

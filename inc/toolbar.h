@@ -22,6 +22,7 @@ enum class ToolType {
     ROAD,
     BUILDING,
     DESTROY,
+    AGENT,
     NONE
 };
 
@@ -29,10 +30,10 @@ using namespace std;
 
 class Toolbar : public Renderable {
     public:
-        static const int ACTIVE_W = 90;
-        static const int ACTIVE_H = 90;
-        static const int TOOL_W = 80;
-        static const int TOOL_H = 60;
+        static const int ACTIVE_W = 70;
+        static const int ACTIVE_H = 50;
+        static const int TOOL_W = 50;
+        static const int TOOL_H = 40;
         
         Toolbar(SDL_Renderer *renderer, GameState *state);
         virtual ~Toolbar();
@@ -66,6 +67,7 @@ class Toolbar : public Renderable {
             {ToolType::SAND, "assets/ui/sand.png"},
             {ToolType::ROAD, "assets/ui/road.png"},
             {ToolType::BUILDING, "assets/ui/home_0.png"},
+            {ToolType::AGENT, "assets/ui/human.png"},
             {ToolType::DESTROY, "assets/ui/destroy.png"},
         };
         unordered_map<ToolType, Sprite*> toolSprites;

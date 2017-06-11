@@ -24,8 +24,8 @@ class Sprite : public Renderable {
         Sprite(SDL_Renderer* renderer, string textureFile, SDL_BlendMode blend);
         virtual ~Sprite();
 
-        virtual SDL_Texture* getTexture();
-        virtual SDL_Texture* getTexture(string textureFile, SDL_Renderer* renderer);
+        SDL_Texture* getTexture();
+        SDL_Texture* getTexture(string textureFile, SDL_Renderer* renderer);
         void render(SDL_Rect* rect);
     private:
         SDL_Texture* texture;
