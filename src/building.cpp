@@ -1,11 +1,11 @@
 #include <string>
-
 #include "SDL.h"
+
+#include "constants.h"
+#include "utils.h"
 #include "sprite.h"
 #include "thing.h"
 #include "road.h"
-#include "utils.h"
-
 #include "building.h"
 
 using namespace std;
@@ -72,7 +72,7 @@ void BuildingWithLevel::render(SDL_Rect* rect) {
 }
 
 BuildingSegment::BuildingSegment(SDL_Renderer* renderer)
-: Sprite(renderer, BUILDINGSEGMENT_TEXTURE_FILE), Thing(renderer, BUILDINGSEGMENT_SIZE) {
+: Sprite(renderer, TEXTURE_BUILDING_SEGMENT), Thing(renderer, BUILDINGSEGMENT_SIZE) {
     LOG(DEBUG, "BuildingSegment::BuildingSegment");
 }
 
@@ -110,7 +110,7 @@ void BuildingStack::render(SDL_Rect* rect) {
 }
 
 Building::Building(SDL_Renderer* renderer)
-: Sprite(renderer, BUILDING_TEXTURE_FILES[0]), Thing(renderer, BUILDING_SIZE) {
+: Sprite(renderer, TEXTURE_BUILDING_SEGMENT), Thing(renderer, BUILDING_SIZE) {
     LOG(DEBUG, "BuildingSegment::BuildingSegment");
 }
 

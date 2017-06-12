@@ -38,7 +38,8 @@ STATE_INC = $(addprefix $(INC_DIR)/,state.h utils.h direction.h tile.h)
 $(OBJ_DIR)/state.o: $(SRC_DIR)/state.cpp $(STATE_INC)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-$(OBJ_DIR)/tile.o: $(SRC_DIR)/tile.cpp $(addprefix $(INC_DIR)/,tile.h sprite.h)
+TILE_INC = $(addprefix $(INC_DIR)/,tile.h sprite.h constants.h)
+$(OBJ_DIR)/tile.o: $(SRC_DIR)/tile.cpp $(TILE_INC)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 THING_INC = $(addprefix $(INC_DIR)/,thing.h thingtype.h renderable.h)
@@ -52,14 +53,14 @@ WORLD_INC = $(addprefix $(INC_DIR)/,world.h toolbar.h agent.h building.h road.h 
 $(OBJ_DIR)/world.o: $(SRC_DIR)/world.cpp $(WORLD_INC)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-$(OBJ_DIR)/utils.o: $(SRC_DIR)/utils.cpp $(INC_DIR)/utils.h
+$(OBJ_DIR)/utils.o: $(SRC_DIR)/utils.cpp $(INC_DIR)/utils.h $(INC_DIR)/constants.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 ROAD_INC = $(addprefix $(INC_DIR)/,road.h direction.h thing.h thingtype.h sprite.h)
 $(OBJ_DIR)/road.o: $(SRC_DIR)/road.cpp $(ROAD_INC)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-BUILDING_INC = $(addprefix $(INC_DIR)/,building.h thing.h thingtype.h)
+BUILDING_INC = $(addprefix $(INC_DIR)/,building.h utils.h constants.h thing.h thingtype.h)
 $(OBJ_DIR)/building.o: $(SRC_DIR)/building.cpp $(BUILDING_INC)
 	$(CXX) $(CXXFLAGS) $< -o $@
 

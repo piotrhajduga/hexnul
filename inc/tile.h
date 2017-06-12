@@ -7,6 +7,7 @@
 #include "SDL.h"
 #include "SDL_image.h"
 
+#include "constants.h"
 #include "sprite.h"
 #include "utils.h"
 #include "tile.h"
@@ -21,40 +22,30 @@ typedef struct {
     const char* textureFile;
     bool isContainer;
 } TileData;
+
 typedef unordered_map<TileType, TileData> TileTypeDataMap;
 
-const string TILEMASK_TEXTURE_FILE = "assets/tiles/tile_mask.png";
-
 static TileTypeDataMap TILE_TYPE_DATA = {
-    {GRASS, {"assets/tiles/grass.png", true}},
-    {WATER, {"assets/tiles/water.png", false}},
-    {DIRT, {"assets/tiles/dirt.png", true}},
-    {SAND, {"assets/tiles/sand.png", false}},
+    {GRASS, {TEXTURE_TILE_GRASS, true}},
+    {WATER, {TEXTURE_TILE_WATER, false}},
+    {DIRT, {TEXTURE_TILE_DIRT, true}},
+    {SAND, {TEXTURE_TILE_SAND, false}},
 };
 
 class Tile : public Sprite {
-    public:
-        typedef unordered_map<TileType, Tile*> TileTypeMap;
-
-    private:
-        static SDL_Surface* tileMask;
-        static SDL_Surface* getTileMask();
-
-        TileType type;
-        bool _isContainer = false;
-
-        static TileTypeMap typeobjs;
-
     public:
         static Tile* getTile(TileType type, SDL_Renderer* renderer);
 
         Tile(TileType itype, SDL_Renderer* renderer);
         virtual ~Tile();
 
-        virtual SDL_Texture* getTexture(string textureFile, SDL_Renderer* renderer);
-
         TileType getType() { return type; }
 
         bool isContainer() { return _isContainer; }
+
+    private:
+        TileType type;
+        bool _isContainer = false;
 };
+
 #endif	/* _HEXNUL_H_ */

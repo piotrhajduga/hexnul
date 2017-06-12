@@ -1,4 +1,5 @@
 #include "SDL.h"
+#include "constants.h"
 
 #include "utils.h"
 #include "state.h"
@@ -9,7 +10,7 @@ using namespace std;
 
 //TODO: passing AGENT_TEXTURE_FILE from header gives strange errors...
 Agent::Agent(SDL_Renderer* renderer, GameState* istate, SDL_Point ipos)
-: Sprite(renderer, "assets/world/human.png") {
+: Sprite(renderer, TEXTURE_AGENT) {
     state = istate;
     pos = ipos;
 }

@@ -7,6 +7,8 @@
 #include "SDL.h"
 #include "SDL_image.h"
 
+#include "constants.h"
+
 typedef enum {
     DEBUG, INFO, WARN, ERROR
 } LogLevel;
@@ -15,7 +17,7 @@ typedef std::array<SDL_Point, 6> NeighborArray;
 
 class Utils {
     private:
-        static const LogLevel level = DEBUG;
+        static const LogLevel level = LOGGING_LEVEL;
 
     public:
         static void log(LogLevel level, std::string msg);

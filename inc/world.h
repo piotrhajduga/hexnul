@@ -38,6 +38,7 @@ class GameWorld : public Renderable {
         void OnMouseMove(SDL_MouseMotionEvent* event);
     protected:
         void initHexs(SDL_Point origin, int size);
+        void insertHex(SDL_Point coord);
         void drawHex(SDL_Point coord);
         void drawHover(SDL_Point coord, SDL_Rect* rect);
         void drawThings(SDL_Point coord, SDL_Rect* destRect);
@@ -73,6 +74,8 @@ class GameWorld : public Renderable {
             {DIRT, {0xa9, 0x52, 0x1f, 255}},
             {SAND, {0xe9, 0xd2, 0x1f, 255}},
         };
+
+        Tile* generateRandomTile();
 
         void drawHexOutline(SDL_Point coord);
         SDL_Rect getHexRectForCoord(SDL_Point coord);

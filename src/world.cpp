@@ -30,18 +30,36 @@ GameWorld::GameWorld(SDL_Renderer *renderer, GameState *istate, Toolbar* itoolba
     initHexs({VIEW_RADIUS-1,VIEW_RADIUS}, VIEW_RADIUS);
 }
 
+Tile* GameWorld::generateRandomTile() {
+    int randint = rand() % 4;
+    return new Tile(TileType(randint), renderer);
+}
+
+void GameWorld::insertHex(SDL_Point coord) {
+    int randint = rand() % 100;
+    hexs.insert(coord);
+    if (randint > 20) {
+        state->setGround(coord, generateRandomTile());
+    }
+}
+
 void GameWorld::initHexs(SDL_Point origin, int size) {
     hexs.clear();
 
     int i,x,y1,y2,xfrom,xto;
+    xfrom = origin.x-size+1+((origin.y%2)/2);
+    xto = origin.x+size-1-(((origin.y+1)%2)/2);
+    for (x=xfrom;x<=xto;++x) {
+        insertHex({x, origin.y});
+    }
     for (i=0;i<size;++i) {
         y1 = origin.y-i;
         y2 = origin.y+i;
         xfrom = origin.x-size+1+((i+(origin.y%2))/2);
         xto = origin.x+size-1-((i+((origin.y+1)%2))/2);
         for (x=xfrom;x<=xto;++x) {
-            hexs.insert({x,y1});
-            hexs.insert({x,y2});
+            insertHex({x,y1});
+            insertHex({x,y2});
         }
     }
 
@@ -92,25 +110,25 @@ void GameWorld::useTool(SDL_Point coord) {
     case ToolType::GRASS:
         if (thing == NULL && ground == NULL) {
             LOG(DEBUG, "Set GRASS");
-            state->setGround(coord, Tile::getTile(GRASS, renderer));
+            state->setGround(coord, new Tile(GRASS, renderer));
         }
         break;
     case ToolType::WATER:
         if (thing == NULL && ground == NULL) {
             LOG(DEBUG, "Set WATER");
-            state->setGround(coord, Tile::getTile(WATER, renderer));
+            state->setGround(coord, new Tile(WATER, renderer));
         }
         break;
     case ToolType::DIRT:
         if (thing == NULL && ground == NULL) {
             LOG(DEBUG, "Set DIRT");
-            state->setGround(coord, Tile::getTile(DIRT, renderer));
+            state->setGround(coord, new Tile(DIRT, renderer));
         }
         break;
     case ToolType::SAND:
         if (thing == NULL && ground == NULL) {
             LOG(DEBUG, "Set SAND");
-            state->setGround(coord, Tile::getTile(SAND, renderer));
+            state->setGround(coord, new Tile(SAND, renderer));
         }
         break;
     case ToolType::ROAD:
@@ -148,9 +166,9 @@ void GameWorld::useTool(SDL_Point coord) {
         if (state->countThings(coord) > 0) {
             LOG(DEBUG, "Oh, there's a thing! Destroy!");
             state->clearThing(coord);
-        } else if (ground != NULL) {
-            LOG(DEBUG, "Oh, there's ground! Destroy!");
-            state->removeGround(coord);
+        //} else if (ground != NULL) {
+            //LOG(DEBUG, "Oh, there's ground! Destroy!");
+            //state->removeGround(coord);
         }
         break;
     default:

@@ -5,13 +5,13 @@
 
 const char* toString(ToolType type) {
     switch(type) {
-    case ToolType::GRASS: return "ToolType::GRASS";
-    case ToolType::WATER: return "ToolType::WATER";
+    //case ToolType::GRASS: return "ToolType::GRASS";
+    //case ToolType::WATER: return "ToolType::WATER";
     case ToolType::DIRT: return "ToolType::DIRT";
     case ToolType::SAND: return "ToolType::SAND";
     case ToolType::ROAD: return "ToolType::ROAD";
     case ToolType::BUILDING: return "ToolType::BUILDING";
-    case ToolType::DESTROY: return "ToolType::DESTROY";
+    //case ToolType::DESTROY: return "ToolType::DESTROY";
     default:
     case ToolType::NONE: return "ToolType::NONE";
     }
@@ -21,8 +21,8 @@ Toolbar::Toolbar(SDL_Renderer *renderer, GameState *istate)
     : Renderable(renderer) {
     state = istate;
 
-    hover = new Sprite(renderer, HOVER_TEXTURE_FILE, SDL_BLENDMODE_ADD);
-    active = new Sprite(renderer, ACTIVE_TEXTURE_FILE, SDL_BLENDMODE_BLEND);
+    hover = new Sprite(renderer, TEXTURE_TOOL_HOVER, SDL_BLENDMODE_BLEND);
+    active = new Sprite(renderer, TEXTURE_TOOL_ACTIVE, SDL_BLENDMODE_BLEND);
 
     initTools();
 }
@@ -36,8 +36,11 @@ Toolbar::~Toolbar() {
 }
 
 ToolType Toolbar::toolTypeForXY(SDL_Point point) {
-    int x = point.x/ACTIVE_W;
-    return (x>int(ToolType::NONE))?ToolType::NONE:(ToolType)x;
+    try {
+        return intToToolType.at(point.x/ACTIVE_W);
+    } catch (const out_of_range& oor) {
+        return ToolType::NONE;
+    }
 }
 
 void Toolbar::initTools() {
@@ -52,10 +55,11 @@ void Toolbar::render(SDL_Rect* irect) {
     SDL_RenderFillRect(renderer, irect);
 
     SDL_Rect rect;
-
-    for (int i=0;i<(int)toolSprites.size();++i) {
-        if (i != int(ToolType::NONE)) {
-            if (activeTool == ToolType(i)) {
+    int i = 0;
+    for (auto it : toolSprites) {
+        intToToolType[i] = it.first;
+        if (it.first != ToolType::NONE) {
+            if (activeTool == it.first) {
                 rect = {
                     irect->x+i*ACTIVE_W,
                     irect->y+((irect->h-ACTIVE_H)/2), // centering on Y
@@ -70,11 +74,12 @@ void Toolbar::render(SDL_Rect* irect) {
                 TOOL_W,
                 TOOL_H
             };
-            toolSprites[ToolType(i)]->render(&rect);
-            if (hoverTool == ToolType(i)) {
+            it.second->render(&rect);
+            if (hoverTool == it.first) {
                 hover->render(&rect);
             }
         }
+        i++;
     }
 }
 

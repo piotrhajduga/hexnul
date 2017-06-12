@@ -1,13 +1,14 @@
 #ifndef _HEXNUL_TOOLBAR_H_
 #define _HEXNUL_TOOLBAR_H_
 
-#include <unordered_map>
+#include <map>
 #include <functional>
 #include <string>
 
 #include "SDL.h"
 #include "SDL_image.h"
 
+#include "constants.h"
 #include "utils.h"
 
 #include "renderable.h"
@@ -15,6 +16,7 @@
 #include "state.h"
 
 enum class ToolType {
+    AGENT,
     GRASS,
     WATER,
     DIRT,
@@ -22,7 +24,6 @@ enum class ToolType {
     ROAD,
     BUILDING,
     DESTROY,
-    AGENT,
     NONE
 };
 
@@ -57,20 +58,18 @@ class Toolbar : public Renderable {
     private:
         GameState* state;
 
-        const char* HOVER_TEXTURE_FILE = "assets/ui/hover.png";
-        const char* ACTIVE_TEXTURE_FILE = "assets/ui/active.png";
-
-        const unordered_map<ToolType, string> TOOL_TEXTURES = {
-            {ToolType::GRASS, "assets/ui/grass.png"},
-            {ToolType::WATER, "assets/ui/water.png"},
-            {ToolType::DIRT, "assets/ui/dirt.png"},
-            {ToolType::SAND, "assets/ui/sand.png"},
-            {ToolType::ROAD, "assets/ui/road.png"},
-            {ToolType::BUILDING, "assets/ui/home_0.png"},
-            {ToolType::AGENT, "assets/ui/human.png"},
-            {ToolType::DESTROY, "assets/ui/destroy.png"},
+        const map<ToolType, string> TOOL_TEXTURES = {
+            {ToolType::GRASS, TEXTURE_TOOL_GRASS},
+            {ToolType::WATER, TEXTURE_TILE_WATER},
+            {ToolType::DIRT, TEXTURE_TOOL_DIRT},
+            {ToolType::SAND, TEXTURE_TOOL_SAND},
+            {ToolType::ROAD, TEXTURE_TOOL_ROAD},
+            {ToolType::BUILDING, TEXTURE_TOOL_BUILDING},
+            {ToolType::AGENT, TEXTURE_TOOL_AGENT},
+            {ToolType::DESTROY, TEXTURE_TOOL_DESTROY},
         };
-        unordered_map<ToolType, Sprite*> toolSprites;
+        map<int, ToolType> intToToolType;
+        map<ToolType, Sprite*> toolSprites;
 
         ToolType activeTool = ToolType::NONE;
         ToolType hoverTool = ToolType::NONE;

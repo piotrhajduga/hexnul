@@ -10,7 +10,14 @@
 using namespace std;
 
 GameState::GameState() {}
-GameState::~GameState() {}
+GameState::~GameState() {
+    for (auto it : ground) {
+        delete it.second;
+    }
+    for (auto it : things) {
+        delete it.second;
+    }
+}
 
 Tile* GameState::getGround(SDL_Point coord) {
     try {
@@ -34,7 +41,11 @@ bool GameState::isGround(SDL_Point coord) {
 }
 
 void GameState::removeGround(SDL_Point coord) {
-    ground.erase(coord);
+    try {
+        delete ground.at(coord);
+        ground.erase(coord);
+    } catch (const out_of_range& oor) {
+    }
 }
 
 int GameState::countThings(SDL_Point coord) {

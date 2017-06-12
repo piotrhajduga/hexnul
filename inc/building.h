@@ -6,6 +6,7 @@
 #include <list>
 #include "SDL.h"
 
+#include "constants.h"
 #include "utils.h"
 #include "road.h"
 #include "sprite.h"
@@ -26,8 +27,8 @@ class BuildingWithLevel : public RoadNode {
         const int MAXLEVEL = 1;
         const int MAX_VISIBLE_SEGMENTS = 1;
         const char* LEVEL_TEXTURES[2] = {
-            "assets/tiles/building/home_0.png",
-            "assets/tiles/building/home_1.png",
+            TEXTURE_BUILDING_HOME_0,
+            TEXTURE_BUILDING_HOME_1,
         };
 
     public:
@@ -52,7 +53,6 @@ class BuildingWithLevel : public RoadNode {
 class BuildingSegment : public Sprite, public Thing  {
     public:
         const int BUILDINGSEGMENT_SIZE = 10;
-        const char* BUILDINGSEGMENT_TEXTURE_FILE = "assets/tiles/building.png";
 
         BuildingSegment(SDL_Renderer* renderer);
 
@@ -79,7 +79,6 @@ class BuildingStack : public std::list<Thing*>, public Thing {
 class Building : public Sprite, public Thing {
     public:
         const int BUILDING_SIZE = 0;
-        const char* BUILDING_TEXTURE_FILES[1] = {"assets/tiles/building/home_0.png"};
 
         Building(SDL_Renderer* renderer);
 

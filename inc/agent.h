@@ -15,7 +15,6 @@ class Agent : public Sprite {
     public:
         const int AGENT_W = 10;
         const int AGENT_H = 22;
-        const char* AGENT_TEXTURE_FILE = "assets/world/human.png";
 
         Agent(SDL_Renderer* renderer, GameState* state, SDL_Point pos);
         virtual ~Agent();
