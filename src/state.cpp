@@ -4,6 +4,7 @@
 
 #include "building.h"
 #include "utils.h"
+#include "agent.h"
 
 #include "state.h"
 

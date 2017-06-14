@@ -5,9 +5,10 @@
 #include <unordered_map>
 #include "SDL.h"
 #include "renderable.h"
+#include "pathnode.h"
 #include "thingtype.h"
 
-class Thing : public Renderable {
+class Thing : public Renderable, public PathNode {
     public:
         int height = 0;
 
@@ -20,6 +21,9 @@ class Thing : public Renderable {
         };
 
         virtual void init() {};
+
+        bool isPassable() { return false; }
+        int getMoveCost() { return 1000; }
 };
 
 #endif	/* _HEXNUL_BASE_THING_H_ */

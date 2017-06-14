@@ -96,6 +96,7 @@ void Game::OnClick(SDL_MouseButtonEvent* event) {
 }
 
 void Game::OnLoop() {
+    world->OnLoop();
 }
 
 void Game::OnRender() {

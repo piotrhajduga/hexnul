@@ -2,8 +2,10 @@
 #include <functional>
 #include <iostream>
 
+#include "time.h"
 #include "SDL.h"
 
+#include "constants.h"
 #include "utils.h"
 #include "renderable.h"
 #include "sprite.h"
@@ -13,19 +15,21 @@
 #include "road.h"
 #include "direction.h"
 #include "world.h"
-#include "toolbar.h"
 #include "agent.h"
+#include "toolbar.h"
 #include "state.h"
 
 using namespace std;
 
 GameWorld::GameWorld(SDL_Renderer *renderer, GameState *istate, Toolbar* itoolbar) 
     : Renderable(renderer) {
+    srand(time(NULL));
+
     state = istate;
     toolbar = itoolbar;
 
-    hover = new Sprite(renderer, HOVER_TEXTURE_FILE, SDL_BLENDMODE_ADD);
-    empty = new Sprite(renderer, EMPTY_TEXTURE_FILE);
+    hover = new Sprite(renderer, TEXTURE_TILE_HOVER, SDL_BLENDMODE_BLEND);
+    empty = new Sprite(renderer, TEXTURE_TILE_EMPTY);
 
     initHexs({VIEW_RADIUS-1,VIEW_RADIUS}, VIEW_RADIUS);
 }
@@ -70,10 +74,6 @@ GameWorld::~GameWorld() {
     delete empty;
     delete hover;
 
-    if (agent != NULL) {
-        delete agent;
-    }
-
     Sprite::clearTextureCache();
 }
 
@@ -84,7 +84,7 @@ void GameWorld::OnClick(SDL_MouseButtonEvent* event) {
     if (hexs.find(coord) != hexs.end()) {
         switch (event->button) {
         case SDL_BUTTON_LEFT:
-            useTool(coord);
+            toolbar->useActiveTool(coord);
             break;
         case SDL_BUTTON_RIGHT:
             toolbar->setActive(ToolType::NONE);
@@ -100,81 +100,6 @@ void GameWorld::OnClick(SDL_MouseButtonEvent* event) {
         updateRoadNode(thing, neighbors);
     }
     updateNeighbors(neighbors, thing);
-}
-
-void GameWorld::useTool(SDL_Point coord) {
-    Tile* ground = state->getGround(coord);
-    Thing* thing = state->getThing(coord);
-
-    switch (toolbar->getActive()) {
-    case ToolType::GRASS:
-        if (thing == NULL && ground == NULL) {
-            LOG(DEBUG, "Set GRASS");
-            state->setGround(coord, new Tile(GRASS, renderer));
-        }
-        break;
-    case ToolType::WATER:
-        if (thing == NULL && ground == NULL) {
-            LOG(DEBUG, "Set WATER");
-            state->setGround(coord, new Tile(WATER, renderer));
-        }
-        break;
-    case ToolType::DIRT:
-        if (thing == NULL && ground == NULL) {
-            LOG(DEBUG, "Set DIRT");
-            state->setGround(coord, new Tile(DIRT, renderer));
-        }
-        break;
-    case ToolType::SAND:
-        if (thing == NULL && ground == NULL) {
-            LOG(DEBUG, "Set SAND");
-            state->setGround(coord, new Tile(SAND, renderer));
-        }
-        break;
-    case ToolType::ROAD:
-        if (ground!=NULL && ground->isContainer() && thing==NULL) {
-            LOG(DEBUG, "Put ROAD");
-            thing = new Road(renderer);
-            state->putThing(coord, thing);
-        }
-        break;
-    case ToolType::BUILDING:
-        if (ground!=NULL && ground->isContainer()) {
-            if (thing==NULL) {
-                LOG(DEBUG, "Create Building");
-                state->putThing(coord, new BuildingWithLevel(renderer));
-            } else {
-                BuildingWithLevel* building = dynamic_cast<BuildingWithLevel*>(thing);
-                if (building!=NULL) {
-                    building->incLevel();
-                }
-            }
-        }
-        break;
-    case ToolType::AGENT:
-        if (agent==NULL) {
-            if (ground != NULL) {
-                LOG(DEBUG, "Create new PathfindingAgent");
-                agent = new PathfindingAgent(renderer, state, coord);
-            }
-        } else {
-            agent->setDestination(coord);
-        }
-        break;
-    case ToolType::DESTROY:
-        LOG(DEBUG, "Destroy!");
-        if (state->countThings(coord) > 0) {
-            LOG(DEBUG, "Oh, there's a thing! Destroy!");
-            state->clearThing(coord);
-        //} else if (ground != NULL) {
-            //LOG(DEBUG, "Oh, there's ground! Destroy!");
-            //state->removeGround(coord);
-        }
-        break;
-    default:
-        //idle
-        break;
-    }
 }
 
 void GameWorld::updateNeighbors(NeighborArray neighbors, RoadNode* thing) {
@@ -244,7 +169,7 @@ void GameWorld::render(SDL_Rect* rect) {
         drawHex(*it);
     }
 
-    drawAgent();
+    drawAgents();
 }
 
 void GameWorld::OnMouseMove(SDL_MouseMotionEvent* event) {
@@ -308,10 +233,24 @@ void GameWorld::drawHover(SDL_Point coord, SDL_Rect* rect) {
     }
 }
 
-void GameWorld::drawAgent() {
+void GameWorld::drawAgents() {
     SDL_Rect rect;
-    if (agent != NULL) {
+    Agent* agent = toolbar->getAgent();
+    if (agent == NULL) {
+        return;
+    }
+    //for (auto agent : state->getAgents()) {
         rect = getHexRectForCoord(agent->getPosition());
         agent->render(&rect);
+    //}
+}
+
+void GameWorld::OnLoop() {
+    Agent* agent = toolbar->getAgent();
+    if (agent == NULL) {
+        return;
     }
+    //for (auto agent : state->getAgents()) {
+        agent->update();
+    //}
 }

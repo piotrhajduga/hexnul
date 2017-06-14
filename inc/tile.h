@@ -8,6 +8,7 @@
 #include "SDL_image.h"
 
 #include "constants.h"
+#include "pathnode.h"
 #include "sprite.h"
 #include "utils.h"
 #include "tile.h"
@@ -21,18 +22,20 @@ typedef enum {
 typedef struct {
     const char* textureFile;
     bool isContainer;
+    bool isPassable;
+    int moveCost;
 } TileData;
 
 typedef unordered_map<TileType, TileData> TileTypeDataMap;
 
 static TileTypeDataMap TILE_TYPE_DATA = {
-    {GRASS, {TEXTURE_TILE_GRASS, true}},
-    {WATER, {TEXTURE_TILE_WATER, false}},
-    {DIRT, {TEXTURE_TILE_DIRT, true}},
-    {SAND, {TEXTURE_TILE_SAND, false}},
+    {GRASS, {TEXTURE_TILE_GRASS, true, true, 10}},
+    {WATER, {TEXTURE_TILE_WATER, false, false, 100}},
+    {DIRT, {TEXTURE_TILE_DIRT, true, true, 20}},
+    {SAND, {TEXTURE_TILE_SAND, false, true, 50}},
 };
 
-class Tile : public Sprite {
+class Tile : public Sprite, public PathNode {
     public:
         static Tile* getTile(TileType type, SDL_Renderer* renderer);
 
@@ -43,7 +46,11 @@ class Tile : public Sprite {
 
         bool isContainer() { return _isContainer; }
 
+        int getMoveCost();
+        bool isPassable();
     private:
+        int moveCost = 0;
+        int passable = true;
         TileType type;
         bool _isContainer = false;
 };

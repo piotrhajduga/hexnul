@@ -38,29 +38,29 @@ STATE_INC = $(addprefix $(INC_DIR)/,state.h utils.h direction.h tile.h)
 $(OBJ_DIR)/state.o: $(SRC_DIR)/state.cpp $(STATE_INC)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-TILE_INC = $(addprefix $(INC_DIR)/,tile.h sprite.h constants.h)
+TILE_INC = $(addprefix $(INC_DIR)/,tile.h sprite.h constants.h pathnode.h)
 $(OBJ_DIR)/tile.o: $(SRC_DIR)/tile.cpp $(TILE_INC)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-THING_INC = $(addprefix $(INC_DIR)/,thing.h thingtype.h renderable.h)
+THING_INC = $(addprefix $(INC_DIR)/,thing.h thingtype.h renderable.h pathnode.h)
 $(OBJ_DIR)/thing.o: $(SRC_DIR)/thing.cpp $(THING_INC)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 $(OBJ_DIR)/sprite.o: $(SRC_DIR)/sprite.cpp $(INC_DIR)/sprite.h $(INC_DIR)/renderable.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-WORLD_INC = $(addprefix $(INC_DIR)/,world.h toolbar.h agent.h building.h road.h direction.h tile.h state.h utils.h sprite.h)
+WORLD_INC = $(addprefix $(INC_DIR)/,world.h toolbar.h agent.h building.h road.h direction.h tile.h state.h utils.h sprite.h pathnode.h)
 $(OBJ_DIR)/world.o: $(SRC_DIR)/world.cpp $(WORLD_INC)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 $(OBJ_DIR)/utils.o: $(SRC_DIR)/utils.cpp $(INC_DIR)/utils.h $(INC_DIR)/constants.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-ROAD_INC = $(addprefix $(INC_DIR)/,road.h direction.h thing.h thingtype.h sprite.h)
+ROAD_INC = $(addprefix $(INC_DIR)/,road.h direction.h thing.h thingtype.h sprite.h pathnode.h)
 $(OBJ_DIR)/road.o: $(SRC_DIR)/road.cpp $(ROAD_INC)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-BUILDING_INC = $(addprefix $(INC_DIR)/,building.h utils.h constants.h thing.h thingtype.h)
+BUILDING_INC = $(addprefix $(INC_DIR)/,building.h utils.h constants.h thing.h thingtype.h pathnode.h)
 $(OBJ_DIR)/building.o: $(SRC_DIR)/building.cpp $(BUILDING_INC)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
@@ -68,7 +68,7 @@ TOOLBAR_INC = $(addprefix $(INC_DIR)/,toolbar.h renderable.h sprite.h world.h st
 $(OBJ_DIR)/toolbar.o: $(SRC_DIR)/toolbar.cpp $(TOOLBAR_INC)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-AGENT_INC = $(addprefix $(INC_DIR)/,agent.h sprite.h renderable.h state.h utils.h direction.h)
+AGENT_INC = $(addprefix $(INC_DIR)/,agent.h sprite.h renderable.h state.h utils.h direction.h pathnode.h)
 $(OBJ_DIR)/agent.o: $(SRC_DIR)/agent.cpp $(AGENT_INC)
 	$(CXX) $(CXXFLAGS) $< -o $@
 

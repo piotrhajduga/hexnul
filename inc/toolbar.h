@@ -12,6 +12,7 @@
 #include "utils.h"
 
 #include "renderable.h"
+#include "agent.h"
 #include "sprite.h"
 #include "state.h"
 
@@ -55,6 +56,9 @@ class Toolbar : public Renderable {
         void OnClick(SDL_MouseButtonEvent* event);
         void OnMouseMove(SDL_MouseMotionEvent* event);
 
+        void useActiveTool(SDL_Point coord);
+        Agent* getAgent();
+
     private:
         GameState* state;
 
@@ -76,6 +80,8 @@ class Toolbar : public Renderable {
 
         Sprite* hover;
         Sprite* active;
+
+        Agent* agent = NULL;
 };
 
 #endif //_HEXNUL_TOOLBAR_H_

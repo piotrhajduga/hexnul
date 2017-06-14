@@ -2,7 +2,6 @@
 #define	_HEXNUL_AGENT_H_
 
 #include <list>
-#include <queue>
 #include <string>
 #include "SDL.h"
 #include "state.h"
@@ -29,24 +28,11 @@ class Agent : public Sprite {
         void render(SDL_Rect* rect);
 
     protected:
+        void move(SDL_Point coord);
+
         SDL_Point pos;
 
         GameState* state;
-};
-
-struct PathNode {
-    Direction dir;
-    SDL_Point dest;
-    unsigned short int g = 0xff;
-    unsigned short int h = 0xff;
-};
-
-class PathNodeCompare {
-    private:
-        bool reverse;
-    public:
-        PathNodeCompare(const bool& reverse=false);
-        bool operator() (const PathNode& lnode, const PathNode& rnode) const;
 };
 
 class PathfindingAgent : public Agent {
@@ -59,13 +45,20 @@ class PathfindingAgent : public Agent {
         void update();
 
     protected:
-        void searchPath();
+        bool findPath();
 
     private:
+        int lastMoveTicks = 0;
+
         SDL_Point dest;
 
-        list<PathNode> path;
-        priority_queue<PathNode,vector<PathNode>,PathNodeCompare> queue;
+        list<SDL_Point> path;
+
+        bool isPassable(SDL_Point point);
+
+        int gscore(SDL_Point point);
+
+        int hscore(SDL_Point point);
 };
 
 #endif	/* _HEXNUL_AGENT_H_ */

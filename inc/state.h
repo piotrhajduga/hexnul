@@ -34,6 +34,7 @@ typedef std::set<SDL_Point, compareCoords> PointSet;
 
 typedef std::unordered_map<SDL_Point, Thing*, hashCoord, equalsCoords> ThingMap;
 
+
 class GameState {
     public:
         GameState();

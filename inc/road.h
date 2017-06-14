@@ -31,6 +31,9 @@ class RoadNode : public Thing {
         void setSegmentVisible(Direction dir, bool cond);
 
         bool isVisible();
+
+        bool isPassable() { return true; }
+        int getMoveCost() { return 5; }
     protected:
         const char* SEGMENTS[6] = {
             "assets/tiles/road_tl.png",

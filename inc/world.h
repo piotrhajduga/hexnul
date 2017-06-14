@@ -34,6 +34,7 @@ class GameWorld : public Renderable {
 
         void setHover(SDL_Point coord);
 
+        void OnLoop();
         void OnClick(SDL_MouseButtonEvent* event);
         void OnMouseMove(SDL_MouseMotionEvent* event);
     protected:
@@ -42,14 +43,10 @@ class GameWorld : public Renderable {
         void drawHex(SDL_Point coord);
         void drawHover(SDL_Point coord, SDL_Rect* rect);
         void drawThings(SDL_Point coord, SDL_Rect* destRect);
-        void useTool(SDL_Point coord);
 
     private:
         GameState* state;
         Toolbar* toolbar;
-
-        const char* EMPTY_TEXTURE_FILE = "assets/tiles/empty.png";
-        const char* HOVER_TEXTURE_FILE = "assets/ui/hover.png";
 
         int VIEW_RADIUS = 10;
         int HEX_H = WIN_H/(VIEW_RADIUS*2-1);
@@ -80,7 +77,7 @@ class GameWorld : public Renderable {
         void drawHexOutline(SDL_Point coord);
         SDL_Rect getHexRectForCoord(SDL_Point coord);
 
-        void drawAgent();
+        void drawAgents();
 
         void updateRoadNode(RoadNode* road, NeighborArray neighbors);
         void updateNeighbors(NeighborArray neighbors, RoadNode* thing);

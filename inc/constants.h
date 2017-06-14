@@ -1,7 +1,7 @@
 #ifndef	_HEXNUL_CONSTANTS_H_
 #define	_HEXNUL_CONSTANTS_H_
 
-#define LOGGING_LEVEL WARN
+#define LOGGING_LEVEL DEBUG
 
 #define TEXTURE_AGENT "assets/world/human.png"
 
@@ -12,6 +12,9 @@
 #define TEXTURE_TILE_WATER "assets/tiles/water.png"
 #define TEXTURE_TILE_DIRT "assets/tiles/dirt.png"
 #define TEXTURE_TILE_SAND "assets/tiles/sand.png"
+
+#define TEXTURE_TILE_EMPTY "assets/tiles/empty.png"
+#define TEXTURE_TILE_HOVER "assets/ui/hover.png"
 
 ////////  BUILDINGS  ////////
 #define TEXTURE_BUILDING_SEGMENT "assets/tiles/building.png"

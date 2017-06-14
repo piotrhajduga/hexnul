@@ -1,5 +1,8 @@
 #include <string>
 #include "utils.h"
+#include "tile.h"
+#include "building.h"
+#include "road.h"
 #include "toolbar.h"
 
 
@@ -33,6 +36,9 @@ Toolbar::~Toolbar() {
     }
     delete hover;
     delete active;
+    if (agent != NULL) {
+        delete agent;
+    }
 }
 
 ToolType Toolbar::toolTypeForXY(SDL_Point point) {
@@ -113,4 +119,87 @@ void Toolbar::OnClick(SDL_MouseButtonEvent* event) {
 
 void Toolbar::OnMouseMove(SDL_MouseMotionEvent* event) {
     setHover(toolTypeForXY({event->x, event->y}));
+}
+
+void Toolbar::useActiveTool(SDL_Point coord) {
+    Tile* ground = state->getGround(coord);
+    Thing* thing = state->getThing(coord);
+
+    switch (getActive()) {
+    case ToolType::GRASS:
+        if (thing == NULL && ground == NULL) {
+            LOG(DEBUG, "Set GRASS");
+            state->setGround(coord, new Tile(GRASS, renderer));
+        }
+        break;
+    case ToolType::WATER:
+        if (thing == NULL && ground == NULL) {
+            LOG(DEBUG, "Set WATER");
+            state->setGround(coord, new Tile(WATER, renderer));
+        }
+        break;
+    case ToolType::DIRT:
+        if (thing == NULL && ground == NULL) {
+            LOG(DEBUG, "Set DIRT");
+            state->setGround(coord, new Tile(DIRT, renderer));
+        }
+        break;
+    case ToolType::SAND:
+        if (thing == NULL && ground == NULL) {
+            LOG(DEBUG, "Set SAND");
+            state->setGround(coord, new Tile(SAND, renderer));
+        }
+        break;
+    case ToolType::ROAD:
+        if (ground!=NULL && ground->isContainer() && thing==NULL) {
+            LOG(DEBUG, "Put ROAD");
+            thing = new Road(renderer);
+            state->putThing(coord, thing);
+        }
+        break;
+    case ToolType::BUILDING:
+        if (ground!=NULL && ground->isContainer()) {
+            if (thing==NULL) {
+                LOG(DEBUG, "Create Building");
+                state->putThing(coord, new BuildingWithLevel(renderer));
+            } else {
+                BuildingWithLevel* building = dynamic_cast<BuildingWithLevel*>(thing);
+                if (building!=NULL) {
+                    building->incLevel();
+                }
+            }
+        }
+        break;
+    case ToolType::AGENT:
+        if (agent==NULL) {
+            if (ground != NULL) {
+                LOG(DEBUG, "Create new PathfindingAgent");
+                agent = new PathfindingAgent(renderer, state, coord);
+                //state->addAgent(agent);
+            }
+        } else {
+            PathfindingAgent* pfagent = dynamic_cast<PathfindingAgent*>(agent);
+            if (pfagent != NULL) {
+                pfagent->setDestination(coord);
+            }
+        }
+        break;
+    case ToolType::DESTROY:
+        LOG(DEBUG, "Destroy!");
+        if (state->countThings(coord) > 0) {
+            LOG(DEBUG, "Oh, there's a thing! Destroy!");
+            state->clearThing(coord);
+        //} else if (ground != NULL) {
+            //LOG(DEBUG, "Oh, there's ground! Destroy!");
+            //state->removeGround(coord);
+        }
+        break;
+    default:
+        //idle
+        break;
+    }
+}
+
+Agent* Toolbar::getAgent() {
+    return agent;
 }
