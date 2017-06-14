@@ -103,7 +103,7 @@ bool PathfindingAgent::findPath() {
     set<SDL_Point, compareCoords> open;
 
     auto compareCoordPriorities = [&] (const SDL_Point& lp, const SDL_Point& rp) {
-        return g[lp]+h[lp] > g[rp]+g[rp];
+        return g[lp]+h[lp] > g[rp]+h[rp];
     };
     priority_queue<SDL_Point,vector<SDL_Point>,decltype(compareCoordPriorities)> openqueue(compareCoordPriorities);
 
