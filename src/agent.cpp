@@ -47,7 +47,7 @@ void Agent::update() {
 void Agent::render(SDL_Rect* rect) {
     SDL_Rect newrect = {
         rect->x + rect->w/2 - AGENT_W/2,
-        rect->y + rect->h/2 - AGENT_H/2,
+        rect->y + rect->h/2 - AGENT_H*3/4,
         AGENT_W,
         AGENT_H,
     };
@@ -65,6 +65,7 @@ void PathfindingAgent::setDestination(SDL_Point idest) {
     LOG(DEBUG, "PathfindingAgent::setDestination");
     dest = idest;
     findPath();
+    lastMoveTicks = SDL_GetTicks();
 }
 
 bool PathfindingAgent::isPassable(SDL_Point coord) {
