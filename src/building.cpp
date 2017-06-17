@@ -34,7 +34,7 @@ Sprite* BuildingWithLevel::getLevel(int level) {
 
     if (levelSprite==NULL) {
         LOG(INFO, "Building level sprite not found");
-        levelSprite = new Sprite(renderer, LEVEL_TEXTURES[level]);
+        levelSprite = new Sprite(renderer, LEVELS[level].textureFile);
         BuildingWithLevel::levels[level] = levelSprite;
     }
 
@@ -63,12 +63,17 @@ void BuildingWithLevel::setLevel(int ilevel) {
 }
 
 void BuildingWithLevel::update() {
-    sprite = getLevel(getLevel());
+    sprite = getLevel(level);
+    height = LEVELS[level].height;
 }
 
 void BuildingWithLevel::render(SDL_Rect* rect) {
     RoadNode::render(rect);
+    rect->y -= height;
+    rect->h += height;
     sprite->render(rect);
+    rect->y += height;
+    rect->h -= height;
 }
 
 BuildingSegment::BuildingSegment(SDL_Renderer* renderer)

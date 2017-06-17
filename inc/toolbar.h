@@ -63,10 +63,10 @@ class Toolbar : public Renderable {
         GameState* state;
 
         const map<ToolType, string> TOOL_TEXTURES = {
-            {ToolType::GRASS, TEXTURE_TOOL_GRASS},
-            {ToolType::WATER, TEXTURE_TILE_WATER},
-            {ToolType::DIRT, TEXTURE_TOOL_DIRT},
-            {ToolType::SAND, TEXTURE_TOOL_SAND},
+            //{ToolType::GRASS, TEXTURE_TOOL_GRASS},
+            //{ToolType::WATER, TEXTURE_TILE_WATER},
+            //{ToolType::DIRT, TEXTURE_TOOL_DIRT},
+            //{ToolType::SAND, TEXTURE_TOOL_SAND},
             {ToolType::ROAD, TEXTURE_TOOL_ROAD},
             {ToolType::BUILDING, TEXTURE_TOOL_BUILDING},
             {ToolType::AGENT, TEXTURE_TOOL_AGENT},

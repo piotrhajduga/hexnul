@@ -8,13 +8,13 @@
 
 const char* toString(ToolType type) {
     switch(type) {
-    //case ToolType::GRASS: return "ToolType::GRASS";
-    //case ToolType::WATER: return "ToolType::WATER";
+    case ToolType::GRASS: return "ToolType::GRASS";
+    case ToolType::WATER: return "ToolType::WATER";
     case ToolType::DIRT: return "ToolType::DIRT";
     case ToolType::SAND: return "ToolType::SAND";
     case ToolType::ROAD: return "ToolType::ROAD";
     case ToolType::BUILDING: return "ToolType::BUILDING";
-    //case ToolType::DESTROY: return "ToolType::DESTROY";
+    case ToolType::DESTROY: return "ToolType::DESTROY";
     default:
     case ToolType::NONE: return "ToolType::NONE";
     }

@@ -12,6 +12,7 @@
 #define TEXTURE_TILE_WATER "assets/tiles/water.png"
 #define TEXTURE_TILE_DIRT "assets/tiles/dirt.png"
 #define TEXTURE_TILE_SAND "assets/tiles/sand.png"
+#define TEXTURE_TILE_STONE "assets/tiles/stone.png"
 
 #define TEXTURE_TILE_EMPTY "assets/tiles/empty.png"
 #define TEXTURE_TILE_HOVER "assets/ui/hover.png"
@@ -21,6 +22,11 @@
 
 #define TEXTURE_BUILDING_HOME_0 "assets/tiles/building/home_0.png"
 #define TEXTURE_BUILDING_HOME_1 "assets/tiles/building/home_1.png"
+#define TEXTURE_BUILDING_HOME_2 "assets/tiles/building/home_2.png"
+
+////////  MAPS  ////////
+
+#define MAP_0 "assets/maps/map.png"
 
 ////////  TOOLS  ////////
 #define TEXTURE_TOOL_GRASS "assets/ui/grass.png"

@@ -14,21 +14,25 @@
 
 using namespace std;
 
+struct BuildingLevelData {
+    const char* textureFile;
+    int height;
+};
+
 class BuildingWithLevel : public RoadNode {
     private:
         static map<int, Sprite*> levels;
         int level = 0;
-
         Sprite* sprite;
 
     protected:
         void update();
 
-        const int MAXLEVEL = 1;
-        const int MAX_VISIBLE_SEGMENTS = 1;
-        const char* LEVEL_TEXTURES[2] = {
-            TEXTURE_BUILDING_HOME_0,
-            TEXTURE_BUILDING_HOME_1,
+        const int MAXLEVEL = 2;
+        const BuildingLevelData LEVELS[3] = {
+            {TEXTURE_BUILDING_HOME_0, 0},
+            {TEXTURE_BUILDING_HOME_1, 0},
+            {TEXTURE_BUILDING_HOME_2, 12},
         };
 
     public:

@@ -17,6 +17,7 @@
 #include "world.h"
 #include "agent.h"
 #include "toolbar.h"
+#include "maploader.h"
 #include "state.h"
 
 using namespace std;
@@ -32,19 +33,18 @@ GameWorld::GameWorld(SDL_Renderer *renderer, GameState *istate, Toolbar* itoolba
     empty = new Sprite(renderer, TEXTURE_TILE_EMPTY);
 
     initHexs({VIEW_RADIUS-1,VIEW_RADIUS}, VIEW_RADIUS);
+    //MapLoader maploader(state, MAP_0, {37, 30}, 24);
+    //maploader.load();
 }
 
 Tile* GameWorld::generateRandomTile() {
-    int randint = rand() % 4;
+    int randint = rand() % 5;
     return new Tile(TileType(randint), renderer);
 }
 
 void GameWorld::insertHex(SDL_Point coord) {
-    int randint = rand() % 100;
     hexs.insert(coord);
-    if (randint > 20) {
-        state->setGround(coord, generateRandomTile());
-    }
+    state->setGround(coord, generateRandomTile());
 }
 
 void GameWorld::initHexs(SDL_Point origin, int size) {
@@ -107,8 +107,7 @@ void GameWorld::updateNeighbors(NeighborArray neighbors, RoadNode* thing) {
     SDL_Point coord;
     Direction dir = (Direction)0;
 
-    LOG(DEBUG, "Update neighbors");
-
+    LOG(DEBUG, "Update neighbors...");
     while (dir<6) {
         coord = neighbors[dir];
         neighbor = dynamic_cast<RoadNode*>(state->getThing(coord));
