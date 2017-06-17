@@ -33,8 +33,11 @@ GameWorld::GameWorld(SDL_Renderer *renderer, GameState *istate, Toolbar* itoolba
     empty = new Sprite(renderer, TEXTURE_TILE_EMPTY);
 
     initHexs({VIEW_RADIUS-1,VIEW_RADIUS}, VIEW_RADIUS);
-    //MapLoader maploader(state, MAP_0, {37, 30}, 24);
-    //maploader.load();
+
+    MapLoader maploader(state, renderer);
+    int mapOffsetX = rand() % (61-VIEW_RADIUS);
+    int mapOffsetY = rand() % (61-VIEW_RADIUS);
+    maploader.load(MAP_0, {mapOffsetX,mapOffsetY}, {VIEW_RADIUS-1,VIEW_RADIUS}, VIEW_RADIUS);
 }
 
 Tile* GameWorld::generateRandomTile() {
@@ -44,7 +47,7 @@ Tile* GameWorld::generateRandomTile() {
 
 void GameWorld::insertHex(SDL_Point coord) {
     hexs.insert(coord);
-    state->setGround(coord, generateRandomTile());
+    //state->setGround(coord, generateRandomTile());
 }
 
 void GameWorld::initHexs(SDL_Point origin, int size) {

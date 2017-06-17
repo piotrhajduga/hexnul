@@ -23,7 +23,7 @@ $(OUT_DIR):
 $(OBJ_DIR):
 	mkdir $(OBJ_DIR)
 
-$(EXE): $(addprefix $(OBJ_DIR)/,main.o utils.o agent.o game.o state.o toolbar.o sprite.o tile.o thing.o world.o building.o road.o thing.o)
+$(EXE): $(addprefix $(OBJ_DIR)/,main.o utils.o agent.o game.o maploader.o state.o toolbar.o sprite.o tile.o thing.o world.o building.o road.o thing.o)
 	$(CXX) $^ $(LDFLAGS) -o $@
 
 MAIN_INC = $(addprefix $(INC_DIR)/,game.h road.h thing.h utils.h)
@@ -49,8 +49,12 @@ $(OBJ_DIR)/thing.o: $(SRC_DIR)/thing.cpp $(THING_INC)
 $(OBJ_DIR)/sprite.o: $(SRC_DIR)/sprite.cpp $(INC_DIR)/sprite.h $(INC_DIR)/renderable.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-WORLD_INC = $(addprefix $(INC_DIR)/,world.h toolbar.h agent.h building.h road.h direction.h tile.h state.h utils.h sprite.h pathnode.h)
+WORLD_INC = $(addprefix $(INC_DIR)/,world.h maploader.h toolbar.h agent.h building.h road.h direction.h tile.h state.h utils.h sprite.h pathnode.h)
 $(OBJ_DIR)/world.o: $(SRC_DIR)/world.cpp $(WORLD_INC)
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+MAPLOADER_INC = $(addprefix $(INC_DIR)/,maploader.h utils.h state.h tile.h)
+$(OBJ_DIR)/maploader.o: $(SRC_DIR)/maploader.cpp $(MAPLOADER_INC)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 $(OBJ_DIR)/utils.o: $(SRC_DIR)/utils.cpp $(INC_DIR)/utils.h $(INC_DIR)/constants.h

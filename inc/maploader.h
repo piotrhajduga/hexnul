@@ -9,11 +9,12 @@ using namespace std;
 
 class MapLoader {
     public:
-        MapLoader(GameState* state, string mapFile, SDL_Point origin, int radius);
+        MapLoader(GameState* state, SDL_Renderer* renderer);
         ~MapLoader();
 
-        void load();
+        void load(string mapFile, SDL_Point srcorigin, SDL_Point dstorigin, int radius);
     protected:
+        SDL_Renderer* renderer;
         GameState* state;
         string mapFile;
         SDL_Point origin;
