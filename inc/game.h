@@ -32,6 +32,8 @@ class Game {
     private:
         static const int TOOLBAR_H = 62;
         const int FPS = 30;
+        int WIN_W = 1024;
+        int WIN_H = 768;
         bool running;
         unsigned int ticks = 0;
 

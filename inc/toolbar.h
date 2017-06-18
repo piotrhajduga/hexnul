@@ -32,10 +32,10 @@ using namespace std;
 
 class Toolbar : public Renderable {
     public:
-        static const int ACTIVE_W = 70;
-        static const int ACTIVE_H = 50;
-        static const int TOOL_W = 50;
-        static const int TOOL_H = 40;
+        static const int ACTIVE_W = 80;
+        static const int ACTIVE_H = 60;
+        static const int TOOL_W = 80;
+        static const int TOOL_H = 60;
         
         Toolbar(SDL_Renderer *renderer, GameState *state);
         virtual ~Toolbar();

@@ -24,6 +24,8 @@ class Agent : public Sprite {
         virtual void update();
 
         void move(Direction dir);
+        Uint8 getSpeed();
+        void setSpeed(Uint8 speed);
 
         void render(SDL_Rect* rect);
 
@@ -33,6 +35,7 @@ class Agent : public Sprite {
         SDL_Point pos;
 
         GameState* state;
+        Uint8 speed = 0;
 };
 
 class PathfindingAgent : public Agent {
@@ -45,6 +48,7 @@ class PathfindingAgent : public Agent {
         void update();
 
     protected:
+        Uint8 speed = 10;
         bool findPath();
 
     private:

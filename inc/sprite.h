@@ -24,11 +24,15 @@ class Sprite : public Renderable {
         Sprite(SDL_Renderer* renderer, string textureFile, SDL_BlendMode blend);
         virtual ~Sprite();
 
+        void render(SDL_Rect* rect);
+
         SDL_Texture* getTexture();
         SDL_Texture* getTexture(string textureFile, SDL_Renderer* renderer);
-        void render(SDL_Rect* rect);
+
+        SDL_Rect getTextureRect();
     private:
         SDL_Texture* texture;
+        SDL_Rect textureRect = {0,0,0,0};
 };
 
 #endif	/* _HEXNUL_H_ */

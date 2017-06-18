@@ -20,13 +20,12 @@ class Utils {
         static const LogLevel level = LOGGING_LEVEL;
 
     public:
-        static void log(LogLevel level, std::string msg);
-        static void log(LogLevel ilevel, std::string message, std::string file, int line);
+        static void log(LogLevel ilevel, std::string file, int line, std::string message);
 
         static SDL_Texture* loadTexture(std::string file, SDL_Renderer* renderer);
         static NeighborArray getNeighbors(SDL_Point coord);
 };
 
-#define LOG(level, message) Utils::log(level, message, __FILE__, __LINE__)
+#define LOG(level, message) Utils::log(level, __FILE__, __LINE__, message)
 
 #endif

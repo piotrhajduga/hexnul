@@ -55,7 +55,7 @@ bool Game::OnInit() {
     if(renderer == NULL) {
         return false;
     }
-    SDL_RenderSetLogicalSize(renderer, WIN_W, WIN_H);
+    //SDL_RenderSetLogicalSize(renderer, WIN_W, WIN_H);
 
     toolbar = new Toolbar(renderer, &state);
     world = new GameWorld(renderer, &state, toolbar);
@@ -100,6 +100,8 @@ void Game::OnLoop() {
 }
 
 void Game::OnRender() {
+    SDL_GetWindowSize(display, &WIN_W, &WIN_H);
+
     SDL_Rect rect;
 
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");

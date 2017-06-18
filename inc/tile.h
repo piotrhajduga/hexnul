@@ -29,11 +29,11 @@ typedef struct {
 typedef unordered_map<TileType, TileData> TileTypeDataMap;
 
 static TileTypeDataMap TILE_TYPE_DATA = {
-    {GRASS, {TEXTURE_TILE_GRASS, true, true, 10}},
-    {WATER, {TEXTURE_TILE_WATER, false, true, 1000}},
-    {DIRT, {TEXTURE_TILE_DIRT, true, true, 14}},
+    {GRASS, {TEXTURE_TILE_GRASS, true, true, 20}},
+    {WATER, {TEXTURE_TILE_WATER, false, true, 200}},
+    {DIRT, {TEXTURE_TILE_DIRT, true, true, 24}},
     {SAND, {TEXTURE_TILE_SAND, false, true, 30}},
-    {STONE, {TEXTURE_TILE_STONE, false, true, 50}},
+    {STONE, {TEXTURE_TILE_STONE, false, true, 60}},
 };
 
 class Tile : public Sprite, public PathNode {

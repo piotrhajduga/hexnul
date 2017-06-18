@@ -39,22 +39,29 @@ Sprite::Sprite(SDL_Renderer* renderer, SDL_Texture* iTexture)
     : Renderable(renderer) {
     LOG(DEBUG, "Sprite::Sprite from existing texture");
     texture = iTexture;
+    SDL_QueryTexture(texture, NULL, NULL, &textureRect.w, &textureRect.h);
 };
 
 Sprite::Sprite(SDL_Renderer* renderer, string textureFile)
     : Renderable(renderer) {
     LOG(DEBUG, string("Sprite::Sprite ")+textureFile);
     texture = getTexture(textureFile, renderer);
+    SDL_QueryTexture(texture, NULL, NULL, &textureRect.w, &textureRect.h);
 }
 
 Sprite::Sprite(SDL_Renderer* renderer, string textureFile, SDL_BlendMode blend)
     : Renderable(renderer) {
     texture = getTexture(textureFile, renderer);
     SDL_SetTextureBlendMode(texture, blend);
+    SDL_QueryTexture(texture, NULL, NULL, &textureRect.w, &textureRect.h);
 }
 
 Sprite::~Sprite() {}
 
 void Sprite::render(SDL_Rect* rect) {
     SDL_RenderCopy(renderer, texture, NULL, rect);
+}
+
+SDL_Rect Sprite::getTextureRect() {
+    return textureRect;
 }

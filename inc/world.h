@@ -18,10 +18,6 @@
 #include "agent.h"
 #include "state.h"
 
-#define WIN_W 1024
-#define WIN_H 768
-#define BOARD_OFFSET_X 0
-#define BOARD_OFFSET_Y 0
 
 class GameWorld : public Renderable {
     public:
@@ -44,22 +40,28 @@ class GameWorld : public Renderable {
         void drawHover(SDL_Point coord, SDL_Rect* rect);
         void drawThings(SDL_Point coord, SDL_Rect* destRect);
 
+        void updateDimensions(SDL_Rect* rect);
+
     private:
         GameState* state;
         Toolbar* toolbar;
 
-        int VIEW_RADIUS = 10;
-        int HEX_H = WIN_H/(VIEW_RADIUS*2-1);
-        int HEX_W = WIN_W/(VIEW_RADIUS*2-1);
-        int GRID_ROW_H = HEX_H*3/4;
-        int GRID_ROW_TOP_H = HEX_H/4;
+        int viewRadius = 10;
+
+        SDL_Rect winRect;
+
+        int dim_mul = 2;
+        int dim();
+        SDL_Point centeringOffset = {0,0};
+        SDL_Point hexDims;
+        void updateHexDims();
 
         //hexs is like an active region that user might act on
         PointSet hexs;
 
         PathfindingAgent* agent = NULL;
 
-        SDL_Point offset;
+        //SDL_Point offset;
         SDL_Point* hoverCoord = NULL;
 
         Sprite* empty;

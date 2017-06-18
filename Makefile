@@ -68,7 +68,7 @@ BUILDING_INC = $(addprefix $(INC_DIR)/,building.h utils.h constants.h thing.h th
 $(OBJ_DIR)/building.o: $(SRC_DIR)/building.cpp $(BUILDING_INC)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-TOOLBAR_INC = $(addprefix $(INC_DIR)/,toolbar.h renderable.h sprite.h world.h state.h)
+TOOLBAR_INC = $(addprefix $(INC_DIR)/,toolbar.h renderable.h sprite.h world.h state.h utils.h)
 $(OBJ_DIR)/toolbar.o: $(SRC_DIR)/toolbar.cpp $(TOOLBAR_INC)
 	$(CXX) $(CXXFLAGS) $< -o $@
 

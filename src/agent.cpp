@@ -36,6 +36,14 @@ void Agent::move(SDL_Point coord) {
     pos = coord;
 }
 
+Uint8 Agent::getSpeed() {
+    return speed;
+}
+
+void Agent::setSpeed(Uint8 ispeed) {
+    speed = ispeed;
+}
+
 void Agent::move(Direction dir) {
     pos = Utils::getNeighbors(pos)[dir];
 }
@@ -165,7 +173,7 @@ bool PathfindingAgent::findPath() {
 
 void PathfindingAgent::update() {
     if (!path.empty()) {
-        if (lastMoveTicks == 0 || SDL_TICKS_PASSED(SDL_GetTicks(), lastMoveTicks+gscore(pos)*20)) {
+        if (lastMoveTicks == 0 || SDL_TICKS_PASSED(SDL_GetTicks(), lastMoveTicks+gscore(pos)*30-getSpeed())) {
             LOG(DEBUG, string("Agent pos: {")+to_string(pos.x)+","+to_string(pos.y)+"}");
             LOG(DEBUG, string("Agent gscore: ")+to_string(gscore(pos)));
             LOG(DEBUG, string("Agent hscore: ")+to_string(hscore(pos)));

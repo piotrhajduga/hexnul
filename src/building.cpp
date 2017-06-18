@@ -68,12 +68,17 @@ void BuildingWithLevel::update() {
 }
 
 void BuildingWithLevel::render(SDL_Rect* rect) {
+    SDL_Rect textureRect = sprite->getTextureRect();
+    SDL_Rect backup = *rect;
+    int textureHeight = backup.w * textureRect.h / textureRect.w;
     RoadNode::render(rect);
-    rect->y -= height;
-    rect->h += height;
+    if (textureHeight > backup.h) {
+        rect->y = backup.y + backup.h - textureHeight;
+        rect->h = textureHeight;
+    }
     sprite->render(rect);
-    rect->y += height;
-    rect->h -= height;
+    rect->y = backup.y;
+    rect->h = backup.h;
 }
 
 BuildingSegment::BuildingSegment(SDL_Renderer* renderer)

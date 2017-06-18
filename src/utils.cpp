@@ -8,23 +8,7 @@
 
 using namespace std;
 
-void Utils::log(LogLevel ilevel, std::string message) {
-    if (ilevel >= level) {
-        switch (ilevel) {
-        case DEBUG:
-            std::cout<<"D"; break;
-        case INFO:
-            std::cout<<"I"; break;
-        case WARN:
-            std::cout<<"W"; break;
-        case ERROR:
-            std::cout<<"E"; break;
-        }
-        std::cout<<" | "<<message<<std::endl;
-    }
-}
-
-void Utils::log(LogLevel ilevel, std::string message, std::string file, int line) {
+void Utils::log(LogLevel ilevel, string file, int line, string message) {
     if (ilevel >= level) {
         switch (ilevel) {
         case DEBUG:
