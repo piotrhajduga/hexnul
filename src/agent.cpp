@@ -184,3 +184,16 @@ void PathfindingAgent::update() {
         }
     }
 }
+
+GoalOrientedAgent::GoalOrientedAgent(SDL_Renderer* renderer, GameState* state, SDL_Point position)
+: PathfindingAgent(renderer, state, position) {}
+
+GoalOrientedAgent::~GoalOrientedAgent() {}
+
+void GoalOrientedAgent::update() {
+    
+}
+
+void GoalOrientedAgent::addGoal(Goal goal) {
+    goals.push(goal);
+}

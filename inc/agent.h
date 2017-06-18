@@ -2,6 +2,8 @@
 #define	_HEXNUL_AGENT_H_
 
 #include <list>
+#include <queue>
+#include <functional>
 #include <string>
 #include "SDL.h"
 #include "state.h"
@@ -63,6 +65,29 @@ class PathfindingAgent : public Agent {
         int gscore(SDL_Point point);
 
         int hscore(SDL_Point point);
+};
+
+struct Goal {
+    int priority;
+    function<void(Agent*, GameState*)> action;
+
+    bool operator<(const Goal& rg) const {
+        return priority < rg.priority;
+    }
+};
+
+typedef priority_queue<Goal> GoalQueue;
+
+class GoalOrientedAgent : public PathfindingAgent {
+    public:
+        GoalOrientedAgent(SDL_Renderer* renderer, GameState* state, SDL_Point position);
+        virtual ~GoalOrientedAgent();
+
+        void update();
+
+        void addGoal(Goal goal);
+    private:
+        GoalQueue goals;
 };
 
 #endif	/* _HEXNUL_AGENT_H_ */
