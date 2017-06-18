@@ -74,8 +74,10 @@ void BuildingWithLevel::render(SDL_Rect* rect) {
     RoadNode::render(rect);
     if (textureHeight > backup.h) {
         rect->y = backup.y + backup.h - textureHeight;
-        rect->h = textureHeight;
+    } else {
+        rect->y = backup.y + (backup.h - textureHeight)/2;
     }
+    rect->h = textureHeight;
     sprite->render(rect);
     rect->y = backup.y;
     rect->h = backup.h;
