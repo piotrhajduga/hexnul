@@ -12,8 +12,8 @@ using namespace std;
 
 class Agent : public Sprite {
     public:
-        const int AGENT_W = 7;
-        const int AGENT_H = 15;
+        const int AGENT_W = 10;
+        const int AGENT_H = 20;
 
         Agent(SDL_Renderer* renderer, GameState* state, SDL_Point pos);
         virtual ~Agent();
