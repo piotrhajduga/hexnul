@@ -6,7 +6,7 @@
 #include <functional>
 #include <string>
 #include "SDL.h"
-#include "state.h"
+#include "worldstate.h"
 #include "sprite.h"
 #include "direction.h"
 
@@ -17,7 +17,7 @@ class Agent : public Sprite {
         const int AGENT_W = 10;
         const int AGENT_H = 20;
 
-        Agent(SDL_Renderer* renderer, GameState* state, SDL_Point pos);
+        Agent(SDL_Renderer* renderer, WorldState* state, SDL_Point pos);
         virtual ~Agent();
 
         void setPosition(SDL_Point pos);
@@ -36,13 +36,13 @@ class Agent : public Sprite {
 
         SDL_Point pos;
 
-        GameState* state;
+        WorldState* state;
         Uint8 speed = 0;
 };
 
 class PathfindingAgent : public Agent {
     public:
-        PathfindingAgent(SDL_Renderer* renderer, GameState* state, SDL_Point position);
+        PathfindingAgent(SDL_Renderer* renderer, WorldState* state, SDL_Point position);
         virtual ~PathfindingAgent();
 
         void setDestination(SDL_Point dest);
@@ -53,12 +53,12 @@ class PathfindingAgent : public Agent {
         Uint8 speed = 10;
         bool findPath();
 
-    private:
-        int lastMoveTicks = 0;
-
         SDL_Point dest;
 
         list<SDL_Point> path;
+
+    private:
+        int lastMoveTicks = 0;
 
         bool isPassable(SDL_Point point);
 
@@ -68,8 +68,15 @@ class PathfindingAgent : public Agent {
 };
 
 struct Goal {
+    enum Type {
+        GOTO,BUILD,NONE
+    } type;
+    
     int priority;
-    function<void(Agent*, GameState*)> action;
+
+    union Data {
+        SDL_Point gotoXY;
+    } data;
 
     bool operator<(const Goal& rg) const {
         return priority < rg.priority;
@@ -80,14 +87,18 @@ typedef priority_queue<Goal> GoalQueue;
 
 class GoalOrientedAgent : public PathfindingAgent {
     public:
-        GoalOrientedAgent(SDL_Renderer* renderer, GameState* state, SDL_Point position);
+        GoalOrientedAgent(SDL_Renderer* renderer, WorldState* state, SDL_Point position);
         virtual ~GoalOrientedAgent();
 
         void update();
 
+        bool isBusy();
         void addGoal(Goal goal);
     private:
+        Goal activeGoal;
         GoalQueue goals;
 };
+
+typedef GoalOrientedAgent GOAgent;
 
 #endif	/* _HEXNUL_AGENT_H_ */

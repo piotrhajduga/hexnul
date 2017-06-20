@@ -6,8 +6,9 @@
 
 #include "SDL.h"
 
+#include "constants.h"
 #include "direction.h"
-#include "state.h"
+#include "worldstate.h"
 #include "thing.h"
 
 using namespace std;
@@ -36,12 +37,12 @@ class RoadNode : public Thing {
         int getMoveCost() { return 5; }
     protected:
         const char* SEGMENTS[6] = {
-            "assets/tiles/road_tl.png",
-            "assets/tiles/road_tr.png",
-            "assets/tiles/road_r.png",
-            "assets/tiles/road_br.png",
-            "assets/tiles/road_bl.png",
-            "assets/tiles/road_l.png",
+            TEXTURE_ROAD_TL,
+            TEXTURE_ROAD_TR,
+            TEXTURE_ROAD_R,
+            TEXTURE_ROAD_BR,
+            TEXTURE_ROAD_BL,
+            TEXTURE_ROAD_L,
         };
 
         int getVisibleCount();
@@ -53,9 +54,6 @@ class RoadNode : public Thing {
 };
 
 class Road : public RoadNode, public Sprite {
-    protected:
-        const char* ROAD_CENTER = "assets/tiles/road_c.png";
-
     public:
         Road(SDL_Renderer* renderer);
 

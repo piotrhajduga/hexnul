@@ -14,7 +14,7 @@
 #include "renderable.h"
 #include "agent.h"
 #include "sprite.h"
-#include "state.h"
+#include "gamestate.h"
 
 enum class ToolType {
     AGENT,

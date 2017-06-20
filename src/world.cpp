@@ -18,7 +18,7 @@
 #include "agent.h"
 #include "toolbar.h"
 #include "maploader.h"
-#include "state.h"
+#include "gamestate.h"
 
 using namespace std;
 
@@ -286,6 +286,12 @@ void GameWorld::OnLoop() {
     if (agent != NULL) {
     //for (auto agent : state->getAgents()) {
         agent->update();
-    //}
+        GoalOrientedAgent* goagent = dynamic_cast<GoalOrientedAgent*>(agent);
+        if (goagent!=NULL && !goagent->isBusy()) {
+            Goal goal = state->getGoal();
+            if (goal.type != Goal::NONE) {
+                goagent->addGoal(goal);
+            }
+        }
     }
 }

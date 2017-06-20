@@ -6,7 +6,7 @@
 #include "constants.h"
 
 #include "utils.h"
-#include "state.h"
+#include "worldstate.h"
 #include "tile.h"
 #include "thing.h"
 #include "sprite.h"
@@ -16,7 +16,7 @@
 using namespace std;
 
 //TODO: passing AGENT_TEXTURE_FILE from header gives strange errors...
-Agent::Agent(SDL_Renderer* renderer, GameState* istate, SDL_Point ipos)
+Agent::Agent(SDL_Renderer* renderer, WorldState* istate, SDL_Point ipos)
 : Sprite(renderer, TEXTURE_AGENT) {
     state = istate;
     pos = ipos;
@@ -62,7 +62,7 @@ void Agent::render(SDL_Rect* rect) {
     Sprite::render(&newrect);
 }
 
-PathfindingAgent::PathfindingAgent(SDL_Renderer* renderer, GameState* state, SDL_Point pos)
+PathfindingAgent::PathfindingAgent(SDL_Renderer* renderer, WorldState* state, SDL_Point pos)
 : Agent(renderer, state, pos) {
     LOG(DEBUG, "PathfindingAgent::PathfindingAgent");
 }
@@ -185,15 +185,46 @@ void PathfindingAgent::update() {
     }
 }
 
-GoalOrientedAgent::GoalOrientedAgent(SDL_Renderer* renderer, GameState* state, SDL_Point position)
-: PathfindingAgent(renderer, state, position) {}
+GoalOrientedAgent::GoalOrientedAgent(SDL_Renderer* renderer, WorldState* state, SDL_Point position)
+: PathfindingAgent(renderer, state, position) {
+    activeGoal = {Goal::NONE, 1, 0};
+}
 
 GoalOrientedAgent::~GoalOrientedAgent() {}
 
 void GoalOrientedAgent::update() {
-    
+    switch (activeGoal.type) {
+        case Goal::GOTO:
+            PathfindingAgent::update();
+            if (path.empty()) {
+                LOG(DEBUG, "Goal achieved!");
+                activeGoal = {Goal::NONE, 1, 0};
+            }
+            break;
+        case Goal::NONE:
+            if (!goals.empty()) {
+                LOG(DEBUG, "Get new Goal");
+                activeGoal = goals.top();
+                switch(activeGoal.type) {
+                    case Goal::GOTO:
+                        setDestination(activeGoal.data.gotoXY);
+                        break;
+                    default:
+                        break;
+                }
+                goals.pop();
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+bool GoalOrientedAgent::isBusy() {
+    return activeGoal.type != Goal::NONE;
 }
 
 void GoalOrientedAgent::addGoal(Goal goal) {
+    LOG(DEBUG, "add GOAgent Goal");
     goals.push(goal);
 }

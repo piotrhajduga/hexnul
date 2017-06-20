@@ -1,5 +1,5 @@
-#ifndef	_HEXNUL_GAME_STATE_H_
-#define	_HEXNUL_GAME_STATE_H_
+#ifndef	_HEXNUL_WORLD_STATE_H_
+#define	_HEXNUL_WORLD_STATE_H_
 
 #include <set>
 #include <unordered_map>
@@ -35,10 +35,10 @@ typedef std::set<SDL_Point, compareCoords> PointSet;
 typedef std::unordered_map<SDL_Point, Thing*, hashCoord, equalsCoords> ThingMap;
 
 
-class GameState {
+class WorldState {
     public:
-        GameState();
-        ~GameState();
+        WorldState();
+        ~WorldState();
 
         Tile* getGround(SDL_Point coord);
         void setGround(SDL_Point point, Tile* tile);
@@ -56,4 +56,4 @@ class GameState {
         ThingMap things;
 };
 
-#endif	/* _HEXNUL_GAME_STATE_H_ */
+#endif	/* _HEXNUL_WORLD_STATE_H_ */

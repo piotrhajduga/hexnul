@@ -41,4 +41,13 @@
 #define TEXTURE_TOOL_HOVER "assets/ui/hover.png"
 #define TEXTURE_TOOL_ACTIVE "assets/ui/active.png"
 
+////////// ROADS //////////
+#define TEXTURE_ROAD_TL "assets/tiles/road_tl.png"
+#define TEXTURE_ROAD_TR "assets/tiles/road_tr.png"
+#define TEXTURE_ROAD_R "assets/tiles/road_r.png"
+#define TEXTURE_ROAD_BR "assets/tiles/road_br.png"
+#define TEXTURE_ROAD_BL "assets/tiles/road_bl.png"
+#define TEXTURE_ROAD_L "assets/tiles/road_l.png"
+#define TEXTURE_ROAD_CENTER "assets/tiles/road_c.png"
+
 #endif	/* _HEXNUL_CONSTANTS_H_ */

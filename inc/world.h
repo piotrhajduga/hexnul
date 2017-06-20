@@ -16,7 +16,7 @@
 #include "direction.h"
 #include "toolbar.h"
 #include "agent.h"
-#include "state.h"
+#include "gamestate.h"
 
 
 class GameWorld : public Renderable {
@@ -59,7 +59,8 @@ class GameWorld : public Renderable {
         //hexs is like an active region that user might act on
         PointSet hexs;
 
-        PathfindingAgent* agent = NULL;
+        GoalOrientedAgent* agent = NULL;
+        GoalQueue goals;
 
         //SDL_Point offset;
         SDL_Point* hoverCoord = NULL;

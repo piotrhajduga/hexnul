@@ -4,14 +4,13 @@
 
 #include "building.h"
 #include "utils.h"
-#include "agent.h"
 
-#include "state.h"
+#include "worldstate.h"
 
 using namespace std;
 
-GameState::GameState() {}
-GameState::~GameState() {
+WorldState::WorldState() {}
+WorldState::~WorldState() {
     for (auto it : ground) {
         delete it.second;
     }
@@ -20,7 +19,7 @@ GameState::~GameState() {
     }
 }
 
-Tile* GameState::getGround(SDL_Point coord) {
+Tile* WorldState::getGround(SDL_Point coord) {
     try {
         return ground.at(coord);
     } catch (const out_of_range& oor) {
@@ -28,7 +27,7 @@ Tile* GameState::getGround(SDL_Point coord) {
     }
 }
 
-void GameState::setGround(SDL_Point coord, Tile* tile) {
+void WorldState::setGround(SDL_Point coord, Tile* tile) {
     if (ground[coord] != NULL) {
         LOG(DEBUG, "Ground already present. Remove...");
         delete ground[coord];
@@ -37,11 +36,11 @@ void GameState::setGround(SDL_Point coord, Tile* tile) {
     ground[coord] = tile;
 }
 
-bool GameState::isGround(SDL_Point coord) {
+bool WorldState::isGround(SDL_Point coord) {
     return ground.find(coord) != ground.end();
 }
 
-void GameState::removeGround(SDL_Point coord) {
+void WorldState::removeGround(SDL_Point coord) {
     try {
         delete ground.at(coord);
         ground.erase(coord);
@@ -49,7 +48,7 @@ void GameState::removeGround(SDL_Point coord) {
     }
 }
 
-int GameState::countThings(SDL_Point coord) {
+int WorldState::countThings(SDL_Point coord) {
     Thing* thing;
     try {
         thing = things.at(coord);
@@ -63,7 +62,7 @@ int GameState::countThings(SDL_Point coord) {
     }
 }
 
-int GameState::countNeighborThingType(SDL_Point coord, ThingType type) {
+int WorldState::countNeighborThingType(SDL_Point coord, ThingType type) {
     NeighborArray neighbors = Utils::getNeighbors(coord);
     int count = 0;
     for (auto nb=neighbors.begin();nb!=neighbors.end();++nb) {
@@ -77,7 +76,7 @@ int GameState::countNeighborThingType(SDL_Point coord, ThingType type) {
     return count;
 }
 
-int GameState::countNeighborGroundType(SDL_Point coord, TileType type) {
+int WorldState::countNeighborGroundType(SDL_Point coord, TileType type) {
     NeighborArray neighbors = Utils::getNeighbors(coord);
     int count = 0;
     for (auto nb=neighbors.begin();nb!=neighbors.end();++nb) {
@@ -91,7 +90,7 @@ int GameState::countNeighborGroundType(SDL_Point coord, TileType type) {
     return count;
 }
 
-void GameState::putThing(SDL_Point coord, Thing* thing) {
+void WorldState::putThing(SDL_Point coord, Thing* thing) {
     Thing* currentThing;
     try {
         currentThing = things.at(coord);
@@ -103,7 +102,7 @@ void GameState::putThing(SDL_Point coord, Thing* thing) {
     }
 }
 
-void GameState::clearThing(SDL_Point coord) {
+void WorldState::clearThing(SDL_Point coord) {
     Thing* thing;
 
     try {
@@ -126,7 +125,7 @@ void GameState::clearThing(SDL_Point coord) {
     }
 }
 
-Thing* GameState::getThing(SDL_Point coord) {
+Thing* WorldState::getThing(SDL_Point coord) {
     try {
         return things.at(coord);
     } catch (const out_of_range& oor) {

@@ -3,19 +3,19 @@
 
 #include <string>
 
-#include "state.h"
+#include "worldstate.h"
 
 using namespace std;
 
 class MapLoader {
     public:
-        MapLoader(GameState* state, SDL_Renderer* renderer);
+        MapLoader(WorldState* state, SDL_Renderer* renderer);
         ~MapLoader();
 
         void load(string mapFile, SDL_Point srcorigin, SDL_Point dstorigin, int radius);
     protected:
         SDL_Renderer* renderer;
-        GameState* state;
+        WorldState* state;
         string mapFile;
         SDL_Point origin;
         int radius;

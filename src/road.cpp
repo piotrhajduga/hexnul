@@ -6,14 +6,12 @@
 
 RoadNode::RoadNode(SDL_Renderer* renderer)
 : Thing(renderer) {
-    LOG(DEBUG, "Creating road segments");
     for (int i=0;i<6;++i) {
         segments[Direction(i)].sprite = new Sprite(renderer, SEGMENTS[Direction(i)]);
     }
 }
 
 RoadNode::~RoadNode() {
-    LOG(DEBUG, "Destroying road segments");
     for (auto it : segments) {
         if (it.second.sprite != NULL) {
             delete it.second.sprite;
@@ -51,9 +49,7 @@ bool RoadNode::isVisible() {
 }
 
 Road::Road(SDL_Renderer* renderer)
-: RoadNode(renderer), Sprite(renderer, "assets/tiles/road_c.png") {
-    LOG(DEBUG, "Init road done");
-}
+: RoadNode(renderer), Sprite(renderer, TEXTURE_ROAD_CENTER) {}
 
 void Road::render(SDL_Rect* rect) {
     RoadNode::render(rect);

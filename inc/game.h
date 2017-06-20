@@ -3,7 +3,7 @@
 
 #include "SDL.h"
 
-#include "state.h"
+#include "gamestate.h"
 #include "world.h"
 #include "tile.h"
 #include "toolbar.h"

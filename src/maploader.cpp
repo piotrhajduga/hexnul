@@ -3,13 +3,13 @@
 #include "stdio.h"
 
 #include "utils.h"
-#include "state.h"
+#include "worldstate.h"
 #include "tile.h"
 #include "maploader.h"
 
 using namespace std;
 
-MapLoader::MapLoader(GameState* istate, SDL_Renderer* irenderer) {
+MapLoader::MapLoader(WorldState* istate, SDL_Renderer* irenderer) {
     state = istate;
     renderer = irenderer;
 }
