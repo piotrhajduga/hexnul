@@ -10,6 +10,7 @@
 #include "tile.h"
 #include "thing.h"
 #include "sprite.h"
+#include "road.h"
 #include "building.h"
 #include "pathnode.h"
 #include "agent.h"

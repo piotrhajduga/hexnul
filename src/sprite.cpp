@@ -1,5 +1,8 @@
 #include <unordered_map>
 #include <string>
+
+#include "SDL.h"
+
 #include "utils.h"
 #include "sprite.h"
 

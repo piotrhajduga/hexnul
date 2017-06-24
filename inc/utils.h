@@ -4,8 +4,8 @@
 #include <iostream>
 #include <string>
 #include <array>
+
 #include "SDL.h"
-#include "SDL_image.h"
 
 #include "constants.h"
 
