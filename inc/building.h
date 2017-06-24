@@ -17,6 +17,7 @@ using namespace std;
 struct BuildingLevelData {
     const char* textureFile;
     int height;
+    bool visibleRoads;
 };
 
 class BuildingWithLevel : public RoadNode {
@@ -24,18 +25,20 @@ class BuildingWithLevel : public RoadNode {
         static map<int, Sprite*> levels;
         int level = 0;
         Sprite* sprite;
+        bool visibleRoads;
 
     protected:
         void update();
 
         const int MAXLEVEL = 2;
         const BuildingLevelData LEVELS[3] = {
-            {TEXTURE_BUILDING_HOME_0, 0},
-            {TEXTURE_BUILDING_HOME_1, 0},
-            {TEXTURE_BUILDING_HOME_2, 12},
+            {TEXTURE_BUILDING_HOME_0, 0, false},
+            {TEXTURE_BUILDING_HOME_1, 0, true},
+            {TEXTURE_BUILDING_HOME_2, 12, true},
         };
 
     public:
+        virtual bool isVisible();
         static void deleteLevels();
 
         BuildingWithLevel(SDL_Renderer* renderer);

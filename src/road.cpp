@@ -57,7 +57,3 @@ void Road::render(SDL_Rect* rect) {
         Sprite::render(rect);
     }
 }
-
-bool Road::isVisible() {
-    return getVisibleCount()>0;
-}

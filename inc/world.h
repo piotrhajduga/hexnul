@@ -68,16 +68,8 @@ class GameWorld : public Renderable {
         Sprite* empty;
         Sprite* hover;
 
-        std::unordered_map<TileType, SDL_Color> tileBorderColors = {
-            {GRASS, {0x09, 0xb2, 0x1f, 255}},
-            {WATER, {0x09, 0x12, 0xcf, 255}},
-            {DIRT, {0xa9, 0x52, 0x1f, 255}},
-            {SAND, {0xe9, 0xd2, 0x1f, 255}},
-        };
-
         Tile* generateRandomTile();
 
-        void drawHexOutline(SDL_Point coord);
         SDL_Rect getHexRectForCoord(SDL_Point coord);
 
         void drawAgents();

@@ -153,36 +153,19 @@ void Toolbar::useActiveTool(SDL_Point coord) {
     case ToolType::ROAD:
         if (ground!=NULL && ground->isContainer() && thing==NULL) {
             LOG(DEBUG, "Put ROAD");
-            thing = new Road(renderer);
-            state->putThing(coord, thing);
+            state->addGoal({Goal::BUILD, 5, coord, BuildType::ROAD});
         }
         break;
     case ToolType::BUILDING:
         if (ground!=NULL && ground->isContainer()) {
-            if (thing==NULL && agent != NULL) {
-                LOG(DEBUG, "Create goal: Building");
-                state->putThing(coord, new BuildingWithLevel(renderer));
-            } else {
-                BuildingWithLevel* building = dynamic_cast<BuildingWithLevel*>(thing);
-                if (building!=NULL) {
-                    building->incLevel();
-                }
-            }
+            LOG(DEBUG, "Create goal: Building");
+            state->addGoal({Goal::BUILD, 3, coord, BuildType::HOUSE});
         }
         break;
     case ToolType::AGENT:
-        if (agent==NULL) {
-            if (ground != NULL) {
-                LOG(DEBUG, "Create new GOAgent");
-                agent = new GOAgent(renderer, state, coord);
-                //state->addAgent(agent);
-            }
-        } else {
-            //PathfindingAgent* pfagent = dynamic_cast<PathfindingAgent*>(agent);
-            //if (pfagent != NULL) {
-                //pfagent->setDestination(coord);
-            //}
-            state->addGoal(Goal{Goal::GOTO, 1, coord});
+        if (ground != NULL) {
+            LOG(DEBUG, "Create new GOAgent");
+            state->addAgent(new GOAgent(renderer, state, coord));
         }
         break;
     case ToolType::DESTROY:

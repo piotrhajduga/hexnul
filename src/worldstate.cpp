@@ -4,6 +4,7 @@
 
 #include "building.h"
 #include "utils.h"
+#include "road.h"
 
 #include "worldstate.h"
 
@@ -62,6 +63,49 @@ int WorldState::countThings(SDL_Point coord) {
     }
 }
 
+void WorldState::updateNeighbors(SDL_Point icoord, Thing* thing) {
+    SDL_Point coord;
+    RoadNode* neighbor;
+    RoadNode* node = dynamic_cast<RoadNode*>(thing);
+    bool cond = node!=NULL && node->isVisible();
+
+    NeighborArray neighbors = Utils::getNeighbors(icoord);
+
+    LOG(DEBUG, "Update neighbors...");
+    Direction dir = (Direction)0;
+    while (dir<6) {
+        coord = neighbors[dir];
+        neighbor = dynamic_cast<RoadNode*>(getThing(coord));
+        if (neighbor != NULL) {
+            neighbor->setSegmentVisible((Direction)((3+dir)%6), cond);
+        }
+        dir = (Direction) (((int) dir) + 1);
+    }
+}
+
+void WorldState::updateRoadNode(SDL_Point coord, Thing* thing) {
+    RoadNode* neighbor;
+    RoadNode* node = dynamic_cast<RoadNode*>(thing);
+    if (node == NULL) {
+        LOG(DEBUG, "Not a RoadNode");
+    }
+
+    NeighborArray neighbors = Utils::getNeighbors(coord);
+    Direction dir=(Direction)0;
+
+    LOG(DEBUG, "Update RoadNode");
+    while (dir<6) {
+        neighbor = dynamic_cast<RoadNode*>(getThing(neighbors[dir]));
+        node->setSegmentVisible(dir, neighbor!=NULL && neighbor->isVisible());
+        dir = (Direction) (((int) dir) + 1);
+    }
+}
+
+void WorldState::updateThing(SDL_Point coord, Thing* thing) {
+    updateRoadNode(coord, thing);
+    updateNeighbors(coord, thing);
+}
+
 int WorldState::countNeighborThingType(SDL_Point coord, ThingType type) {
     NeighborArray neighbors = Utils::getNeighbors(coord);
     int count = 0;
@@ -100,6 +144,7 @@ void WorldState::putThing(SDL_Point coord, Thing* thing) {
     } catch (const out_of_range& oor) {
         things[coord] = thing;
     }
+    updateThing(coord, things[coord]);
 }
 
 void WorldState::clearThing(SDL_Point coord) {
@@ -122,7 +167,9 @@ void WorldState::clearThing(SDL_Point coord) {
             things.erase(coord);
         }
     } catch (const out_of_range& oor) {
+        thing = NULL;
     }
+    updateNeighbors(coord, thing);
 }
 
 Thing* WorldState::getThing(SDL_Point coord) {

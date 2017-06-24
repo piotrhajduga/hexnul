@@ -82,7 +82,6 @@ GameWorld::~GameWorld() {
 
 void GameWorld::OnClick(SDL_MouseButtonEvent* event) {
     SDL_Point coord = coordsForXY({event->x, event->y});
-    NeighborArray neighbors = Utils::getNeighbors(coord);
 
     if (hexs.find(coord) != hexs.end()) {
         switch (event->button) {
@@ -96,40 +95,6 @@ void GameWorld::OnClick(SDL_MouseButtonEvent* event) {
             //idle
             break;
         }
-    }
-
-    RoadNode* thing = dynamic_cast<RoadNode*>(state->getThing(coord));
-    if (thing!=NULL) {
-        updateRoadNode(thing, neighbors);
-    }
-    updateNeighbors(neighbors, thing);
-}
-
-void GameWorld::updateNeighbors(NeighborArray neighbors, RoadNode* thing) {
-    RoadNode* neighbor;
-    SDL_Point coord;
-    Direction dir = (Direction)0;
-
-    LOG(DEBUG, "Update neighbors...");
-    while (dir<6) {
-        coord = neighbors[dir];
-        neighbor = dynamic_cast<RoadNode*>(state->getThing(coord));
-        if (neighbor != NULL) {
-            neighbor->setSegmentVisible((Direction)((3+dir)%6), thing!=NULL && thing->isVisible());
-        }
-        dir = (Direction) (((int) dir) + 1);
-    }
-}
-
-void GameWorld::updateRoadNode(RoadNode* road, NeighborArray neighbors) {
-    RoadNode* neighbor;
-    Direction dir=(Direction)0;
-
-    LOG(DEBUG, "Update RoadNode");
-    while (dir<6) {
-        neighbor = dynamic_cast<RoadNode*>(state->getThing(neighbors[dir]));
-        road->setSegmentVisible(dir, neighbor!=NULL && neighbor->isVisible());
-        dir = (Direction) (((int) dir) + 1);
     }
 }
 
@@ -271,20 +236,14 @@ void GameWorld::drawHover(SDL_Point coord, SDL_Rect* rect) {
 
 void GameWorld::drawAgents() {
     SDL_Rect rect;
-    Agent* agent = toolbar->getAgent();
-    if (agent == NULL) {
-        return;
-    }
-    //for (auto agent : state->getAgents()) {
+    for (auto agent : state->getAgents()) {
         rect = getHexRectForCoord(agent->getPosition());
         agent->render(&rect);
-    //}
+    }
 }
 
 void GameWorld::OnLoop() {
-    Agent* agent = toolbar->getAgent();
-    if (agent != NULL) {
-    //for (auto agent : state->getAgents()) {
+    for (auto agent : state->getAgents()) {
         agent->update();
         GoalOrientedAgent* goagent = dynamic_cast<GoalOrientedAgent*>(agent);
         if (goagent!=NULL && !goagent->isBusy()) {

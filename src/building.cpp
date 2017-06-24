@@ -65,13 +65,20 @@ void BuildingWithLevel::setLevel(int ilevel) {
 void BuildingWithLevel::update() {
     sprite = getLevel(level);
     height = LEVELS[level].height;
+    visibleRoads = LEVELS[level].visibleRoads;
+}
+
+bool BuildingWithLevel::isVisible() {
+    return visibleRoads;
 }
 
 void BuildingWithLevel::render(SDL_Rect* rect) {
     SDL_Rect textureRect = sprite->getTextureRect();
     SDL_Rect backup = *rect;
     int textureHeight = backup.w * textureRect.h / textureRect.w;
-    RoadNode::render(rect);
+    if (visibleRoads) {
+        RoadNode::render(rect);
+    }
     if (textureHeight > backup.h) {
         rect->y = backup.y + backup.h - textureHeight;
     } else {

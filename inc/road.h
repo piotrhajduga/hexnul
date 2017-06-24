@@ -31,7 +31,7 @@ class RoadNode : public Thing {
         void setSegmentVisible(Direction dir);
         void setSegmentVisible(Direction dir, bool cond);
 
-        bool isVisible();
+        virtual bool isVisible();
 
         bool isPassable() { return true; }
         int getMoveCost() { return 5; }
@@ -60,8 +60,6 @@ class Road : public RoadNode, public Sprite {
         virtual ThingType getType() const {
             return ROAD;
         }
-
-        bool isVisible();
 
         void render(SDL_Rect* rect);
 };

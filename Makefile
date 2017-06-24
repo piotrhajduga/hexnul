@@ -34,7 +34,7 @@ GAME_INC = $(addprefix $(INC_DIR)/,game.h world.h gamestate.h thing.h utils.h)
 $(OBJ_DIR)/game.o: $(SRC_DIR)/game.cpp $(GAME_INC)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-WORLDSTATE_INC = $(addprefix $(INC_DIR)/,worldstate.h utils.h direction.h tile.h)
+WORLDSTATE_INC = $(addprefix $(INC_DIR)/,worldstate.h utils.h direction.h tile.h building.h road.h)
 $(OBJ_DIR)/worldstate.o: $(SRC_DIR)/worldstate.cpp $(WORLDSTATE_INC)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
@@ -68,7 +68,7 @@ ROAD_INC = $(addprefix $(INC_DIR)/,road.h direction.h thing.h thingtype.h sprite
 $(OBJ_DIR)/road.o: $(SRC_DIR)/road.cpp $(ROAD_INC)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-BUILDING_INC = $(addprefix $(INC_DIR)/,building.h utils.h constants.h thing.h thingtype.h pathnode.h)
+BUILDING_INC = $(addprefix $(INC_DIR)/,building.h utils.h constants.h thing.h thingtype.h road.h pathnode.h)
 $(OBJ_DIR)/building.o: $(SRC_DIR)/building.cpp $(BUILDING_INC)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
@@ -76,7 +76,7 @@ TOOLBAR_INC = $(addprefix $(INC_DIR)/,toolbar.h renderable.h sprite.h world.h ga
 $(OBJ_DIR)/toolbar.o: $(SRC_DIR)/toolbar.cpp $(TOOLBAR_INC)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-AGENT_INC = $(addprefix $(INC_DIR)/,agent.h sprite.h renderable.h worldstate.h utils.h direction.h pathnode.h)
+AGENT_INC = $(addprefix $(INC_DIR)/,agent.h sprite.h renderable.h worldstate.h utils.h direction.h building.h road.h pathnode.h)
 $(OBJ_DIR)/agent.o: $(SRC_DIR)/agent.cpp $(AGENT_INC)
 	$(CXX) $(CXXFLAGS) $< -o $@
 

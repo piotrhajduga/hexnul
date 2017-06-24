@@ -67,6 +67,10 @@ class PathfindingAgent : public Agent {
         int hscore(SDL_Point point);
 };
 
+enum class BuildType {
+    HOUSE,ROAD
+};
+
 struct Goal {
     enum Type {
         GOTO,BUILD,NONE
@@ -74,8 +78,11 @@ struct Goal {
     
     int priority;
 
-    union Data {
+    struct Data {
         SDL_Point gotoXY;
+        union {
+            BuildType buildType;
+        };
     } data;
 
     bool operator<(const Goal& rg) const {
@@ -93,7 +100,15 @@ class GoalOrientedAgent : public PathfindingAgent {
         void update();
 
         bool isBusy();
+
+        void resetGoal();
         void addGoal(Goal goal);
+
+        void actionGOTO(SDL_Point gotoxy);
+        void actionBUILD(SDL_Point gotoxy);
+
+    protected:
+        void setActiveGoal();
     private:
         Goal activeGoal;
         GoalQueue goals;

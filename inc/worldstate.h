@@ -51,6 +51,10 @@ class WorldState {
         void clearThing(SDL_Point coord);
         Thing* getThing(SDL_Point coord);
         int countNeighborThingType(SDL_Point coord, ThingType type);
+
+        void updateThing(SDL_Point coord, Thing* thing);
+        void updateNeighbors(SDL_Point coord, Thing* thing);
+        void updateRoadNode(SDL_Point coord, Thing* thing);
     private:
         TileMap ground;
         ThingMap things;

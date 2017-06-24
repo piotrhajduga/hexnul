@@ -10,6 +10,7 @@
 #include "tile.h"
 #include "thing.h"
 #include "sprite.h"
+#include "building.h"
 #include "pathnode.h"
 #include "agent.h"
 
@@ -187,33 +188,82 @@ void PathfindingAgent::update() {
 
 GoalOrientedAgent::GoalOrientedAgent(SDL_Renderer* renderer, WorldState* state, SDL_Point position)
 : PathfindingAgent(renderer, state, position) {
-    activeGoal = {Goal::NONE, 1, 0};
+    resetGoal();
 }
 
 GoalOrientedAgent::~GoalOrientedAgent() {}
 
+void GoalOrientedAgent::setActiveGoal() {
+    if (!goals.empty()) {
+        activeGoal = goals.top();
+        goals.pop();
+    //} else {
+        //Wandering agent
+        //int dxy = 2-(rand() % 5);
+        //activeGoal.type = Goal::GOTO;
+        //TODO:gotoXY limiting
+        //activeGoal.data.gotoXY = {pos.x+dxy,pos.y+dxy};
+        //goals.push(activeGoal);
+    }
+}
+
+void GoalOrientedAgent::resetGoal() {
+    activeGoal = {Goal::NONE, 1, 0};
+}
+
+void GoalOrientedAgent::actionGOTO(SDL_Point gotoxy) {
+    if (equalsCoords()(pos, gotoxy)) {
+        resetGoal();
+    } else if (path.empty()) {
+        setDestination(gotoxy);
+    } else {
+        PathfindingAgent::update();
+    }
+}
+
+void GoalOrientedAgent::actionBUILD(SDL_Point gotoxy) {
+    Thing* thing = state->getThing(gotoxy);
+    if (thing == NULL) {
+        actionGOTO(gotoxy);
+        if (equalsCoords()(pos, gotoxy)) {
+            switch (activeGoal.data.buildType) {
+                case BuildType::HOUSE:
+                    thing = new BuildingWithLevel(renderer);
+                    break;
+                case BuildType::ROAD:
+                    thing = new Road(renderer);
+                    break;
+            }
+            if (thing != NULL) {
+                state->putThing(gotoxy, thing);
+            }
+            resetGoal();
+        }
+    } else {
+        BuildingWithLevel* building = dynamic_cast<BuildingWithLevel*>(thing);
+        if (building!=NULL) {
+            actionGOTO(gotoxy);
+            if (equalsCoords()(pos, gotoxy)) {
+                building->incLevel();
+                state->updateThing(pos, building);
+                resetGoal();
+            }
+        } else {
+            resetGoal();
+        }
+    }
+}
+
 void GoalOrientedAgent::update() {
     switch (activeGoal.type) {
         case Goal::GOTO:
-            PathfindingAgent::update();
-            if (path.empty()) {
-                LOG(DEBUG, "Goal achieved!");
-                activeGoal = {Goal::NONE, 1, 0};
-            }
+            actionGOTO(activeGoal.data.gotoXY);
+            break;
+        case Goal::BUILD:
+            actionBUILD(activeGoal.data.gotoXY);
             break;
         case Goal::NONE:
-            if (!goals.empty()) {
-                LOG(DEBUG, "Get new Goal");
-                activeGoal = goals.top();
-                switch(activeGoal.type) {
-                    case Goal::GOTO:
-                        setDestination(activeGoal.data.gotoXY);
-                        break;
-                    default:
-                        break;
-                }
-                goals.pop();
-            }
+            setActiveGoal();
             break;
         default:
             break;
