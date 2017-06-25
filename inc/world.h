@@ -25,6 +25,7 @@ class GameWorld : public Renderable {
         virtual ~GameWorld();
 
         SDL_Point coordsForXY(SDL_Point point);
+        SDL_Rect getHexRectForCoord(SDL_Point coord);
 
         void render(SDL_Rect* rect);
 
@@ -67,11 +68,15 @@ class GameWorld : public Renderable {
 
         Sprite* empty;
         Sprite* hover;
+        Sprite* goalSprite;
+        Sprite* goalSpriteActive;
+        Sprite* goalSpriteRoad;
+        Sprite* goalSpriteBuilding;
 
         Tile* generateRandomTile();
 
-        SDL_Rect getHexRectForCoord(SDL_Point coord);
-
+        void drawGoal(Goal goal, Sprite* sprite=NULL);
+        void drawGoals();
         void drawAgents();
 
         void updateRoadNode(RoadNode* road, NeighborArray neighbors);

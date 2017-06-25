@@ -17,6 +17,13 @@
 #define TEXTURE_TILE_EMPTY "assets/tiles/empty.png"
 #define TEXTURE_TILE_HOVER "assets/ui/hover.png"
 
+////////  GOALPOSTS  ////////
+#define TEXTURE_GOALPOST "assets/tiles/building/goalpost.png"
+#define TEXTURE_GOALPOST_ACTIVE "assets/tiles/building/goalpost_active.png"
+
+#define TEXTURE_GOALPOST_ROAD "assets/tiles/building/goalpost_road.png"
+#define TEXTURE_GOALPOST_BUILDING "assets/tiles/building/goalpost_building.png"
+
 ////////  BUILDINGS  ////////
 #define TEXTURE_BUILDING_SEGMENT "assets/tiles/building.png"
 

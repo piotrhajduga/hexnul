@@ -29,9 +29,11 @@ class GameState : public WorldState {
 
         void addGoal(Goal goal);
         Goal getGoal();
+        GoalSet getGoals();
     private:
         AgentSet agents;
-        GoalQueue goals;
+        GoalQueue goalqueue;
+        GoalSet goalset;
 };
 
 #endif	/* _HEXNUL_GAME_STATE_H_ */

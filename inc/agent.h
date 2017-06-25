@@ -90,7 +90,20 @@ struct Goal {
     }
 };
 
+struct compareGoals {
+    bool operator() (Goal const& gl, Goal const& gr) {
+        bool rgtl = compareCoords()(gl.data.gotoXY, gr.data.gotoXY);
+        bool lgtr = compareCoords()(gr.data.gotoXY, gl.data.gotoXY);
+        if (rgtl == lgtr) {
+            return gl < gr;
+        } else {
+            return rgtl;
+        }
+    }
+};
+
 typedef priority_queue<Goal> GoalQueue;
+typedef set<Goal, compareGoals> GoalSet;
 
 class GoalOrientedAgent : public PathfindingAgent {
     public:
@@ -103,6 +116,7 @@ class GoalOrientedAgent : public PathfindingAgent {
 
         void resetGoal();
         void addGoal(Goal goal);
+        Goal getActiveGoal();
 
         void actionGOTO(SDL_Point gotoxy);
         void actionBUILD(SDL_Point gotoxy);

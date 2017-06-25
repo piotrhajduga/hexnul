@@ -279,3 +279,7 @@ void GoalOrientedAgent::addGoal(Goal goal) {
     LOG(DEBUG, "add GOAgent Goal");
     goals.push(goal);
 }
+
+Goal GoalOrientedAgent::getActiveGoal() {
+    return activeGoal;
+}

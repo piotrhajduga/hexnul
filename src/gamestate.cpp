@@ -23,16 +23,22 @@ void GameState::killAgents() {
 
 void GameState::addGoal(Goal goal) {
     LOG(DEBUG, "add GameState Goal");
-    goals.push(goal);
+    goalset.insert(goal);
+    goalqueue.push(goal);
 }
 
 Goal GameState::getGoal() {
-    if (!goals.empty()) {
+    if (!goalqueue.empty()) {
         LOG(DEBUG, "get GameState Goal");
-        Goal goal = goals.top();
-        goals.pop();
+        Goal goal = goalqueue.top();
+        goalset.erase(goal);
+        goalqueue.pop();
         return goal;
     } else {
         return {Goal::NONE, 1};
     }
+}
+
+GoalSet GameState::getGoals() {
+    return goalset;
 }

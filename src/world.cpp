@@ -31,6 +31,10 @@ GameWorld::GameWorld(SDL_Renderer *renderer, GameState *istate, Toolbar* itoolba
 
     hover = new Sprite(renderer, TEXTURE_TILE_HOVER, SDL_BLENDMODE_ADD);
     empty = new Sprite(renderer, TEXTURE_TILE_EMPTY);
+    goalSprite = new Sprite(renderer, TEXTURE_GOALPOST);
+    goalSpriteActive = new Sprite(renderer, TEXTURE_GOALPOST_ACTIVE);
+    goalSpriteRoad = new Sprite(renderer, TEXTURE_GOALPOST_ROAD);
+    goalSpriteBuilding = new Sprite(renderer, TEXTURE_GOALPOST_BUILDING);
 
     initHexs({viewRadius-1,viewRadius}, viewRadius);
 
@@ -38,6 +42,17 @@ GameWorld::GameWorld(SDL_Renderer *renderer, GameState *istate, Toolbar* itoolba
     int mapOffsetX = rand() % (61-2*viewRadius) + viewRadius;
     int mapOffsetY = rand() % (61-2*viewRadius) + viewRadius;
     maploader.load(MAP_0, {mapOffsetX,mapOffsetY}, {viewRadius-1,viewRadius-1}, viewRadius+1);
+}
+
+GameWorld::~GameWorld() {
+    delete empty;
+    delete hover;
+    delete goalSprite;
+    delete goalSpriteActive;
+    delete goalSpriteRoad;
+    delete goalSpriteBuilding;
+
+    Sprite::clearTextureCache();
 }
 
 Tile* GameWorld::generateRandomTile() {
@@ -71,13 +86,6 @@ void GameWorld::initHexs(SDL_Point origin, int size) {
     }
 
     hexs.begin();
-}
-
-GameWorld::~GameWorld() {
-    delete empty;
-    delete hover;
-
-    Sprite::clearTextureCache();
 }
 
 void GameWorld::OnClick(SDL_MouseButtonEvent* event) {
@@ -143,6 +151,7 @@ void GameWorld::render(SDL_Rect* rect) {
         drawHex(*it);
     }
 
+    drawGoals();
     drawAgents();
 }
 
@@ -234,10 +243,50 @@ void GameWorld::drawHover(SDL_Point coord, SDL_Rect* rect) {
     }
 }
 
+void GameWorld::drawGoal(Goal goal, Sprite* sprite) {
+    SDL_Rect rect = getHexRectForCoord(goal.data.gotoXY);
+    if (sprite == NULL) {
+        switch (goal.type) {
+            case Goal::GOTO:
+                sprite = goalSprite;
+                break;
+            case Goal::BUILD:
+                switch (goal.data.buildType) {
+                    case BuildType::ROAD:
+                        sprite = goalSpriteRoad;
+                        break;
+                    case BuildType::HOUSE:
+                        sprite = goalSpriteBuilding;
+                        break;
+                    default:
+                        sprite = goalSprite;
+                        break;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    if (sprite != NULL && goal.type != Goal::NONE) {
+        sprite->render(&rect);
+    }
+}
+
+void GameWorld::drawGoals() {
+    for (auto goal : state->getGoals()) {
+        drawGoal(goal);
+    }
+}
+
 void GameWorld::drawAgents() {
     SDL_Rect rect;
+    GOAgent* goagent;
     for (auto agent : state->getAgents()) {
         rect = getHexRectForCoord(agent->getPosition());
+        goagent = dynamic_cast<GOAgent*>(agent);
+        if (goagent != NULL) {
+            drawGoal(goagent->getActiveGoal(), goalSpriteActive);
+        }
         agent->render(&rect);
     }
 }
